@@ -11,7 +11,7 @@
     "js"
   ],
   "author": "Jørgen Fogh",
-  "license": "ISC",
+  "license": "LGPL-3.0-or-later",
   "devDependencies": {
     "jest": "^23.6.0"
   }
