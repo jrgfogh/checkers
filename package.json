@@ -1,0 +1,18 @@
+{
+  "name": "checkers",
+  "version": "1.0.0",
+  "description": "A simple in-browser checkers game.",
+  "main": "checkers.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "checkers",
+    "js"
+  ],
+  "author": "Jørgen Fogh",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}
