@@ -5,7 +5,7 @@
   "main": "checkers.js",
   "scripts": {
     "test": "jest",
-    "start": "webpack-dev-server --output-public-path=/dist/ --mode development --progress --open --hot",
+    "start": "webpack-dev-server --content-base=src/ --mode development --progress --open --hot",
     "build": "webpack --mode production --progress"
   },
   "keywords": [
