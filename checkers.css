@@ -1,0 +1,64 @@
+#wrapper
+{
+	text-align: center;
+}
+
+#board
+{
+	display: inline-block;
+	width: 450px;
+	height: 450px;
+	border-color: black;
+	border-width: 5px;
+	border-style: dotted;
+}
+
+#board .cell
+{
+	position: relative;
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 12.5%;
+	height: 12.5%;
+	vertical-align: top;
+}
+
+#board .cell.black
+{
+	background-color: darkgrey;
+}
+
+#board .cell .piece
+{
+	display: inline-block;
+	margin: 5%;
+	height: 90%;
+	width: 90%;
+	border-radius: 50%;
+}
+
+#board .cell .piece.man::before
+{
+	color: white;
+	vertical-align: -100%;
+	content: "M";
+}
+
+#board .cell .piece.king::before
+{
+	color: white;
+	vertical-align: -100%;
+	content: "K";
+}
+
+#board .cell .piece.black
+{
+	background-color: black;
+}
+
+#board .cell .piece.red
+{
+	background-color: red;
+}
