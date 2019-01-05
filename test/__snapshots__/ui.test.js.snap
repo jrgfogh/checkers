@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Board renders correctly 1`] = `
+exports[`Board renders correctly when empty 1`] = `
 <div
   id="board"
 >

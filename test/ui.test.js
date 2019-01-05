@@ -80,8 +80,8 @@ describe("Board", () => {
     });
   });
 
-  it("renders correctly", () => {
-    const board = TestRenderer.create(<Board />);
+  it("renders correctly when empty", () => {
+    const board = TestRenderer.create(<Board squares={ Array(64).fill(null) } />);
     expect(board.toJSON()).toMatchSnapshot();
   });
 });
