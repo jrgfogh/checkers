@@ -8,7 +8,7 @@ describe("Board", () => {
       const square = TestRenderer.create(<Square color="black" />);
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="square black"
+  className="square black"
 />
 `);
     });
@@ -17,7 +17,7 @@ describe("Board", () => {
       const square = TestRenderer.create(<Square color="white" />);
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="square white"
+  className="square white"
 />
 `);
     });
@@ -28,10 +28,10 @@ describe("Board", () => {
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="square white"
+  className="square white"
 >
   <div
-    class="piece white-piece man"
+    className="piece white-piece man"
   />
 </div>
 `);
@@ -43,10 +43,10 @@ describe("Board", () => {
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="square white"
+  className="square white"
 >
   <div
-    class="piece white-piece king"
+    className="piece white-piece king"
   />
 </div>
 `);
@@ -58,10 +58,10 @@ describe("Board", () => {
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="square white"
+  className="square white"
 >
   <div
-    class="piece black-piece man"
+    className="piece black-piece man"
   />
 </div>
 `);
@@ -74,14 +74,16 @@ describe("Board", () => {
     });
 
     it("should require a valid color", () => {
-      expect(() => TestRenderer.create(<Square color="invalid" />)).toThrowError(
+      expect(() =>
+        TestRenderer.create(<Square color="invalid" />)
+      ).toThrowError(
         'Warning: Failed prop type: Invalid prop `color` of value `invalid` supplied to `Square`, expected one of ["white","black"].'
       );
     });
   });
 
   it("renders correctly when empty", () => {
-    const board = TestRenderer.create(<Board squares={ Array(64).fill(null) } />);
+    const board = TestRenderer.create(<Board squares={Array(64).fill(null)} />);
     expect(board.toJSON()).toMatchSnapshot();
   });
 });

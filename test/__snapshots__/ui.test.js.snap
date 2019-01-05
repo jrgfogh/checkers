@@ -5,196 +5,196 @@ exports[`Board renders correctly when empty 1`] = `
   id="board"
 >
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
   <div
-    class="square black"
+    className="square black"
   />
   <div
-    class="square white"
+    className="square white"
   />
 </div>
 `;
