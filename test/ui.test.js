@@ -1,34 +1,34 @@
 import React from "react";
 import * as TestRenderer from "react-test-renderer";
-import Board, { Cell } from "../src/ui";
+import Board, { Square } from "../src/ui";
 
 describe("Board", () => {
-  describe("Cell", () => {
+  describe("Square", () => {
     it("renders empty black correctly", () => {
-      const cell = TestRenderer.create(<Cell color="black" />);
-      expect(cell.toJSON()).toMatchInlineSnapshot(`
+      const square = TestRenderer.create(<Square color="black" />);
+      expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="cell black"
+  class="square black"
 />
 `);
     });
 
     it("renders empty white correctly", () => {
-      const cell = TestRenderer.create(<Cell color="white" />);
-      expect(cell.toJSON()).toMatchInlineSnapshot(`
+      const square = TestRenderer.create(<Square color="white" />);
+      expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="cell white"
+  class="square white"
 />
 `);
     });
 
     it("renders white man on white correctly", () => {
-      const cell = TestRenderer.create(
-        <Cell color="white" piece={{ color: "white", kind: "man" }} />
+      const square = TestRenderer.create(
+        <Square color="white" piece={{ color: "white", kind: "man" }} />
       );
-      expect(cell.toJSON()).toMatchInlineSnapshot(`
+      expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="cell white"
+  class="square white"
 >
   <div
     class="piece white-piece man"
@@ -38,12 +38,12 @@ describe("Board", () => {
     });
 
     it("renders white king on white correctly", () => {
-      const cell = TestRenderer.create(
-        <Cell color="white" piece={{ color: "white", kind: "king" }} />
+      const square = TestRenderer.create(
+        <Square color="white" piece={{ color: "white", kind: "king" }} />
       );
-      expect(cell.toJSON()).toMatchInlineSnapshot(`
+      expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="cell white"
+  class="square white"
 >
   <div
     class="piece white-piece king"
@@ -53,12 +53,12 @@ describe("Board", () => {
     });
 
     it("renders black man on white correctly", () => {
-      const cell = TestRenderer.create(
-        <Cell color="white" piece={{ color: "black", kind: "man" }} />
+      const square = TestRenderer.create(
+        <Square color="white" piece={{ color: "black", kind: "man" }} />
       );
-      expect(cell.toJSON()).toMatchInlineSnapshot(`
+      expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
-  class="cell white"
+  class="square white"
 >
   <div
     class="piece black-piece man"
@@ -68,14 +68,14 @@ describe("Board", () => {
     });
 
     it("should require a color", () => {
-      expect(() => TestRenderer.create(<Cell />)).toThrowError(
-        "Warning: Failed prop type: The prop `color` is marked as required in `Cell`, but its value is `undefined`."
+      expect(() => TestRenderer.create(<Square />)).toThrowError(
+        "Warning: Failed prop type: The prop `color` is marked as required in `Square`, but its value is `undefined`."
       );
     });
 
     it("should require a valid color", () => {
-      expect(() => TestRenderer.create(<Cell color="invalid" />)).toThrowError(
-        'Warning: Failed prop type: Invalid prop `color` of value `invalid` supplied to `Cell`, expected one of ["white","black"].'
+      expect(() => TestRenderer.create(<Square color="invalid" />)).toThrowError(
+        'Warning: Failed prop type: Invalid prop `color` of value `invalid` supplied to `Square`, expected one of ["white","black"].'
       );
     });
   });

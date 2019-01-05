@@ -5,196 +5,196 @@ exports[`Board renders correctly when empty 1`] = `
   id="board"
 >
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
   <div
-    class="cell black"
+    class="square black"
   />
   <div
-    class="cell white"
+    class="square white"
   />
 </div>
 `;

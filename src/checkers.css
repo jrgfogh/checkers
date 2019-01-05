@@ -13,7 +13,7 @@
 	border-style: dotted;
 }
 
-#board .cell
+#board .square
 {
 	position: relative;
 	display: inline-block;
@@ -25,12 +25,12 @@
 	vertical-align: top;
 }
 
-#board .cell.black
+#board .square.black
 {
 	background-color: darkgrey;
 }
 
-#board .cell .piece
+#board .square .piece
 {
 	display: inline-block;
 	margin: 5%;
@@ -39,26 +39,26 @@
 	border-radius: 50%;
 }
 
-#board .cell .piece.man::before
+#board .square .piece.man::before
 {
 	color: white;
 	vertical-align: -100%;
 	content: "M";
 }
 
-#board .cell .piece.king::before
+#board .square .piece.king::before
 {
 	color: white;
 	vertical-align: -100%;
 	content: "K";
 }
 
-#board .cell .black-piece
+#board .square .black-piece
 {
 	background-color: black;
 }
 
-#board .cell .white-piece
+#board .square .white-piece
 {
 	background-color: red;
 }
