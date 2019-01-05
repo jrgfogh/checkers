@@ -18,21 +18,26 @@ export default class Board extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      squares: props.squares
+      pieces: props.pieces
     };
   }
 
   render() {
+    const boardColors =
+      [ "white", "black", "white", "black", "white", "black", "white", "black",
+        "black", "white", "black", "white", "black", "white", "black", "white",
+        "white", "black", "white", "black", "white", "black", "white", "black",
+        "black", "white", "black", "white", "black", "white", "black", "white",
+        "white", "black", "white", "black", "white", "black", "white", "black",
+        "black", "white", "black", "white", "black", "white", "black", "white",
+        "white", "black", "white", "black", "white", "black", "white", "black",
+        "black", "white", "black", "white", "black", "white", "black", "white" ]
+    const squares = []
+    for (let i = 0; i < 64; i++)
+      squares[i] = <Square key={ i } color={ boardColors[i] } piece={ this.state.pieces[i] } />
     return (
       <div id="board">
-        <Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" />
-        <Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" />
-        <Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" />
-        <Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" />
-        <Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" />
-        <Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" />
-        <Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" />
-        <Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" /><Square color="black" /><Square color="white" />
+        { squares }
       </div>
     )
   }

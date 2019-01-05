@@ -1,5 +1,8 @@
 import React from "react";
 import * as TestRenderer from "react-test-renderer";
+import ShallowRenderer from 'react-test-renderer/shallow';
+import each from 'jest-each';
+
 import Board, { Square } from "../src/ui";
 
 describe("Board", () => {
@@ -83,7 +86,17 @@ describe("Board", () => {
   });
 
   it("renders correctly when empty", () => {
-    const board = TestRenderer.create(<Board squares={Array(64).fill(null)} />);
+    const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } />);
     expect(board.toJSON()).toMatchSnapshot();
   });
+
+  const allSquareIndices = Array(64).fill().map((_, i) => i);
+
+  each(allSquareIndices).it("renders white man correctly in square %d", (index) => {
+    const pieces = Array(64).fill(null)
+    const whiteMan = { color: "white", kind: "man" };
+    pieces[index] = whiteMan
+    const board = new ShallowRenderer().render(<Board pieces={ pieces } />);
+    expect(board.props.children[index].props).toMatchObject({ piece: whiteMan })
+  })
 });
