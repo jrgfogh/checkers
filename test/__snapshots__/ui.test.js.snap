@@ -1,0 +1,200 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Board renders correctly 1`] = `
+<div
+  id="board"
+>
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+  <div
+    class="cell black"
+  />
+  <div
+    class="cell white"
+  />
+</div>
+`;

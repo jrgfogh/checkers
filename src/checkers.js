@@ -1,3 +1,9 @@
-"use strict";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-export default 42
+import Board from './ui'
+
+ReactDOM.render(
+    <Board />,
+    document.getElementById('game')
+  );
