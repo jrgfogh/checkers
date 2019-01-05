@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Board from './ui'
-import checkersFEN from './checkersFEN'
+import { parse } from "../src/checkersFEN";
 
-const pieces = checkersFEN(
+const pieces = parse(
   ".m.m.m.m" +
   "m.m.m.m." +
   ".m.m.m.m" +

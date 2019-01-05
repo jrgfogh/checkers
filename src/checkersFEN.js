@@ -1,5 +1,5 @@
 
-export default function checkersFEN(fenString) {
+export function parse(fenString) {
   if (fenString.length < 66)
     throw Error(
       'Invalid checkers FEN string: "' + fenString + '"\n' +
@@ -56,4 +56,25 @@ export default function checkersFEN(fenString) {
     pieces: pieces,
     turn: turn
   }
+}
+
+export function unparse(gameState) {
+  const squares = Array(64).fill('.');
+  for (let i = 0; i < 64; i++) {
+    const piece = gameState.pieces[i];
+    if (piece)
+      if (piece.kind === 'king')
+        if (piece.color == 'white')
+          squares[i] = 'K';
+        else
+          squares[i] = 'k';
+      else
+        if (piece.color == 'white')
+          squares[i] = 'M';
+        else
+          squares[i] = 'm';
+  }
+  if (gameState.turn == 'white')
+      return squares.join('') + " w";
+  return squares.join('') + " b";
 }
