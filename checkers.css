@@ -53,12 +53,12 @@
 	content: "K";
 }
 
-#board .cell .piece.black
+#board .cell .black-piece
 {
 	background-color: black;
 }
 
-#board .cell .piece.red
+#board .cell .white-piece
 {
 	background-color: red;
 }
