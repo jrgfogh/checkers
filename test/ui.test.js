@@ -83,6 +83,15 @@ describe("Board", () => {
         'Warning: Failed prop type: Invalid prop `color` of value `invalid` supplied to `Square`, expected one of ["white","black"].'
       );
     });
+
+    it("renders empty black selected correctly", () => {
+      const square = TestRenderer.create(<Square color="black" selected={ true } />);
+      expect(square.toJSON()).toMatchInlineSnapshot(`
+<div
+  className="square black selected"
+/>
+`);
+    });
   });
 
   it("renders correctly when empty", () => {
@@ -95,8 +104,62 @@ describe("Board", () => {
   each(allSquareIndices).it("renders white man correctly in square %d", (index) => {
     const pieces = Array(64).fill(null)
     const whiteMan = { color: "white", kind: "man" };
-    pieces[index] = whiteMan
+    pieces[index] = whiteMan;
     const board = new ShallowRenderer().render(<Board pieces={ pieces } />);
     expect(board.props.children[index].props).toMatchObject({ piece: whiteMan })
   })
+
+  describe('User input', () => {
+    each(allSquareIndices).it('should select piece on square %d when clicked', (index) => {
+      const pieces = Array(64).fill(null)
+      const whiteMan = { color: "white", kind: "man" };
+      pieces[index] = whiteMan;
+      const board = TestRenderer.create(<Board pieces={pieces} />);
+
+      propsForSquare(board, index).onClick()
+
+      expect(propsForSquare(board, index).selected).toBe(true)
+    })
+
+    each(allSquareIndices).it('should unselect piece on square %d when clicked', (index) => {
+      const pieces = Array(64).fill(null)
+      const whiteMan = { color: "white", kind: "man" };
+      pieces[index] = whiteMan;
+      const board = TestRenderer.create(<Board pieces={pieces} />);
+
+      propsForSquare(board, index).onClick()
+      propsForSquare(board, index).onClick()
+
+      expect(propsForSquare(board, index).selected).toBe(false)
+    })
+
+    each(allSquareIndices).it('should not select empty square %d when clicked', (index) => {
+      // Arrange
+      const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } />);
+
+      // Act
+      propsForSquare(board, index).onClick()
+
+      // Assert
+      expect(propsForSquare(board, index).selected).toBe(false)
+    })
+
+    it('should unselect square 2 when square 5 clicked', () => {
+      const pieces = Array(64).fill(null)
+      const whiteMan = { color: "white", kind: "man" };
+      pieces[2] = pieces[5] = whiteMan;
+      const board = TestRenderer.create(<Board pieces={pieces} />);
+
+      propsForSquare(board, 2).onClick()
+      propsForSquare(board, 5).onClick()
+
+      expect(propsForSquare(board, 2).selected).toBe(false)
+    })
+  })
 });
+
+function propsForSquare(boardComponent, index) {
+  const boardElement = boardComponent.root.findByProps({ id: 'board' });
+  const squareElement = boardElement.props.children[index];
+  return squareElement.props;
+}

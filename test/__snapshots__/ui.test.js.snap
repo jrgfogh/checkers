@@ -6,195 +6,259 @@ exports[`Board renders correctly when empty 1`] = `
 >
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
   <div
     className="square black"
+    onClick={[Function]}
   />
   <div
     className="square white"
+    onClick={[Function]}
   />
 </div>
 `;

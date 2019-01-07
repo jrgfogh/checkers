@@ -3,10 +3,13 @@ import PropTypes from 'prop-types';
 
 export function Square (props) {
   let piece
+  let squareClasses = ["square", props.color]
+  if (props.selected)
+    squareClasses.push("selected")
   if (props.piece)
     piece = <div className={ "piece " + props.piece.color + "-piece " + props.piece.kind } />
   return (
-    <div className={ "square " + props.color }>{ piece }</div>
+    <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ piece }</div>
   )
 }
 
@@ -18,8 +21,21 @@ export default class Board extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      selected: null,
       pieces: props.pieces
     };
+  }
+
+  handleClick(i) {
+    if (this.state.pieces[i])
+      this.toggleSelected(i);
+  }
+
+  toggleSelected(i) {
+    if (this.state.selected !== i)
+      this.setState({ selected: i })
+    else
+      this.setState({ selected: null })
   }
 
   render() {
@@ -34,7 +50,7 @@ export default class Board extends React.Component {
         "black", "white", "black", "white", "black", "white", "black", "white" ]
     const squares = []
     for (let i = 0; i < 64; i++)
-      squares[i] = <Square key={ i } color={ boardColors[i] } piece={ this.state.pieces[i] } />
+      squares[i] = <Square key={ i } color={ boardColors[i] } piece={ this.state.pieces[i] } onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } />
     return (
       <div id="board">
         { squares }
