@@ -94,8 +94,20 @@ describe("Board", () => {
     });
   });
 
+  it("should require a turn", () => {
+    expect(() => TestRenderer.create(<Board />)).toThrowError(
+      "Warning: Failed prop type: The prop `turn` is marked as required in `Board`, but its value is `undefined`."
+    );
+  });
+
+  it("should reject an invalid turn", () => {
+    expect(() => TestRenderer.create(<Board turn="invalid" />)).toThrowError(
+      'Warning: Failed prop type: Invalid prop `turn` of value `invalid` supplied to `Board`, expected one of ["white","black"].'
+    );
+  });
+
   it("renders correctly when empty", () => {
-    const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } />);
+    const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } turn="white" />);
     expect(board.toJSON()).toMatchSnapshot();
   });
 
@@ -105,7 +117,7 @@ describe("Board", () => {
     const pieces = Array(64).fill(null)
     const whiteMan = { color: "white", kind: "man" };
     pieces[index] = whiteMan;
-    const board = new ShallowRenderer().render(<Board pieces={ pieces } />);
+    const board = new ShallowRenderer().render(<Board pieces={ pieces } turn="white" />);
     expect(board.props.children[index].props).toMatchObject({ piece: whiteMan })
   })
 
@@ -114,7 +126,7 @@ describe("Board", () => {
       const pieces = Array(64).fill(null)
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
-      const board = TestRenderer.create(<Board pieces={pieces} />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
 
       propsForSquare(board, index).onClick()
 
@@ -125,7 +137,7 @@ describe("Board", () => {
       const pieces = Array(64).fill(null)
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
-      const board = TestRenderer.create(<Board pieces={pieces} />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
 
       propsForSquare(board, index).onClick()
       propsForSquare(board, index).onClick()
@@ -135,7 +147,7 @@ describe("Board", () => {
 
     each(allSquareIndices).it('should not select empty square %d when clicked', (index) => {
       // Arrange
-      const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } />);
+      const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } turn="white" />);
 
       // Act
       propsForSquare(board, index).onClick()
@@ -148,7 +160,7 @@ describe("Board", () => {
       const pieces = Array(64).fill(null)
       const whiteMan = { color: "white", kind: "man" };
       pieces[2] = pieces[5] = whiteMan;
-      const board = TestRenderer.create(<Board pieces={pieces} />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
 
       propsForSquare(board, 2).onClick()
       propsForSquare(board, 5).onClick()

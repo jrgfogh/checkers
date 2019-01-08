@@ -58,3 +58,7 @@ export default class Board extends React.Component {
     )
   }
 }
+
+Board.propTypes = {
+  turn: PropTypes.oneOf(["white", "black"]).isRequired
+};
