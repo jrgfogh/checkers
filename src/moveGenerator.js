@@ -19,24 +19,22 @@ export default class MoveGenerator {
 
     movesForBlackManFrom(index, rowLength) {
         const moves = [];
+        const moveKind = index > 47 ? MoveKind.Crowning : MoveKind.Simple;
         if ((index & 0x7) !== 7)
         {
             const move = index + rowLength + 1
-            this.pushMoveIfNotObstructed(move, index, moves);
+            this.pushMoveIfNotObstructed(move, moveKind, moves);
         }
         if ((index & 0x7) !== 0)
         {
             const move = index + rowLength - 1;
-            this.pushMoveIfNotObstructed(move, index, moves);
+            this.pushMoveIfNotObstructed(move, moveKind, moves);
         }
         return moves;
     }
 
-    pushMoveIfNotObstructed(move, index, moves) {
+    pushMoveIfNotObstructed(move, moveKind, moves) {
         if (!this.board[move])
-            if (index > 47)
-                moves.push(move, MoveKind.Crowning);
-            else
-                moves.push(move, MoveKind.Simple);
+            moves.push(move, moveKind);
     }
 }
