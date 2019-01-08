@@ -1,6 +1,7 @@
 
-export const MoveKinds = {
-    Simple: 0
+export const MoveKind = {
+    Simple: 0,
+    Crowning: 1
 }
 
 export default class MoveGenerator {
@@ -13,11 +14,21 @@ export default class MoveGenerator {
 
     movesFrom(index) {
         const rowLength = 8
-        const moves = []
+        return this.movesForBlackManFrom(index, rowLength);
+    }
+
+    movesForBlackManFrom(index, rowLength) {
+        const moves = [];
         if ((index & 0x7) !== 7)
-            moves.push(index + rowLength + 1, MoveKinds.Simple)
+            if (index > 47)
+                moves.push(index + rowLength + 1, MoveKind.Crowning);
+            else
+                moves.push(index + rowLength + 1, MoveKind.Simple);
         if ((index & 0x7) !== 0)
-            moves.push(index + rowLength - 1, MoveKinds.Simple)
-        return moves
+            if (index > 47)
+                moves.push(index + rowLength - 1, MoveKind.Crowning);
+            else
+                moves.push(index + rowLength - 1, MoveKind.Simple);
+        return moves;
     }
 }
