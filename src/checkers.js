@@ -15,6 +15,6 @@ const pieces = parse(
   "M.M.M.M." +
   " w").pieces;
 ReactDOM.render(
-    <Board pieces={ pieces } turn="white" />,
+    <Board pieces={ pieces } turn="black" />,
     document.getElementById('game')
   );
