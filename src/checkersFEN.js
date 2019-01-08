@@ -55,7 +55,7 @@ export function parse(fenString) {
   return {
     pieces: pieces,
     turn: turn
-  }
+  };
 }
 
 export function unparse(gameState) {
