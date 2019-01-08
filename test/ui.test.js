@@ -122,11 +122,33 @@ describe("Board", () => {
   })
 
   describe('User input', () => {
-    each(allSquareIndices).it('should select piece on square %d when clicked', (index) => {
+    each(allSquareIndices).it("should select white piece on square %d when clicked and white's turn.", (index) => {
       const pieces = Array(64).fill(null)
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
       const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
+
+      propsForSquare(board, index).onClick()
+
+      expect(propsForSquare(board, index).selected).toBe(true)
+    })
+
+    each(allSquareIndices).it("should not select black piece on square %d when clicked and white's turn.", (index) => {
+      const pieces = Array(64).fill(null)
+      const blackMan = { color: "black", kind: "man" };
+      pieces[index] = blackMan;
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
+
+      propsForSquare(board, index).onClick()
+
+      expect(propsForSquare(board, index).selected).toBe(false)
+    })
+
+    each(allSquareIndices).it("should select black piece on square %d when clicked and black's turn.", (index) => {
+      const pieces = Array(64).fill(null)
+      const blackMan = { color: "black", kind: "man" };
+      pieces[index] = blackMan;
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" />);
 
       propsForSquare(board, index).onClick()
 

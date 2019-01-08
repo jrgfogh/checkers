@@ -22,7 +22,8 @@ export default class Board extends React.Component {
     super(props)
     this.state = {
       selected: null,
-      pieces: props.pieces
+      pieces: props.pieces,
+      turn: props.turn
     };
   }
 
@@ -32,7 +33,7 @@ export default class Board extends React.Component {
   }
 
   toggleSelected(i) {
-    if (this.state.selected !== i)
+    if (this.state.selected !== i && this.state.pieces[i].color === this.state.turn)
       this.setState({ selected: i })
     else
       this.setState({ selected: null })
