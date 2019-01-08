@@ -3,6 +3,7 @@ import each from 'jest-each';
 import MoveGenerator, { MoveKind } from '../src/moveGenerator';
 
 const emptyBoard = Array(64).fill(null)
+const rowLength = 8
 
 describe("Move Generator", () => {
     describe("Constructor", () => {
@@ -27,7 +28,6 @@ describe("Move Generator", () => {
 
             const moves = generator.movesFrom(index)
 
-            const rowLength = 8
             expect(moves).toEqual([
                 index + rowLength + 1, MoveKind.Simple,
                 index + rowLength - 1, MoveKind.Simple
@@ -41,7 +41,6 @@ describe("Move Generator", () => {
 
             const moves = generator.movesFrom(index)
 
-            const rowLength = 8
             expect(moves).toEqual([
                 index + rowLength + 1, MoveKind.Simple
             ])
@@ -54,7 +53,6 @@ describe("Move Generator", () => {
 
             const moves = generator.movesFrom(index)
 
-            const rowLength = 8
             expect(moves).toEqual([
                 index + rowLength - 1, MoveKind.Simple
             ])
@@ -67,7 +65,6 @@ describe("Move Generator", () => {
 
             const moves = generator.movesFrom(index)
 
-            const rowLength = 8
             expect(moves).toEqual([
                 index + rowLength + 1, MoveKind.Crowning,
                 index + rowLength - 1, MoveKind.Crowning
@@ -81,7 +78,6 @@ describe("Move Generator", () => {
 
             const moves = generator.movesFrom(index)
 
-            const rowLength = 8
             expect(moves).toEqual([
                 index + rowLength + 1, MoveKind.Crowning
             ])
@@ -94,10 +90,31 @@ describe("Move Generator", () => {
 
             const moves = generator.movesFrom(index)
 
-            const rowLength = 8
             expect(moves).toEqual([
                 index + rowLength - 1, MoveKind.Crowning
             ])
+        })
+
+        each([0, 48]).it("should generate no moves for obstructed black man at square %d", (index) => {
+            const board = emptyBoard.slice()
+            board[index] = { color: "black", kind: "man" }
+            board[index + rowLength + 1] = { color: "black", kind: "man" }
+            const generator = new MoveGenerator(board, "white")
+
+            const moves = generator.movesFrom(index)
+
+            expect(moves).toEqual([])
+        })
+
+        each([7, 55]).it("should generate no moves for obstructed black man at square %d", (index) => {
+            const board = emptyBoard.slice()
+            board[index] = { color: "black", kind: "man" }
+            board[index + rowLength - 1] = { color: "black", kind: "man" }
+            const generator = new MoveGenerator(board, "white")
+
+            const moves = generator.movesFrom(index)
+
+            expect(moves).toEqual([])
         })
     })
 })
