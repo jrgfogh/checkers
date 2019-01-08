@@ -1,5 +1,3 @@
-import { timingSafeEqual } from "crypto";
-
 export const MoveKind = {
     Simple: 0,
     Crowning: 1
