@@ -3,33 +3,38 @@ export const MoveKind = {
     Crowning: 1
 }
 
+const rowLength = 8
+
 export default class MoveGenerator {
-    constructor(board, turn) {
-        if (!["white", "black"].includes(turn))
-            throw Error("A valid player turn is required.");
+    constructor(board) {
         if (!board)
             throw Error("A valid board state is required.");
         this.board = board;
     }
 
     movesFrom(index) {
-        const rowLength = 8
-        return this.movesForBlackManFrom(index, rowLength);
+        if (this.board[index].color === "black")
+            return this.movesForBlackManFrom(index);
+        return this.movesForWhiteManFrom(index)
     }
 
-    movesForBlackManFrom(index, rowLength) {
+    movesForWhiteManFrom(index) {
+        const moves = []
+        const moveKind = index < 16 ? MoveKind.Crowning : MoveKind.Simple;
+        if ((index & 0x7) !== 7)
+            this.pushMoveIfNotObstructed(index - rowLength + 1, moveKind, moves);
+        if ((index & 0x7) !== 0)
+            this.pushMoveIfNotObstructed(index - rowLength - 1, moveKind, moves);
+        return moves;
+    }
+
+    movesForBlackManFrom(index) {
         const moves = [];
         const moveKind = index > 47 ? MoveKind.Crowning : MoveKind.Simple;
         if ((index & 0x7) !== 7)
-        {
-            const move = index + rowLength + 1
-            this.pushMoveIfNotObstructed(move, moveKind, moves);
-        }
+            this.pushMoveIfNotObstructed(index + rowLength + 1, moveKind, moves);
         if ((index & 0x7) !== 0)
-        {
-            const move = index + rowLength - 1;
-            this.pushMoveIfNotObstructed(move, moveKind, moves);
-        }
+            this.pushMoveIfNotObstructed(index + rowLength - 1, moveKind, moves);
         return moves;
     }
 
