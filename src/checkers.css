@@ -68,3 +68,9 @@
 	border: 3px solid blue;
 	margin: -3px;
 }
+
+#board .square.destination
+{
+	border: 3px solid blue;
+	margin: -3px;
+}

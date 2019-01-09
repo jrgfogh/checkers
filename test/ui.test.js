@@ -95,6 +95,15 @@ describe("Board", () => {
 />
 `);
     });
+
+    it("renders empty black destination correctly", () => {
+      const square = TestRenderer.create(<Square color="black" canMoveTo={ true } />);
+      expect(square.toJSON()).toMatchInlineSnapshot(`
+<div
+  className="square black destination"
+/>
+`);
+    });
   });
 
   it("should require a turn", () => {
@@ -205,8 +214,35 @@ describe("Board", () => {
 
       expect(propsForSquare(board, 2).selected).toBe(false)
     })
+
+    each([11, 15, 29, 32, 40]).it("should highlight exactly correct moves for black piece on square %d when clicked and black's turn.", (index) => {
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
+      const blackMan = { color: "black", kind: "man" };
+      pieces[index] = blackMan;
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" moveGenerator={ moveGenerator } />);
+
+      propsForSquare(board, index).onClick()
+
+      const moves = moveGenerator.movesFrom(index)
+      for (let i = 0; i < 64; i += 2)
+        expect(propsForSquare(board, i).canMoveTo).toBe(canMoveTo(moves, i))
+    })
+
+    it("should not highlight any moves for an empty board", () => {
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" moveGenerator={ moveGenerator } />);
+
+      for (let i = 0; i < 64; i++)
+        expect(propsForSquare(board, i).canMoveTo).toBe(false)
+    })
   })
 });
+
+function canMoveTo(moves, i) {
+  return (moves.indexOf(i) & 0x1) === 0;
+}
 
 function propsForSquare(boardComponent, index) {
   const boardElement = boardComponent.root.findByProps({ id: 'board' });
