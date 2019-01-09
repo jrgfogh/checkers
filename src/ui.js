@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import MoveGenerator from './moveGenerator';
 
 export function Square (props) {
   let piece
@@ -23,7 +24,8 @@ export default class Board extends React.Component {
     this.state = {
       selected: null,
       pieces: props.pieces,
-      turn: props.turn
+      turn: props.turn,
+      moveGenerator: props.moveGenerator
     };
   }
 
@@ -61,5 +63,6 @@ export default class Board extends React.Component {
 }
 
 Board.propTypes = {
-  turn: PropTypes.oneOf(["white", "black"]).isRequired
+  turn: PropTypes.oneOf(["white", "black"]).isRequired,
+  moveGenerator: PropTypes.instanceOf(MoveGenerator).isRequired
 };
