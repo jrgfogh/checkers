@@ -4,6 +4,9 @@ import ShallowRenderer from 'react-test-renderer/shallow';
 import each from 'jest-each';
 
 import Board, { Square } from "../src/ui";
+import MoveGenerator from '../src/moveGenerator';
+
+const emptyBoard = Array(64).fill(null);
 
 describe("Board", () => {
   describe("Square", () => {
@@ -92,6 +95,15 @@ describe("Board", () => {
 />
 `);
     });
+
+    it("renders empty black destination correctly", () => {
+      const square = TestRenderer.create(<Square color="black" canMoveTo={ true } />);
+      expect(square.toJSON()).toMatchInlineSnapshot(`
+<div
+  className="square black destination"
+/>
+`);
+    });
   });
 
   it("should require a turn", () => {
@@ -106,27 +118,37 @@ describe("Board", () => {
     );
   });
 
+  it("should require a move generator", () => {
+    expect(() => TestRenderer.create(<Board pieces={ emptyBoard.slice() } turn="white" />)).toThrowError(
+      'Warning: Failed prop type: The prop `moveGenerator` is marked as required in `Board`, but its value is `undefined`.'
+    );
+  });
+
   it("renders correctly when empty", () => {
-    const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } turn="white" />);
+    const pieces = emptyBoard.slice();
+    const moveGenerator = new MoveGenerator(pieces);
+    const board = TestRenderer.create(<Board pieces={ pieces } turn="white" moveGenerator={ moveGenerator } />);
     expect(board.toJSON()).toMatchSnapshot();
   });
 
   const allSquareIndices = Array(64).fill().map((_, i) => i);
 
   each(allSquareIndices).it("renders white man correctly in square %d", (index) => {
-    const pieces = Array(64).fill(null)
+    const pieces = emptyBoard.slice()
+    const moveGenerator = new MoveGenerator(pieces);
     const whiteMan = { color: "white", kind: "man" };
     pieces[index] = whiteMan;
-    const board = new ShallowRenderer().render(<Board pieces={ pieces } turn="white" />);
+    const board = new ShallowRenderer().render(<Board pieces={ pieces } turn="white" moveGenerator={ moveGenerator } />);
     expect(board.props.children[index].props).toMatchObject({ piece: whiteMan })
   })
 
   describe('User input', () => {
     each(allSquareIndices).it("should select white piece on square %d when clicked and white's turn.", (index) => {
-      const pieces = Array(64).fill(null)
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
-      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" moveGenerator={ moveGenerator } />);
 
       propsForSquare(board, index).onClick()
 
@@ -134,10 +156,11 @@ describe("Board", () => {
     })
 
     each(allSquareIndices).it("should not select black piece on square %d when clicked and white's turn.", (index) => {
-      const pieces = Array(64).fill(null)
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
       const blackMan = { color: "black", kind: "man" };
       pieces[index] = blackMan;
-      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" moveGenerator={ moveGenerator } />);
 
       propsForSquare(board, index).onClick()
 
@@ -145,10 +168,11 @@ describe("Board", () => {
     })
 
     each(allSquareIndices).it("should select black piece on square %d when clicked and black's turn.", (index) => {
-      const pieces = Array(64).fill(null)
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
       const blackMan = { color: "black", kind: "man" };
       pieces[index] = blackMan;
-      const board = TestRenderer.create(<Board pieces={pieces} turn="black" />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" moveGenerator={ moveGenerator } />);
 
       propsForSquare(board, index).onClick()
 
@@ -156,10 +180,11 @@ describe("Board", () => {
     })
 
     each(allSquareIndices).it('should unselect piece on square %d when clicked', (index) => {
-      const pieces = Array(64).fill(null)
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
-      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" moveGenerator={ moveGenerator } />);
 
       propsForSquare(board, index).onClick()
       propsForSquare(board, index).onClick()
@@ -168,29 +193,56 @@ describe("Board", () => {
     })
 
     each(allSquareIndices).it('should not select empty square %d when clicked', (index) => {
-      // Arrange
-      const board = TestRenderer.create(<Board pieces={ Array(64).fill(null) } turn="white" />);
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
+      const board = TestRenderer.create(<Board pieces={ pieces } turn="white" moveGenerator={ moveGenerator } />);
 
-      // Act
       propsForSquare(board, index).onClick()
 
-      // Assert
       expect(propsForSquare(board, index).selected).toBe(false)
     })
 
     it('should unselect square 2 when square 5 clicked', () => {
-      const pieces = Array(64).fill(null)
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
       const whiteMan = { color: "white", kind: "man" };
       pieces[2] = pieces[5] = whiteMan;
-      const board = TestRenderer.create(<Board pieces={pieces} turn="white" />);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="white" moveGenerator={ moveGenerator } />);
 
       propsForSquare(board, 2).onClick()
       propsForSquare(board, 5).onClick()
 
       expect(propsForSquare(board, 2).selected).toBe(false)
     })
+
+    each([11, 15, 29, 32, 40]).it("should highlight exactly correct moves for black piece on square %d when clicked and black's turn.", (index) => {
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
+      const blackMan = { color: "black", kind: "man" };
+      pieces[index] = blackMan;
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" moveGenerator={ moveGenerator } />);
+
+      propsForSquare(board, index).onClick()
+
+      const moves = moveGenerator.movesFrom(index)
+      for (let i = 0; i < 64; i += 2)
+        expect(propsForSquare(board, i).canMoveTo).toBe(canMoveTo(moves, i))
+    })
+
+    it("should not highlight any moves for an empty board", () => {
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" moveGenerator={ moveGenerator } />);
+
+      for (let i = 0; i < 64; i++)
+        expect(propsForSquare(board, i).canMoveTo).toBe(false)
+    })
   })
 });
+
+function canMoveTo(moves, i) {
+  return (moves.indexOf(i) & 0x1) === 0;
+}
 
 function propsForSquare(boardComponent, index) {
   const boardElement = boardComponent.root.findByProps({ id: 'board' });
