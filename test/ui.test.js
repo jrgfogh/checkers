@@ -284,14 +284,28 @@ describe("Board", () => {
       it("should switch turn from when a destination square is clicked", (from, to, startTurn, endTurn) => {
       const pieces = emptyBoard.slice()
       const moveGenerator = new MoveGenerator(pieces);
-      const blackMan = { color: startTurn, kind: "king" };
-      pieces[from] = blackMan;
+      const king = { color: startTurn, kind: "king" };
+      pieces[from] = king;
       const board = TestRenderer.create(<Board pieces={pieces} turn={ startTurn } moveGenerator={ moveGenerator } />);
 
       propsForSquare(board, from).onClick()
       propsForSquare(board, to).onClick()
 
       expect(board.getInstance().state.turn).toEqual(endTurn)
+    })
+
+    each([10, 27]).
+      it("should clear selection man is clicked twice", (square) => {
+      const pieces = emptyBoard.slice()
+      const moveGenerator = new MoveGenerator(pieces);
+      const blackMan = { color: "black", kind: "man" };
+      pieces[square] = blackMan;
+      const board = TestRenderer.create(<Board pieces={pieces} turn="black" moveGenerator={ moveGenerator } />);
+
+      propsForSquare(board, square).onClick()
+      propsForSquare(board, square).onClick()
+
+      expect(board.getInstance().state.canMoveTo).toEqual(Array(64).fill(false))
     })
   })
 });

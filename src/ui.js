@@ -52,7 +52,7 @@ export default class Board extends React.Component {
     if (this.state.selected !== square && this.state.pieces[square].color === this.state.turn)
       this.setState({ selected: square, canMoveTo: this.legalMoveGrid(square) })
     else
-      this.setState({ selected: null })
+      this.setState({ selected: null, canMoveTo: Array(64).fill(false) })
   }
 
   legalMoveGrid(origin) {
