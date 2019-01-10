@@ -27,29 +27,25 @@ export default class Board extends React.Component {
       selected: null,
       pieces: props.pieces.slice(),
       turn: props.turn,
-      moveGenerator: props.moveGenerator,
       canMoveTo: Array(64).fill(false)
     };
+    this.moveGenerator = props.moveGenerator;
   }
 
   handleClick(square) {
     if (this.state.canMoveTo[square]) {
-      this.state.moveGenerator.movePiece(this.state.selected, square, MoveKind.Simple);
-      this.setState({
-        selected: null,
-        pieces: this.state.moveGenerator.board.slice(),
-        turn: this.nextTurn(),
-        canMoveTo: Array(64).fill(false)
+      this.setState((prevState) => {
+        this.moveGenerator.movePiece(prevState.selected, square, MoveKind.Simple);
+        return {
+          selected: null,
+          pieces: this.moveGenerator.board.slice(),
+          turn: nextTurn(prevState.turn),
+          canMoveTo: Array(64).fill(false)
+        };
       });
     }
     else if (this.state.pieces[square])
       this.toggleSelected(square);
-  }
-
-  nextTurn() {
-    if (this.state.turn === "white")
-      return "black";
-    return "white";
   }
 
   toggleSelected(square) {
@@ -60,7 +56,7 @@ export default class Board extends React.Component {
   }
 
   legalMoveGrid(origin) {
-    const moves = this.state.moveGenerator.movesFrom(origin);
+    const moves = this.moveGenerator.movesFrom(origin);
     const result = Array(64).fill(false);
     for (let i = 0; i < moves.length; i += 2)
       result[moves[i]] = true;
@@ -88,6 +84,12 @@ export default class Board extends React.Component {
       </div>
     )
   }
+}
+
+function nextTurn(turn) {
+  if (turn === "white")
+    return "black";
+  return "white";
 }
 
 Board.propTypes = {
