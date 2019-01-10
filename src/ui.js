@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MoveGenerator from './moveGenerator';
+import MoveGenerator, { MoveKind } from './moveGenerator';
 
 export function Square (props) {
   let piece
@@ -25,27 +25,38 @@ export default class Board extends React.Component {
     super(props)
     this.state = {
       selected: null,
-      pieces: props.pieces,
+      pieces: props.pieces.slice(),
       turn: props.turn,
-      moveGenerator: props.moveGenerator,
       canMoveTo: Array(64).fill(false)
     };
+    this.moveGenerator = props.moveGenerator;
   }
 
-  handleClick(i) {
-    if (this.state.pieces[i])
-      this.toggleSelected(i);
+  handleClick(square) {
+    if (this.state.canMoveTo[square]) {
+      this.setState((prevState) => {
+        this.moveGenerator.movePiece(prevState.selected, square, MoveKind.Simple);
+        return {
+          selected: null,
+          pieces: this.moveGenerator.board.slice(),
+          turn: nextTurn(prevState.turn),
+          canMoveTo: Array(64).fill(false)
+        };
+      });
+    }
+    else if (this.state.pieces[square])
+      this.toggleSelected(square);
   }
 
   toggleSelected(square) {
     if (this.state.selected !== square && this.state.pieces[square].color === this.state.turn)
       this.setState({ selected: square, canMoveTo: this.legalMoveGrid(square) })
     else
-      this.setState({ selected: null })
+      this.setState({ selected: null, canMoveTo: Array(64).fill(false) })
   }
 
   legalMoveGrid(origin) {
-    const moves = this.state.moveGenerator.movesFrom(origin);
+    const moves = this.moveGenerator.movesFrom(origin);
     const result = Array(64).fill(false);
     for (let i = 0; i < moves.length; i += 2)
       result[moves[i]] = true;
@@ -73,6 +84,12 @@ export default class Board extends React.Component {
       </div>
     )
   }
+}
+
+function nextTurn(turn) {
+  if (turn === "white")
+    return "black";
+  return "white";
 }
 
 Board.propTypes = {

@@ -213,8 +213,40 @@ describe("Move Generator", () => {
             })
         })
 
-        // describe("King", () => {
-        //     // TODO(jorgen.fogh): Write some tests!
-        // })
+        describe("King", () => {
+            // TODO(jorgen.fogh): Write some tests!
+        })
+    })
+
+    describe("Move piece", () => {
+        each([0, 1, 2, 3]).it("normal move should leave originating square %d empty", (index) => {
+            const board = emptyBoard.slice()
+            board[index] = { color: "black", kind: "man" }
+            const generator = new MoveGenerator(board)
+
+            generator.movePiece(index, index + rowLength + 1, MoveKind.Simple);
+
+            expect(board[index]).toBe(null)
+        })
+
+        each([[0, "man"], [1, "king"]]).it("normal move from square %d %s should put piece in destination cell", (index, kind) => {
+            const board = emptyBoard.slice()
+            board[index] = { color: "black", kind: kind }
+            const generator = new MoveGenerator(board)
+
+            generator.movePiece(index, index + rowLength + 1, MoveKind.Simple);
+
+            expect(board[index + rowLength + 1]).toEqual({ color: "black", kind: kind })
+        })
+
+        each([52, 55]).it("crowning move from square %d should make destination piece a king", (index) => {
+            const board = emptyBoard.slice()
+            board[index] = { color: "black", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(index, index + rowLength + 1, MoveKind.Crowning);
+
+            expect(board[index + rowLength + 1]).toEqual({ color: "black", kind: "king" })
+        })
     })
 })

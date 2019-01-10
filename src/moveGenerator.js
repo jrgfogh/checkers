@@ -42,4 +42,11 @@ export default class MoveGenerator {
         if (!this.board[move])
             moves.push(move, moveKind);
     }
+
+    movePiece(from, to, moveKind) {
+        this.board[to] = this.board[from];
+        this.board[from] = null;
+        if (moveKind === MoveKind.Crowning)
+            this.board[to].kind = "king";
+    }
 }
