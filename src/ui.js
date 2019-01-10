@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MoveGenerator from './moveGenerator';
+import MoveGenerator, { MoveKind } from './moveGenerator';
 
 export function Square (props) {
   let piece
@@ -25,16 +25,31 @@ export default class Board extends React.Component {
     super(props)
     this.state = {
       selected: null,
-      pieces: props.pieces,
+      pieces: props.pieces.slice(),
       turn: props.turn,
       moveGenerator: props.moveGenerator,
       canMoveTo: Array(64).fill(false)
     };
   }
 
-  handleClick(i) {
-    if (this.state.pieces[i])
-      this.toggleSelected(i);
+  handleClick(square) {
+    if (this.state.canMoveTo[square]) {
+      this.state.moveGenerator.movePiece(this.state.selected, square, MoveKind.Simple);
+      this.setState({
+        selected: null,
+        pieces: this.state.moveGenerator.board.slice(),
+        turn: this.nextTurn(),
+        canMoveTo: Array(64).fill(false)
+      });
+    }
+    else if (this.state.pieces[square])
+      this.toggleSelected(square);
+  }
+
+  nextTurn() {
+    if (this.state.turn === "white")
+      return "black";
+    return "white";
   }
 
   toggleSelected(square) {
