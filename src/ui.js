@@ -2,17 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MoveGenerator, { MoveKind } from './moveGenerator';
 
-export function Square (props) {
-  let piece
+function Piece(props) {
+  return <div className={"piece " + props.color + "-piece " + props.kind}>
+    <div className="piece-center" />
+  </div>;
+}
+
+export function Square(props) {
   let squareClasses = ["square", props.color]
   if (props.selected)
     squareClasses.push("selected")
   if (props.canMoveTo)
     squareClasses.push("destination")
+  let piece
   if (props.piece)
-    piece = <div className={ "piece " + props.piece.color + "-piece " + props.piece.kind }>
-      <div className="piece-center" />
-    </div>
+    piece = Piece(props.piece);
   return (
     <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ piece }</div>
   )

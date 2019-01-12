@@ -27,6 +27,7 @@
 
 #board .square.black
 {
+	/* background-color: rgb(130, 130, 130); */
 	background-color: darkgrey;
 }
 
@@ -93,7 +94,6 @@
 	-moz-box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
 	box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
 }
-
 
 #board .square.selected
 {
