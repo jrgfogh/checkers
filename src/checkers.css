@@ -37,6 +37,10 @@
 	height: 90%;
 	width: 90%;
 	border-radius: 50%;
+
+	-webkit-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
 #board .square .piece.man::before
@@ -60,7 +64,10 @@
 
 #board .square .white-piece
 {
-	background-color: red;
+	background: red;
+	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
 #board .square.selected
