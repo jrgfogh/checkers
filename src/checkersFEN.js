@@ -1,4 +1,3 @@
-
 export function parse(fenString) {
   if (fenString.length < 66)
     throw Error(

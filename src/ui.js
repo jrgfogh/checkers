@@ -10,7 +10,9 @@ export function Square (props) {
   if (props.canMoveTo)
     squareClasses.push("destination")
   if (props.piece)
-    piece = <div className={ "piece " + props.piece.color + "-piece " + props.piece.kind } />
+    piece = <div className={ "piece " + props.piece.color + "-piece " + props.piece.kind }>
+      <div className="piece-center" />
+    </div>
   return (
     <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ piece }</div>
   )

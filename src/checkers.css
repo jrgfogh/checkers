@@ -43,13 +43,6 @@
 	box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
-#board .square .piece.man::before
-{
-	color: white;
-	vertical-align: -100%;
-	content: "M";
-}
-
 #board .square .piece.king::before
 {
 	color: white;
@@ -57,18 +50,50 @@
 	content: "K";
 }
 
-#board .square .black-piece
-{
-	background-color: black;
-}
-
 #board .square .white-piece
 {
-	background: red;
+	background: rgb(250, 0, 0);
 	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
 	-moz-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
 	box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
+
+#board .square .black-piece
+{
+	background-color: rgba(25, 25, 150);
+	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+}
+
+#board .square .piece.white-piece .piece-center
+{
+	display: inline-block;
+	margin: 10%;
+	height: 80%;
+	width: 80%;
+	border-radius: 50%;
+	background: rgb(240, 0, 0);
+
+	-webkit-box-shadow: inset 1px 1px 10px 5px rgb(250, 0, 0);
+	-moz-box-shadow: inset 1px 1px 10px 5px rgb(250, 0, 0);
+	box-shadow: inset 1px 1px 10px 5px rgb(250, 0, 0);
+}
+
+#board .square .piece.black-piece .piece-center
+{
+	display: inline-block;
+	margin: 10%;
+	height: 80%;
+	width: 80%;
+	border-radius: 50%;
+	background: rgba(20, 20, 145);
+
+	-webkit-box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
+	-moz-box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
+	box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
+}
+
 
 #board .square.selected
 {
