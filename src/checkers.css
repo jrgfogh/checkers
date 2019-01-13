@@ -1,16 +1,35 @@
+body
+{
+	padding: 0;
+	margin: 0;
+}
+
 #wrapper
 {
+	font-family: "Lucida Grande", sans-serif;
 	text-align: center;
+	color: #222222;
+	background: lightgrey;
+	border-bottom: 1px darkgrey solid;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-top: 25px;
+	padding-bottom: 100px;
+
+	-webkit-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
 #board
 {
 	display: inline-block;
-	width: 450px;
-	height: 450px;
-	border-color: black;
-	border-width: 5px;
-	border-style: dotted;
+	width: 448px;
+	height: 448px;
+
+	-webkit-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
 #board .square
@@ -27,8 +46,12 @@
 
 #board .square.black
 {
-	/* background-color: rgb(130, 130, 130); */
 	background-color: darkgrey;
+}
+
+#board .square.white
+{
+	background-color: white;
 }
 
 #board .square .piece
