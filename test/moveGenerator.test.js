@@ -208,114 +208,183 @@ describe("Move Generator", () => {
 
 
     describe("King", () => {
-        each("white", "black").it("should generate 7 diagonal simple moves for %s king in square 0", (color) => {
-            const board = emptyBoard.slice()
-            board[0] = { color: color, kind: "king" }
-            const generator = new MoveGenerator(board)
+        describe("Main diagonal", () => {
+            each("white", "black").it("should generate 7 diagonal simple moves for %s king in square 0", (color) => {
+                const board = emptyBoard.slice()
+                board[0] = { color: color, kind: "king" }
+                const generator = new MoveGenerator(board)
 
-            const moves = generator.movesFrom(0);
-            const expected = [];
-            for (let i = 0; i < 7; i++)
-                expected.push(0 + (rowLength + 1) * (i + 1), MoveKind.Simple);
-            expect(moves).toEqual(expected);
+                const moves = generator.movesFrom(0);
+                const expected = [];
+                for (let i = 0; i < 7; i++)
+                    expected.push(0 + (rowLength + 1) * (i + 1), MoveKind.Simple);
+                expect(moves).toEqual(expected);
+            })
+
+            it("should generate 7 diagonal simple moves for king in square 63", () => {
+                const board = emptyBoard.slice()
+                board[63] = { color: "black", kind: "king" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(63);
+                const expected = [];
+                for (let i = 0; i < 7; i++)
+                    expected.push(63 - (rowLength + 1) * (i + 1), MoveKind.Simple);
+                expect(moves).toEqual(expected);
+            })
+
+            each([1, 2, 3, 4, 5, 6, 7]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "king" }
+                board[square + rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+                const expected = [];
+                for (let i = 0; i < 7 - square; i++)
+                    expected.push(square + (rowLength + 1) * (i + 1), MoveKind.Simple);
+                expect(moves).toEqual(expected);
+            })
+
+            each([10]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "king" }
+                board[square + rowLength - 1] = { color: "black", kind: "man" }
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+                expect(moves).toEqual([
+                    1, MoveKind.Simple,
+                    19, MoveKind.Simple,
+                    28, MoveKind.Simple,
+                    37, MoveKind.Simple,
+                    46, MoveKind.Simple,
+                    55, MoveKind.Simple
+                ]);
+            })
+
+            each([20]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "king" }
+                board[square + rowLength - 1] = { color: "black", kind: "man" }
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+                expect(moves).toEqual([
+                    11, MoveKind.Simple,
+                    2, MoveKind.Simple,
+                    29, MoveKind.Simple,
+                    38, MoveKind.Simple,
+                    47, MoveKind.Simple
+                ]);
+            })
+
+            each([33]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "king" }
+                board[square + rowLength - 1] = { color: "black", kind: "man" }
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+                expect(moves).toEqual([
+                    24, MoveKind.Simple,
+                    42, MoveKind.Simple,
+                    51, MoveKind.Simple,
+                    60, MoveKind.Simple
+                ]);
+            })
+
+            it("should generate no moves for completely obstructed king in cell 0", () => {
+                const board = emptyBoard.slice()
+                board[0] = { color: "white", kind: "king" }
+                board[0 + rowLength + 1] = { color: "black", kind: "man" }
+                board[0 + 2 * (rowLength + 1)] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(0)
+                expect(moves).toEqual([]);
+            })
+
+            it("should generate no moves for completely obstructed king in cell 63", () => {
+                const board = emptyBoard.slice()
+                board[63] = { color: "white", kind: "king" }
+                board[63 - rowLength - 1] = { color: "black", kind: "man" }
+                board[63 - 2 * (rowLength + 1)] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(63)
+                expect(moves).toEqual([]);
+            })
         })
 
-        it("should generate 7 diagonal simple moves for king in square 63", () => {
-            const board = emptyBoard.slice()
-            board[63] = { color: "black", kind: "king" }
-            const generator = new MoveGenerator(board)
+        describe("Secondary diagonal", () => {
+            it("should generate 7 diagonal simple moves for %s king in square 7", () => {
+                const board = emptyBoard.slice()
+                board[7] = { color: "black", kind: "king" }
+                const generator = new MoveGenerator(board)
 
-            const moves = generator.movesFrom(63);
-            const expected = [];
-            for (let i = 0; i < 7; i++)
-                expected.push(63 - (rowLength + 1) * (i + 1), MoveKind.Simple);
-            expect(moves).toEqual(expected);
-        })
+                const moves = generator.movesFrom(7);
+                const expected = [];
+                for (let i = 1; i <= 7; i++)
+                    expected.push(7 + (rowLength - 1) * i, MoveKind.Simple);
+                expect(moves).toEqual(expected);
+            })
 
-        each([1, 2, 3, 4, 5, 6, 7]).it("should generate right diagonal simple moves for king in square %d, when he's obstructed on the left diagonal", (square) => {
-            const board = emptyBoard.slice()
-            board[square] = { color: "white", kind: "king" }
-            board[square + rowLength - 1] = { color: "black", kind: "man" }
-            const generator = new MoveGenerator(board)
+            it("should generate 7 diagonal simple moves for %s king in square 56", () => {
+                const board = emptyBoard.slice()
+                board[56] = { color: "black", kind: "king" }
+                const generator = new MoveGenerator(board)
 
-            const moves = generator.movesFrom(square)
-            const expected = [];
-            for (let i = 0; i < 7 - square; i++)
-                expected.push(square + (rowLength + 1) * (i + 1), MoveKind.Simple);
-            expect(moves).toEqual(expected);
-        })
+                const moves = generator.movesFrom(56);
+                const expected = [];
+                for (let i = 1; i <= 7; i++)
+                    expected.push(56 - (rowLength - 1) * i, MoveKind.Simple);
+                expect(moves).toEqual(expected);
+            })
 
-        each([10]).it("should generate right diagonal simple moves for king in square %d, when he's obstructed on the left diagonal", (square) => {
-            const board = emptyBoard.slice()
-            board[square] = { color: "white", kind: "king" }
-            board[square + rowLength - 1] = { color: "black", kind: "man" }
-            board[square - rowLength + 1] = { color: "black", kind: "man" }
-            const generator = new MoveGenerator(board)
+            each([0, 1, 2, 3, 4, 5, 6]).it("should generate secondary diagonal simple moves for king in square %d, when he's obstructed on the main diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "king" }
+                board[square + rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
 
-            const moves = generator.movesFrom(square)
-            expect(moves).toEqual([
-                1, MoveKind.Simple,
-                19, MoveKind.Simple,
-                28, MoveKind.Simple,
-                37, MoveKind.Simple,
-                46, MoveKind.Simple,
-                55, MoveKind.Simple
-            ]);
-        })
+                const moves = generator.movesFrom(square)
+                const expected = [];
+                for (let i = 1; i <= square; i++)
+                    expected.push(square + (rowLength - 1) * i, MoveKind.Simple);
+                expect(moves).toEqual(expected);
+            })
 
-        each([20]).it("should generate right diagonal simple moves for king in square %d, when he's obstructed on the left diagonal", (square) => {
-            const board = emptyBoard.slice()
-            board[square] = { color: "white", kind: "king" }
-            board[square + rowLength - 1] = { color: "black", kind: "man" }
-            board[square - rowLength + 1] = { color: "black", kind: "man" }
-            const generator = new MoveGenerator(board)
+            each([10]).it("should generate secondary diagonal simple moves for king in square %d, when he's obstructed on the main diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "king" }
+                board[square + rowLength + 1] = { color: "black", kind: "man" }
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
 
-            const moves = generator.movesFrom(square)
-            expect(moves).toEqual([
-                11, MoveKind.Simple,
-                2, MoveKind.Simple,
-                29, MoveKind.Simple,
-                38, MoveKind.Simple,
-                47, MoveKind.Simple
-            ]);
-        })
+                const moves = generator.movesFrom(square)
+                expect(moves).toEqual([
+                    3, MoveKind.Simple,
+                    17, MoveKind.Simple,
+                    24, MoveKind.Simple
+                ]);
+            })
 
-        each([33]).it("should generate right diagonal simple moves for king in square %d, when he's obstructed on the left diagonal", (square) => {
-            const board = emptyBoard.slice()
-            board[square] = { color: "white", kind: "king" }
-            board[square + rowLength - 1] = { color: "black", kind: "man" }
-            board[square - rowLength + 1] = { color: "black", kind: "man" }
-            const generator = new MoveGenerator(board)
+            each([55]).it("should generate secondary diagonal simple moves for king in square %d, when he's obstructed on the main diagonal", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "king" }
+                board[square + rowLength + 1] = { color: "black", kind: "man" }
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
 
-            const moves = generator.movesFrom(square)
-            expect(moves).toEqual([
-                24, MoveKind.Simple,
-                42, MoveKind.Simple,
-                51, MoveKind.Simple,
-                60, MoveKind.Simple
-            ]);
-        })
-
-        it("should generate no moves for completely obstructed king in cell 0", () => {
-            const board = emptyBoard.slice()
-            board[0] = { color: "white", kind: "king" }
-            board[0 + rowLength + 1] = { color: "black", kind: "man" }
-            board[0 + 2 * (rowLength + 1)] = { color: "black", kind: "man" }
-            const generator = new MoveGenerator(board)
-
-            const moves = generator.movesFrom(0)
-            expect(moves).toEqual([]);
-        })
-
-        it("should generate no moves for completely obstructed king in cell 63", () => {
-            const board = emptyBoard.slice()
-            board[63] = { color: "white", kind: "king" }
-            board[63 - rowLength - 1] = { color: "black", kind: "man" }
-            board[63 - 2 * (rowLength + 1)] = { color: "black", kind: "man" }
-            const generator = new MoveGenerator(board)
-
-            const moves = generator.movesFrom(63)
-            expect(moves).toEqual([]);
+                const moves = generator.movesFrom(square)
+                expect(moves).toEqual([
+                    62, MoveKind.Simple
+                ]);
+            })
         })
     })
 
@@ -386,7 +455,7 @@ describe("Move Generator", () => {
         })
     })
 
-    describe("Function movesFrom()", () => {
+    describe("Functional movesFrom()", () => {
         it("should generate 7 diagonal simple moves for king in square 63", () => {
             const board = emptyBoard.slice()
             board[63] = { color: "black", kind: "king" }

@@ -23,17 +23,33 @@ export default class MoveGenerator {
     movesForKingFrom(square) {
         const moves = [];
         this.pushMainDiagonalForKing(square, moves);
+        this.pushSecondaryDiagonalForKing(square, moves);
         return moves;
     }
 
     pushMainDiagonalForKing(square, moves) {
         for (let nextSquare = square - (rowLength + 1);
-            // If nextSquare is at the right edge, it means we just wrapped around from the right side.
-            !squareIsAtRightEdge(nextSquare) && nextSquare >= 0 && !this.isObstructed(nextSquare); nextSquare -= (rowLength + 1))
+                // If nextSquare is at the right edge, it means we just wrapped around from the right side.
+                !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
+                 nextSquare -= (rowLength + 1))
             moves.push(nextSquare, MoveKind.Simple);
         for (let nextSquare = square + (rowLength + 1);
-            // If nextSquare is at the left edge, it means we just wrapped around from the right side.
-            !squareIsAtLeftEdge(nextSquare) && nextSquare < 64 && !this.isObstructed(nextSquare); nextSquare += (rowLength + 1))
+                // If nextSquare is at the left edge, it means we just wrapped around from the right side.
+                !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare); 
+                nextSquare += (rowLength + 1))
+            moves.push(nextSquare, MoveKind.Simple);
+    }
+
+    pushSecondaryDiagonalForKing(square, moves) {
+        for (let nextSquare = square - (rowLength - 1);
+                // If nextSquare is at the left edge, it means we just wrapped around from the right side.
+                !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare);
+                nextSquare -= (rowLength - 1))
+            moves.push(nextSquare, MoveKind.Simple);
+        for (let nextSquare = square + (rowLength - 1);
+                // If nextSquare is at the right edge, it means we just wrapped around from the right side.
+                !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
+                nextSquare += (rowLength - 1))
             moves.push(nextSquare, MoveKind.Simple);
     }
 
