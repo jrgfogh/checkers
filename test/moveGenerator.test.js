@@ -476,6 +476,28 @@ describe("Move Generator", () => {
 
             expect(board[square + rowLength + 1]).toEqual({ color: "black", kind: "king" })
         })
+
+        each([5, 27]).it("jump from square %d should capture opponent's piece", (square) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength + 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.Jump);
+
+            expect(board[square + rowLength + 1]).toEqual(null)
+        })
+
+        each([4, 26]).it("jump from square %d should capture opponent's piece", (square) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength - 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(square, square + 2 * (rowLength - 1), MoveKind.Jump);
+
+            expect(board[square + rowLength - 1]).toEqual(null)
+        })
     })
 
     describe("Move piece observationally purely", () => {

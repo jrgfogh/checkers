@@ -100,11 +100,17 @@ export default class MoveGenerator {
         this.board[from] = null;
         if (moveKind === MoveKind.Crowning)
             this.board[to].kind = "king";
+        else if (moveKind === MoveKind.Jump)
+            this.board[midpoint(from, to)] = null;
     }
 
     isObstructed(square) {
         return this.board[square] !== null
     }
+}
+
+function midpoint(from, to) {
+    return (from + to) >> 1;
 }
 
 function squareIsInLastTwoRows(square) {
