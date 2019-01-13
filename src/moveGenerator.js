@@ -23,6 +23,7 @@ export default class MoveGenerator {
 
     movesForKingFrom(square) {
         const moves = [];
+        this.pushDownTheBoardJumps(square, moves);
         this.pushMainDiagonalForKing(square, moves);
         this.pushSecondaryDiagonalForKing(square, moves);
         return moves;
@@ -68,16 +69,17 @@ export default class MoveGenerator {
         const moves = [];
         const moveKind = squareIsInLastTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
-        this.pushJumpsForBlackman(square, moves);
+        this.pushDownTheBoardJumps(square, moves);
 
         if (!squareIsAtRightEdge(square))
             this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
+
         if (!squareIsAtLeftEdge(square))
             this.pushMoveIfNotObstructed(square + rowLength - 1, moveKind, moves);
         return moves;
     }
 
-    pushJumpsForBlackman(square, moves) {
+    pushDownTheBoardJumps(square, moves) {
         if (square < 48 &&
                 this.board[square + rowLength - 1] !== null &&
                 this.board[square + rowLength - 1].color !== "black" &&
