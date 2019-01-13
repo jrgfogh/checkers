@@ -2,17 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import MoveGenerator, { MoveKind } from './moveGenerator';
 
-export function Square (props) {
-  let piece
+function Piece(props) {
+  return <div className={"piece " + props.color + "-piece " + props.kind}>
+    <div className="piece-center" />
+  </div>;
+}
+
+export function Square(props) {
   let squareClasses = ["square", props.color]
+  let squareContent
   if (props.selected)
     squareClasses.push("selected")
-  if (props.canMoveTo)
+  if (props.canMoveTo) {
     squareClasses.push("destination")
-  if (props.piece)
-    piece = <div className={ "piece " + props.piece.color + "-piece " + props.piece.kind } />
+    squareContent = <div className={ "piece ghost-piece " + props.turn + "-piece" } />
+  } else if (props.piece)
+    squareContent = Piece(props.piece);
   return (
-    <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ piece }</div>
+    <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ squareContent }</div>
   )
 }
 
@@ -77,7 +84,7 @@ export default class Board extends React.Component {
     for (let i = 0; i < 64; i++)
       squares[i] =
         <Square key={ i } color={ boardColors[i] } piece={ this.state.pieces[i] }
-          onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } />
+          onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.state.turn } />
     return (
       <div id="board">
         { squares }

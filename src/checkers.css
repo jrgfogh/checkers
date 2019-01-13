@@ -1,16 +1,35 @@
+body
+{
+	padding: 0;
+	margin: 0;
+}
+
 #wrapper
 {
+	font-family: "Lucida Grande", sans-serif;
 	text-align: center;
+	color: #222222;
+	background: lightgrey;
+	border-bottom: 1px darkgrey solid;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-top: 25px;
+	padding-bottom: 100px;
+
+	-webkit-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
 #board
 {
 	display: inline-block;
-	width: 450px;
-	height: 450px;
-	border-color: black;
-	border-width: 5px;
-	border-style: dotted;
+	width: 448px;
+	height: 448px;
+
+	-webkit-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
 
 #board .square
@@ -30,6 +49,11 @@
 	background-color: darkgrey;
 }
 
+#board .square.white
+{
+	background-color: white;
+}
+
 #board .square .piece
 {
 	display: inline-block;
@@ -39,13 +63,6 @@
 	border-radius: 50%;
 }
 
-#board .square .piece.man::before
-{
-	color: white;
-	vertical-align: -100%;
-	content: "M";
-}
-
 #board .square .piece.king::before
 {
 	color: white;
@@ -53,24 +70,96 @@
 	content: "K";
 }
 
-#board .square .black-piece
-{
-	background-color: black;
-}
-
 #board .square .white-piece
 {
-	background-color: red;
+	background: rgb(250, 0, 0);
+	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
 }
+
+#board .square .black-piece
+{
+	background-color: rgba(25, 25, 150);
+	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+	box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 6px 0px rgba(0,0,0,0.5);
+}
+
+#board .square .piece.white-piece .piece-center
+{
+	display: inline-block;
+	margin: 10%;
+	height: 80%;
+	width: 80%;
+	border-radius: 50%;
+	background: rgb(240, 0, 0);
+
+	-webkit-box-shadow: inset 1px 1px 10px 5px rgb(250, 0, 0);
+	-moz-box-shadow: inset 1px 1px 10px 5px rgb(250, 0, 0);
+	box-shadow: inset 1px 1px 10px 5px rgb(250, 0, 0);
+}
+
+#board .square .piece.black-piece .piece-center
+{
+	display: inline-block;
+	margin: 10%;
+	height: 80%;
+	width: 80%;
+	border-radius: 50%;
+	background: rgba(20, 20, 145);
+
+	-webkit-box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
+	-moz-box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
+	box-shadow: inset 1px 1px 10px 5px rgba(25, 25, 150);
+}
+
+#board .square.selected .white-piece
+{
+	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 10px 5px rgba(0,0,0,0.5);
+	-moz-box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 10px 5px rgba(0,0,0,0.5);
+	box-shadow: inset 1px 1px 8px 0px rgba(255,255,255,0.75), 1px 1px 10px 5px rgba(0,0,0,0.5);
+}
+
+#board .square.selected .black-piece
+{
+	-webkit-box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 10px 4px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 10px 4px rgba(0, 0, 0, 0.75);
+	box-shadow: inset 1px 1px 8px 0px rgba(0,0,255,0.75), 1px 1px 10px 4px rgba(0, 0, 0, 0.75);
+}
+
 
 #board .square.selected
 {
-	border: 3px solid blue;
-	margin: -3px;
+	z-index: 1;
 }
 
-#board .square.destination
+#board .square.destination .ghost-piece.black-piece
 {
-	border: 3px solid blue;
-	margin: -3px;
+	z-index: 1;
+
+	background: rgba(50, 50, 200);
+	-webkit-box-shadow: 0px 0px 10px 5px rgba(50, 50, 200);
+	-moz-box-shadow: 0px 0px 10px 5px rgba(50, 50, 200);
+	box-shadow: 0px 0px 10px 5px rgba(50, 50, 200);
+
+	margin: 25%;
+	height: 50%;
+	width: 50%;
+	border-radius: 50%;
+}
+
+#board .square.destination .ghost-piece.white-piece
+{
+	z-index: 1;
+
+	background: rgba(200, 50, 50);
+	-webkit-box-shadow: 1px 1px 10px 5px rgba(200, 50, 50);
+	-moz-box-shadow: 1px 1px 10px 5px rgba(200, 50, 50);
+	box-shadow: 1px 1px 10px 5px rgba(200, 50, 50);
+
+	margin: 25%;
+	height: 50%;
+	width: 50%;
+	border-radius: 50%;
 }
