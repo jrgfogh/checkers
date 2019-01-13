@@ -1,6 +1,6 @@
 import each from 'jest-each';
 
-import MoveGenerator, { MoveKind, movePiece } from '../src/moveGenerator';
+import MoveGenerator, { MoveKind, movesFrom, movePiece } from '../src/moveGenerator';
 
 const emptyBoard = Array(64).fill(null)
 const rowLength = 8
@@ -351,7 +351,7 @@ describe("Move Generator", () => {
         })
     })
 
-    describe("Move piece ovservationally purely", () => {
+    describe("Move piece observationally purely", () => {
         each([0, 1, 2, 3]).it("normal move should leave originating square %d empty", (square) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }
@@ -384,5 +384,18 @@ describe("Move Generator", () => {
 
             expect(() => movePiece(board, 3, 12)).toThrowError("Attempted to move from an empty square.");
         })
+    })
+
+    describe("Function movesFrom()", () => {
+        it("should generate 7 diagonal simple moves for king in square 63", () => {
+            const board = emptyBoard.slice()
+            board[63] = { color: "black", kind: "king" }
+
+            const moves = movesFrom(board, 63);
+            const expected = [];
+            for (let i = 0; i < 7; i++)
+                expected.push(63 - (rowLength + 1) * (i + 1), MoveKind.Simple);
+            expect(moves).toEqual(expected);
+        })      
     })
 })

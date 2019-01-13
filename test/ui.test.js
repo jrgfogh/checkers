@@ -133,14 +133,6 @@ describe("Board", () => {
     );
   });
 
-  it("should require a move generator", () => {
-    expect(() =>
-      TestRenderer.create(<Board pieces={emptyBoard.slice()} turn="white" />)
-    ).toThrowError(
-      "Warning: Failed prop type: The prop `moveGenerator` is marked as required in `Board`, but its value is `undefined`."
-    );
-  });
-
   it("renders correctly when empty", () => {
     const pieces = emptyBoard.slice();
     const moveGenerator = new MoveGenerator(pieces);
