@@ -89,3 +89,20 @@ function squareIsAtLeftEdge(square) {
 function squareIsAtRightEdge(square) {
     return (square & 0x7) === 7;
 }
+
+export function movePiece(board, from, to) {
+    if (board[from] === null)
+        throw Error("Attempted to move from an empty square.");
+    const result = board.slice();
+    const generator = new MoveGenerator(result);
+    const moves = generator.movesFrom(from);
+    for (let i = 0; i < moves.length; i += 2)
+        if (moves[i] == to)
+            generator.movePiece(from, to, moves[i + 1]);
+    return result;
+}
+
+export function movesFrom(board, square) {
+    const generator = new MoveGenerator(board);
+    return generator.movesFrom(square);
+}
