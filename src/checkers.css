@@ -63,11 +63,12 @@ body
 	border-radius: 50%;
 }
 
-#board .square .piece.king::before
+#board .square .piece.king .piece-center::before
 {
 	color: white;
-	vertical-align: -100%;
-	content: "K";
+	font-family: "Lucida Grande", sans-serif;
+	font-size: 20pt;
+	content: "♔";
 }
 
 #board .square .white-piece

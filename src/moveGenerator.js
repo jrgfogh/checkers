@@ -12,29 +12,64 @@ export default class MoveGenerator {
         this.board = board;
     }
 
-    movesFrom(index) {
-        if (this.board[index].color === "black")
-            return this.movesForBlackManFrom(index);
-        return this.movesForWhiteManFrom(index)
+    movesFrom(square) {
+        if (this.board[square].kind === "king")
+            return this.movesForKingFrom(square);
+        if (this.board[square].color === "black")
+            return this.movesForBlackManFrom(square);
+        return this.movesForWhiteManFrom(square)
     }
 
-    movesForWhiteManFrom(index) {
-        const moves = []
-        const moveKind = index < 16 ? MoveKind.Crowning : MoveKind.Simple;
-        if ((index & 0x7) !== 7)
-            this.pushMoveIfNotObstructed(index - rowLength + 1, moveKind, moves);
-        if ((index & 0x7) !== 0)
-            this.pushMoveIfNotObstructed(index - rowLength - 1, moveKind, moves);
+    movesForKingFrom(square) {
+        const moves = [];
+        this.pushMainDiagonalForKing(square, moves);
+        this.pushSecondaryDiagonalForKing(square, moves);
         return moves;
     }
 
-    movesForBlackManFrom(index) {
+    pushMainDiagonalForKing(square, moves) {
+        for (let nextSquare = square - (rowLength + 1);
+                // If nextSquare is at the right edge, it means we just wrapped around from the right side.
+                !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
+                 nextSquare -= (rowLength + 1))
+            moves.push(nextSquare, MoveKind.Simple);
+        for (let nextSquare = square + (rowLength + 1);
+                // If nextSquare is at the left edge, it means we just wrapped around from the right side.
+                !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare); 
+                nextSquare += (rowLength + 1))
+            moves.push(nextSquare, MoveKind.Simple);
+    }
+
+    pushSecondaryDiagonalForKing(square, moves) {
+        for (let nextSquare = square - (rowLength - 1);
+                // If nextSquare is at the left edge, it means we just wrapped around from the right side.
+                !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare);
+                nextSquare -= (rowLength - 1))
+            moves.push(nextSquare, MoveKind.Simple);
+        for (let nextSquare = square + (rowLength - 1);
+                // If nextSquare is at the right edge, it means we just wrapped around from the right side.
+                !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
+                nextSquare += (rowLength - 1))
+            moves.push(nextSquare, MoveKind.Simple);
+    }
+
+    movesForWhiteManFrom(square) {
+        const moves = []
+        const moveKind = squareIsInFirstTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
+        if (!squareIsAtRightEdge(square))
+            this.pushMoveIfNotObstructed(square - rowLength + 1, moveKind, moves);
+        if (!squareIsAtLeftEdge(square))
+            this.pushMoveIfNotObstructed(square - rowLength - 1, moveKind, moves);
+        return moves;
+    }
+
+    movesForBlackManFrom(square) {
         const moves = [];
-        const moveKind = index > 47 ? MoveKind.Crowning : MoveKind.Simple;
-        if ((index & 0x7) !== 7)
-            this.pushMoveIfNotObstructed(index + rowLength + 1, moveKind, moves);
-        if ((index & 0x7) !== 0)
-            this.pushMoveIfNotObstructed(index + rowLength - 1, moveKind, moves);
+        const moveKind = squareIsInLastTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
+        if (!squareIsAtRightEdge(square))
+            this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
+        if (!squareIsAtLeftEdge(square))
+            this.pushMoveIfNotObstructed(square + rowLength - 1, moveKind, moves);
         return moves;
     }
 
@@ -49,4 +84,41 @@ export default class MoveGenerator {
         if (moveKind === MoveKind.Crowning)
             this.board[to].kind = "king";
     }
+
+    isObstructed(square) {
+        return this.board[square] !== null
+    }
+}
+
+function squareIsInLastTwoRows(square) {
+    return square > 47;
+}
+
+function squareIsInFirstTwoRows(square) {
+    return square < 16;
+}
+
+function squareIsAtLeftEdge(square) {
+    return ((square & 0x7) === 0);
+}
+
+function squareIsAtRightEdge(square) {
+    return (square & 0x7) === 7;
+}
+
+export function movePiece(board, from, to) {
+    if (board[from] === null)
+        throw Error("Attempted to move from an empty square.");
+    const result = board.slice();
+    const generator = new MoveGenerator(result);
+    const moves = generator.movesFrom(from);
+    for (let i = 0; i < moves.length; i += 2)
+        if (moves[i] == to)
+            generator.movePiece(from, to, moves[i + 1]);
+    return result;
+}
+
+export function movesFrom(board, square) {
+    const generator = new MoveGenerator(board);
+    return generator.movesFrom(square);
 }
