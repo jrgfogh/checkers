@@ -337,6 +337,28 @@ describe("Board", () => {
       }
     );
 
+    each([51]).it(
+      "should crown the piece when the destination square for a crowning move is clicked",
+      index => {
+        const pieces = emptyBoard.slice();
+        const moveGenerator = new MoveGenerator(pieces);
+        const blackMan = { color: "black", kind: "man" };
+        pieces[index] = blackMan;
+        const board = TestRenderer.create(
+          <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+        );
+
+        propsForSquare(board, index).onClick();
+        propsForSquare(board, index + rowLength + 1).onClick();
+
+        expect(propsForSquare(board, index).piece).toBe(null);
+        expect(propsForSquare(board, index + rowLength + 1).piece).toEqual({
+          color: "black",
+          kind: "king"
+        });
+      }
+    );
+
     each([10, 11, 12]).it(
       "should clear selection when a destination square is clicked",
       index => {

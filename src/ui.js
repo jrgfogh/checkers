@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MoveGenerator, { MoveKind } from './moveGenerator';
+import MoveGenerator, { movePiece } from './moveGenerator';
 
 function Piece(props) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
@@ -42,10 +42,9 @@ export default class Board extends React.Component {
   handleClick(square) {
     if (this.state.canMoveTo[square]) {
       this.setState((prevState) => {
-        this.moveGenerator.movePiece(prevState.selected, square, MoveKind.Simple);
         return {
           selected: null,
-          pieces: this.moveGenerator.board.slice(),
+          pieces: movePiece(prevState.pieces, prevState.selected, square),
           turn: nextTurn(prevState.turn),
           canMoveTo: Array(64).fill(false)
         };
