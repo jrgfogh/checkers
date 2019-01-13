@@ -366,7 +366,7 @@ describe("Board", () => {
       (from, to, startTurn, endTurn) => {
         const pieces = emptyBoard.slice();
         const moveGenerator = new MoveGenerator(pieces);
-        const king = { color: startTurn, kind: "king" };
+        const king = { color: startTurn, kind: "man" };
         pieces[from] = king;
         const board = TestRenderer.create(
           <Board
