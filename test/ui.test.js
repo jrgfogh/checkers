@@ -111,15 +111,13 @@ describe("Board", () => {
 `);
     });
 
-    it("renders empty black destination correctly", () => {
-      const square = TestRenderer.create(
-        <Square color="black" canMoveTo={true} />
+    each(["white", "black"]).it("renders empty black destination correctly, %s's turn", (turn) => {
+      const square = new ShallowRenderer().render(
+        <Square color="black" canMoveTo={ true } turn={ turn } />
       );
-      expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square black destination"
-/>
-`);
+      expect(square.props.className).toBe("square black destination");
+      expect(square.props.children.props.className).
+          toBe("piece ghost-piece " + turn + "-piece");
     });
   });
 
