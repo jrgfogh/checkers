@@ -126,7 +126,7 @@ describe("Move Generator", () => {
                 ]);
             });
 
-            each([0, 8, 16, 24, 32, 40]).it("should generate one jump from square %d when possible", (square) => {
+            each([0, 8, 16, 24, 32]).it("should generate one jump from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
                 // Piece to jump over.
@@ -627,6 +627,17 @@ describe("Move Generator", () => {
             const generator = new MoveGenerator(board);
 
             generator.movePiece(square, square + 2 * (rowLength - 1), MoveKind.Jump);
+
+            expect(board[square + rowLength - 1]).toEqual(null)
+        })
+
+        each([40, 45]).it("crowning jump from square %d should capture opponent's piece", (square) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength + 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.CrowningJump);
 
             expect(board[square + rowLength - 1]).toEqual(null)
         })
