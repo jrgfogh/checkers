@@ -110,9 +110,10 @@ describe("Move Generator", () => {
         })
 
         describe("Jumps", () => {
-            each([2, 20, 45]).it("should generate two jumps from square %d when possible", (square) => {
+            each([2, 20]).it("should generate two jumps from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Pieces to jump over.
                 board[square + rowLength - 1] = { color: "white", kind: "man" }
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
@@ -125,9 +126,10 @@ describe("Move Generator", () => {
                 ]);
             });
 
-            each([0, 8, 16, 24, 32, 40]).it("should generate one jump from square %d when possible", (square) => {
+            each([0, 8, 16, 24, 32]).it("should generate one jump from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Piece to jump over.
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
 
@@ -138,9 +140,10 @@ describe("Move Generator", () => {
                 ]);
             });
 
-            each([7, 15, 23, 31, 39, 47]).it("should generate one jump from square %d when possible", (square) => {
+            each([7, 15, 23, 31, 39]).it("should generate one jump from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Piece to jump over.
                 board[square + rowLength - 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
 
@@ -154,13 +157,73 @@ describe("Move Generator", () => {
             each([0]).it("should not generate any jumps from square %d when obstructed", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Piece to *not* jump over.
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
+                // Piece blocking the jump.
                 board[square + 2 * (rowLength + 1)] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
 
                 const moves = generator.movesFrom(square)
 
                 expect(moves).toEqual([]);
+            });
+
+            each([30]).it("should not generate a jump over the right side of the board from square %d", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Piece to *not* jump over.
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                // Piece blocking the other diagonal
+                board[square + rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([33]).it("should not generate a jump over the left side of the board from square %d", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Piece to *not* jump over.
+                board[square + rowLength - 1] = { color: "white", kind: "man" }
+                // Piece blocking the other diagonal
+                board[square + rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([42, 43, 44, 45]).it("should generate two crowning jumps from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Pieces to jump over.
+                board[square + rowLength - 1] = { color: "white", kind: "man" }
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square + 2 * (rowLength - 1), MoveKind.CrowningJump,
+                    square + 2 * (rowLength + 1), MoveKind.CrowningJump
+                ]);
+            });
+
+            each([40, 41]).it("should generate one crowning jump from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Piece to jump over.
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square + 2 * (rowLength + 1), MoveKind.CrowningJump
+                ]);
             });
         })
     })
@@ -261,8 +324,139 @@ describe("Move Generator", () => {
 
             expect(moves).toEqual([])
         })
-    })
 
+        describe("Jumps", () => {
+            each([61, 29, 45]).it("should generate two jumps from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Pieces to jump over.
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square - 2 * (rowLength - 1), MoveKind.Jump,
+                    square - 2 * (rowLength + 1), MoveKind.Jump
+                ]);
+            });
+
+            each([31, 39, 47, 55, 63]).it("should generate one jump from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Piece to jump over.
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square - 2 * (rowLength + 1), MoveKind.Jump
+                ]);
+            });
+
+            each([63]).it("should not generate any jumps from square %d when obstructed", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Piece to *not* jump over.
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                // Piece blocking the jump.
+                board[square - 2 * (rowLength + 1)] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([40]).it("should not generate any jumps from square %d when obstructed", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Piece to *not* jump over.
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                // Piece blocking the jump.
+                board[square - 2 * (rowLength - 1)] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([30]).it("should not generate a jump over the right side of the board from square %d", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Piece to *not* jump over.
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                // Piece blocking the other diagonal
+                board[square - rowLength - 1] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([41]).it("should not generate a jump over the left side of the board from square %d", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Piece to *not* jump over.
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                // Piece blocking the other diagonal
+                board[square - rowLength + 1] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([18, 19, 20, 21]).it("should generate two crowning jumps from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Pieces to jump over.
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square - 2 * (rowLength - 1), MoveKind.CrowningJump,
+                    square - 2 * (rowLength + 1), MoveKind.CrowningJump
+                ]);
+            });
+
+            each([22, 23]).it("should generate one crowning jump from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Pieces to jump over.
+                board[square - rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square - 2 * (rowLength + 1), MoveKind.CrowningJump
+                ]);
+            });
+
+            each([16]).it("should generate one crowning jump from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "white", kind: "man" }
+                // Pieces to jump over.
+                board[square - rowLength + 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square - 2 * (rowLength - 1), MoveKind.CrowningJump
+                ]);
+            });
+        })
+    })
 
     describe("King", () => {
         describe("Main diagonal", () => {
@@ -566,6 +760,28 @@ describe("Move Generator", () => {
             generator.movePiece(square, square + 2 * (rowLength - 1), MoveKind.Jump);
 
             expect(board[square + rowLength - 1]).toEqual(null)
+        })
+
+        each([40, 45]).it("crowning jump from square %d should capture opponent's piece", (square) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength + 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.CrowningJump);
+
+            expect(board[square + rowLength + 1]).toEqual(null)
+        })
+
+        each([40, 45]).it("crowning jump from square %d should make destination piece a king", (square) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength + 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.CrowningJump);
+
+            expect(board[square + 2 * (rowLength + 1)]).toEqual({ color: "black", kind: "king" })
         })
     })
 
