@@ -23,8 +23,11 @@ export default class MoveGenerator {
 
     movesForKingFrom(square) {
         const moves = [];
-        this.pushMainDiagonalForKing(square, moves);
-        this.pushSecondaryDiagonalForKing(square, moves);
+        this.pushDownTheBoardJumps(square, moves);
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
+            this.pushMainDiagonalForKing(square, moves);
+            this.pushSecondaryDiagonalForKing(square, moves);
+        }
         return moves;
     }
 
@@ -68,16 +71,33 @@ export default class MoveGenerator {
         const moves = [];
         const moveKind = squareIsInLastTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
-        this.pushJumpsForBlackman(square, moves);
+        this.pushDownTheBoardJumps(square, moves);
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
+            if (!squareIsAtRightEdge(square))
+                this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
 
-        if (!squareIsAtRightEdge(square))
-            this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
-        if (!squareIsAtLeftEdge(square))
-            this.pushMoveIfNotObstructed(square + rowLength - 1, moveKind, moves);
+            if (!squareIsAtLeftEdge(square))
+                this.pushMoveIfNotObstructed(square + rowLength - 1, moveKind, moves);
+        }
         return moves;
     }
 
-    pushJumpsForBlackman(square, moves) {
+    anyPieceCanJump() {
+        for (let square = 0; square < 64; square++)
+            if (this.canJumpFrom(square))
+                return true;
+        return false;
+    }
+
+    canJumpFrom(square) {
+        if (this.board[square] === null || this.board[square].color === "white")
+            return false;
+        const unusedMoves = [];
+        this.pushDownTheBoardJumps(square, unusedMoves);
+        return unusedMoves.length > 0;
+    }
+
+    pushDownTheBoardJumps(square, moves) {
         if (square < 48 &&
                 this.board[square + rowLength - 1] !== null &&
                 this.board[square + rowLength - 1].color !== "black" &&
