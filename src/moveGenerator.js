@@ -70,13 +70,29 @@ export default class MoveGenerator {
         const moveKind = squareIsInLastTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
         this.pushDownTheBoardJumps(square, moves);
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
+            if (!squareIsAtRightEdge(square))
+                this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
 
-        if (!squareIsAtRightEdge(square))
-            this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
-
-        if (!squareIsAtLeftEdge(square))
-            this.pushMoveIfNotObstructed(square + rowLength - 1, moveKind, moves);
+            if (!squareIsAtLeftEdge(square))
+                this.pushMoveIfNotObstructed(square + rowLength - 1, moveKind, moves);
+        }
         return moves;
+    }
+
+    anyPieceCanJump() {
+        for (let square = 0; square < 64; square++)
+            if (this.canJumpFrom(square))
+                return true;
+        return false;
+    }
+
+    canJumpFrom(square) {
+        if (this.board[square] === null || this.board[square].color === "white")
+            return false;
+        const unusedMoves = [];
+        this.pushDownTheBoardJumps(square, unusedMoves);
+        return unusedMoves.length > 0;
     }
 
     pushDownTheBoardJumps(square, moves) {
