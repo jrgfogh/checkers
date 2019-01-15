@@ -24,8 +24,10 @@ export default class MoveGenerator {
     movesForKingFrom(square) {
         const moves = [];
         this.pushDownTheBoardJumps(square, moves);
-        this.pushMainDiagonalForKing(square, moves);
-        this.pushSecondaryDiagonalForKing(square, moves);
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
+            this.pushMainDiagonalForKing(square, moves);
+            this.pushSecondaryDiagonalForKing(square, moves);
+        }
         return moves;
     }
 
