@@ -122,15 +122,23 @@ export default class MoveGenerator {
     movePiece(from, to, moveKind) {
         this.board[to] = this.board[from];
         this.board[from] = null;
-        if (moveKind === MoveKind.Crowning)
+        if (isCrowning(moveKind))
             this.board[to].kind = "king";
-        else if (moveKind === MoveKind.Jump)
+        if (isJump(moveKind))
             this.board[midpoint(from, to)] = null;
     }
 
     isObstructed(square) {
         return this.board[square] !== null
     }
+}
+
+function isCrowning(moveKind) {
+    return moveKind === MoveKind.Crowning || moveKind === MoveKind.CrowningJump;
+}
+
+function isJump(moveKind) {
+    return moveKind === MoveKind.Jump || moveKind === MoveKind.CrowningJump;
 }
 
 function midpoint(from, to) {

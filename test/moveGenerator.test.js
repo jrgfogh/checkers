@@ -639,7 +639,18 @@ describe("Move Generator", () => {
 
             generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.CrowningJump);
 
-            expect(board[square + rowLength - 1]).toEqual(null)
+            expect(board[square + rowLength + 1]).toEqual(null)
+        })
+
+        each([40, 45]).it("crowning jump from square %d should make destination piece a king", (square) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength + 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.CrowningJump);
+
+            expect(board[square + 2 * (rowLength + 1)]).toEqual({ color: "black", kind: "king" })
         })
     })
 
