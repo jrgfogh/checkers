@@ -61,11 +61,31 @@ export default class MoveGenerator {
     movesForWhiteManFrom(square) {
         const moves = []
         const moveKind = squareIsInFirstTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
-        if (!squareIsAtRightEdge(square))
-            this.pushMoveIfNotObstructed(square - rowLength + 1, moveKind, moves);
-        if (!squareIsAtLeftEdge(square))
-            this.pushMoveIfNotObstructed(square - rowLength - 1, moveKind, moves);
+
+        this.pushUpTheBoardJumps(square, moves);
+        if (moves.length === 0) {
+            if (!squareIsAtRightEdge(square))
+                this.pushMoveIfNotObstructed(square - rowLength + 1, moveKind, moves);
+            if (!squareIsAtLeftEdge(square))
+                this.pushMoveIfNotObstructed(square - rowLength - 1, moveKind, moves);
+        }
         return moves;
+    }
+
+    pushUpTheBoardJumps(square, moves) {
+        const jumpKind = squareIsInFirstThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
+        if (square > 15 &&
+                this.board[square - rowLength + 1] !== null &&
+                this.board[square - rowLength + 1].color !== "white" &&
+                this.board[square - 2 * (rowLength - 1)] === null &&
+                !squareIsAtRightEdge(square - rowLength + 1))
+            moves.push(square - 2 * (rowLength - 1), jumpKind);
+        if (square > 17 &&
+                this.board[square - rowLength - 1] !== null &&
+                this.board[square - rowLength - 1].color !== "white" &&
+                this.board[square - 2 * (rowLength + 1)] === null &&
+                !squareIsAtLeftEdge(square - rowLength - 1))
+            moves.push(square - 2 * (rowLength + 1), jumpKind);
     }
 
     movesForBlackManFrom(square) {
@@ -147,6 +167,10 @@ function midpoint(from, to) {
 
 function squareIsInLastThreeRows(square) {
     return square > 39;
+}
+
+function squareIsInFirstThreeRows(square) {
+    return square < 24;
 }
 
 function squareIsInLastTwoRows(square) {
