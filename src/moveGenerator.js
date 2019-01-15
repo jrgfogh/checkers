@@ -101,11 +101,13 @@ export default class MoveGenerator {
         if (square < 48 &&
                 this.board[square + rowLength - 1] !== null &&
                 this.board[square + rowLength - 1].color !== "black" &&
+                !squareIsAtLeftEdge(square + rowLength - 1) &&
                 this.board[square + 2 * (rowLength - 1)] === null)
             moves.push(square + 2 * (rowLength - 1), MoveKind.Jump);
         if (square < 46 &&
                 this.board[square + rowLength + 1] !== null &&
                 this.board[square + rowLength + 1].color !== "black" &&
+                !squareIsAtRightEdge(square + rowLength + 1) &&
                 this.board[square + 2 * (rowLength + 1)] === null)
             moves.push(square + 2 * (rowLength + 1), MoveKind.Jump);
     }

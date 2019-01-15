@@ -113,6 +113,7 @@ describe("Move Generator", () => {
             each([2, 20, 45]).it("should generate two jumps from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Pieces to jump over.
                 board[square + rowLength - 1] = { color: "white", kind: "man" }
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
@@ -128,6 +129,7 @@ describe("Move Generator", () => {
             each([0, 8, 16, 24, 32, 40]).it("should generate one jump from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Piece to jump over.
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
 
@@ -141,6 +143,7 @@ describe("Move Generator", () => {
             each([7, 15, 23, 31, 39, 47]).it("should generate one jump from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Piece to jump over.
                 board[square + rowLength - 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator(board)
 
@@ -154,8 +157,38 @@ describe("Move Generator", () => {
             each([0]).it("should not generate any jumps from square %d when obstructed", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
+                // Piece to *not* jump over.
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
+                // Piece blocking the jump.
                 board[square + 2 * (rowLength + 1)] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([30]).it("should not generate a jump over the right side of the board from square %d", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Piece to *not* jump over.
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                // Piece blocking the other diagonal
+                board[square + rowLength - 1] = { color: "black", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([]);
+            });
+
+            each([33]).it("should not generate a jump over the left side of the board from square %d", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Piece to *not* jump over.
+                board[square + rowLength - 1] = { color: "white", kind: "man" }
+                // Piece blocking the other diagonal
+                board[square + rowLength + 1] = { color: "black", kind: "man" }
                 const generator = new MoveGenerator(board)
 
                 const moves = generator.movesFrom(square)
