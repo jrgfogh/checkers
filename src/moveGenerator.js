@@ -1,7 +1,8 @@
 export const MoveKind = {
     Simple: 0,
     Crowning: 1,
-    Jump: 2
+    Jump: 2,
+    CrowningJump: 3
 }
 
 const rowLength = 8
@@ -98,18 +99,19 @@ export default class MoveGenerator {
     }
 
     pushDownTheBoardJumps(square, moves) {
+        const jumpKind = squareIsInLastThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
         if (square < 48 &&
                 this.board[square + rowLength - 1] !== null &&
                 this.board[square + rowLength - 1].color !== "black" &&
                 !squareIsAtLeftEdge(square + rowLength - 1) &&
                 this.board[square + 2 * (rowLength - 1)] === null)
-            moves.push(square + 2 * (rowLength - 1), MoveKind.Jump);
+            moves.push(square + 2 * (rowLength - 1), jumpKind);
         if (square < 46 &&
                 this.board[square + rowLength + 1] !== null &&
                 this.board[square + rowLength + 1].color !== "black" &&
                 !squareIsAtRightEdge(square + rowLength + 1) &&
                 this.board[square + 2 * (rowLength + 1)] === null)
-            moves.push(square + 2 * (rowLength + 1), MoveKind.Jump);
+            moves.push(square + 2 * (rowLength + 1), jumpKind);
     }
 
     pushMoveIfNotObstructed(move, moveKind, moves) {
@@ -133,6 +135,10 @@ export default class MoveGenerator {
 
 function midpoint(from, to) {
     return (from + to) >> 1;
+}
+
+function squareIsInLastThreeRows(square) {
+    return square > 39;
 }
 
 function squareIsInLastTwoRows(square) {

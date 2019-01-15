@@ -110,7 +110,7 @@ describe("Move Generator", () => {
         })
 
         describe("Jumps", () => {
-            each([2, 20, 45]).it("should generate two jumps from square %d when possible", (square) => {
+            each([2, 20]).it("should generate two jumps from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
                 // Pieces to jump over.
@@ -140,7 +140,7 @@ describe("Move Generator", () => {
                 ]);
             });
 
-            each([7, 15, 23, 31, 39, 47]).it("should generate one jump from square %d when possible", (square) => {
+            each([7, 15, 23, 31, 39]).it("should generate one jump from square %d when possible", (square) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "man" }
                 // Piece to jump over.
@@ -194,6 +194,36 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
 
                 expect(moves).toEqual([]);
+            });
+
+            each([42, 43, 44, 45]).it("should generate two crowning jumps from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Pieces to jump over.
+                board[square + rowLength - 1] = { color: "white", kind: "man" }
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square + 2 * (rowLength - 1), MoveKind.CrowningJump,
+                    square + 2 * (rowLength + 1), MoveKind.CrowningJump
+                ]);
+            });
+
+            each([40, 41]).it("should generate one crowning jump from square %d when possible", (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Piece to jump over.
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator(board)
+
+                const moves = generator.movesFrom(square)
+
+                expect(moves).toEqual([
+                    square + 2 * (rowLength + 1), MoveKind.CrowningJump
+                ]);
             });
         })
     })
