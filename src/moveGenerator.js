@@ -25,7 +25,7 @@ export default class MoveGenerator {
     movesForKingFrom(square) {
         const moves = [];
         this.pushDownTheBoardJumps(square, moves);
-        if (moves.length === 0 && !this.anyPieceCanJump()) {
+        if (moves.length === 0 && !this.anyPieceCanJump(this.board[square].color)) {
             this.pushMainDiagonalForKing(square, moves);
             this.pushSecondaryDiagonalForKing(square, moves);
         }
@@ -63,7 +63,7 @@ export default class MoveGenerator {
         const moveKind = squareIsInFirstTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
         this.pushUpTheBoardJumps(square, moves);
-        if (moves.length === 0) {
+        if (moves.length === 0 && !this.anyPieceCanJump("white")) {
             if (!squareIsAtRightEdge(square))
                 this.pushMoveIfNotObstructed(square - rowLength + 1, moveKind, moves);
             if (!squareIsAtLeftEdge(square))
@@ -93,7 +93,7 @@ export default class MoveGenerator {
         const moveKind = squareIsInLastTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
         this.pushDownTheBoardJumps(square, moves);
-        if (moves.length === 0 && !this.anyPieceCanJump()) {
+        if (moves.length === 0 && !this.anyPieceCanJump("black")) {
             if (!squareIsAtRightEdge(square))
                 this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
 
@@ -103,32 +103,37 @@ export default class MoveGenerator {
         return moves;
     }
 
-    anyPieceCanJump() {
+    anyPieceCanJump(turn) {
         for (let square = 0; square < 64; square++)
-            if (this.canJumpFrom(square))
+            if (this.canJumpFrom(square, turn))
                 return true;
         return false;
     }
 
-    canJumpFrom(square) {
-        if (this.board[square] === null || this.board[square].color === "white")
+    canJumpFrom(square, turn) {
+        if (this.board[square] === null || this.board[square].color !== turn)
             return false;
         const unusedMoves = [];
-        this.pushDownTheBoardJumps(square, unusedMoves);
+        if (turn === "black" || this.board[square].kind == "king")
+            this.pushDownTheBoardJumps(square, unusedMoves);
+        // TODO(jrgfogh): This criterion is wrong; white kings can jump up the board.
+        if (turn === "white")
+            this.pushUpTheBoardJumps(square, unusedMoves);
         return unusedMoves.length > 0;
     }
 
     pushDownTheBoardJumps(square, moves) {
         const jumpKind = squareIsInLastThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
+        const turn = this.board[square].color;
         if (square < 48 &&
                 this.board[square + rowLength - 1] !== null &&
-                this.board[square + rowLength - 1].color !== "black" &&
+                this.board[square + rowLength - 1].color !== turn &&
                 !squareIsAtLeftEdge(square + rowLength - 1) &&
                 this.board[square + 2 * (rowLength - 1)] === null)
             moves.push(square + 2 * (rowLength - 1), jumpKind);
         if (square < 46 &&
                 this.board[square + rowLength + 1] !== null &&
-                this.board[square + rowLength + 1].color !== "black" &&
+                this.board[square + rowLength + 1].color !== turn &&
                 !squareIsAtRightEdge(square + rowLength + 1) &&
                 this.board[square + 2 * (rowLength + 1)] === null)
             moves.push(square + 2 * (rowLength + 1), jumpKind);
