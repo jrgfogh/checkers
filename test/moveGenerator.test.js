@@ -7,7 +7,7 @@ const rowLength = 8
 
 describe("Move Generator", () => {
     it("should require a board", () => {
-        expect(() => new MoveGenerator(null, "white")).toThrowError("A valid board state is required.")
+        expect(() => new MoveGenerator(null)).toThrowError("A valid board state is required.")
     })
 
     describe("Black man", () => {

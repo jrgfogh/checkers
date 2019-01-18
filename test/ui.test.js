@@ -135,9 +135,8 @@ describe("Board", () => {
 
   it("renders correctly when empty", () => {
     const pieces = emptyBoard.slice();
-    const moveGenerator = new MoveGenerator(pieces);
     const board = TestRenderer.create(
-      <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+      <Board pieces={pieces} turn="white" />
     );
     expect(board.toJSON()).toMatchSnapshot();
   });
@@ -150,11 +149,10 @@ describe("Board", () => {
     "renders white man correctly in square %d",
     index => {
       const pieces = emptyBoard.slice();
-      const moveGenerator = new MoveGenerator(pieces);
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
       const board = new ShallowRenderer().render(
-        <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+        <Board pieces={pieces} turn="white" />
       );
       expect(board.props.children[index].props).toMatchObject({
         piece: whiteMan
@@ -167,11 +165,10 @@ describe("Board", () => {
       "should select white piece on square %d when clicked and white's turn.",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const whiteMan = { color: "white", kind: "man" };
         pieces[index] = whiteMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="white" />
         );
 
         propsForSquare(board, index).onClick();
@@ -184,11 +181,10 @@ describe("Board", () => {
       "should not select black piece on square %d when clicked and white's turn.",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const blackMan = { color: "black", kind: "man" };
         pieces[index] = blackMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="white" />
         );
 
         propsForSquare(board, index).onClick();
@@ -201,11 +197,10 @@ describe("Board", () => {
       "should select black piece on square %d when clicked and black's turn.",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const blackMan = { color: "black", kind: "man" };
         pieces[index] = blackMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="black" />
         );
 
         propsForSquare(board, index).onClick();
@@ -218,11 +213,10 @@ describe("Board", () => {
       "should unselect piece on square %d when clicked",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const whiteMan = { color: "white", kind: "man" };
         pieces[index] = whiteMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="white" />
         );
 
         propsForSquare(board, index).onClick();
@@ -236,9 +230,8 @@ describe("Board", () => {
       "should not select empty square %d when clicked",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="white" />
         );
 
         propsForSquare(board, index).onClick();
@@ -249,11 +242,10 @@ describe("Board", () => {
 
     it("should unselect square 2 when square 5 clicked", () => {
       const pieces = emptyBoard.slice();
-      const moveGenerator = new MoveGenerator(pieces);
       const whiteMan = { color: "white", kind: "man" };
       pieces[2] = pieces[5] = whiteMan;
       const board = TestRenderer.create(
-        <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+        <Board pieces={pieces} turn="white" />
       );
 
       propsForSquare(board, 2).onClick();
@@ -264,11 +256,10 @@ describe("Board", () => {
 
     it("should not erase the piece in square 2 when square 5 clicked", () => {
       const pieces = emptyBoard.slice();
-      const moveGenerator = new MoveGenerator(pieces);
       const whiteMan = { color: "white", kind: "man" };
       pieces[2] = pieces[5] = whiteMan;
       const board = TestRenderer.create(
-        <Board pieces={pieces} turn="white" moveGenerator={moveGenerator} />
+        <Board pieces={pieces} turn="white" />
       );
 
       propsForSquare(board, 2).onClick();
@@ -285,7 +276,7 @@ describe("Board", () => {
         const blackMan = { color: "black", kind: "man" };
         pieces[index] = blackMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="black" />
         );
 
         propsForSquare(board, index).onClick();
@@ -298,9 +289,8 @@ describe("Board", () => {
 
     it("should not highlight any moves for an empty board", () => {
       const pieces = emptyBoard.slice();
-      const moveGenerator = new MoveGenerator(pieces);
       const board = TestRenderer.create(
-        <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+        <Board pieces={pieces} turn="black" />
       );
 
       for (let i = 0; i < 64; i++)
@@ -311,11 +301,10 @@ describe("Board", () => {
       "should execute move when a destination square is clicked",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const blackMan = { color: "black", kind: "man" };
         pieces[index] = blackMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="black" />
         );
 
         propsForSquare(board, index).onClick();
@@ -333,11 +322,10 @@ describe("Board", () => {
       "should crown the piece when the destination square for a crowning move is clicked",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const blackMan = { color: "black", kind: "man" };
         pieces[index] = blackMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="black" />
         );
 
         propsForSquare(board, index).onClick();
@@ -355,11 +343,10 @@ describe("Board", () => {
       "should clear selection when a destination square is clicked",
       index => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const blackMan = { color: "black", kind: "man" };
         pieces[index] = blackMan;
         const board = TestRenderer.create(
-          <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+          <Board pieces={pieces} turn="black" />
         );
 
         propsForSquare(board, index).onClick();
@@ -379,14 +366,12 @@ describe("Board", () => {
       "should switch turn from when a destination square is clicked",
       (from, to, startTurn, endTurn) => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
         const king = { color: startTurn, kind: "man" };
         pieces[from] = king;
         const board = TestRenderer.create(
           <Board
             pieces={pieces}
             turn={startTurn}
-            moveGenerator={moveGenerator}
           />
         );
 
@@ -399,11 +384,10 @@ describe("Board", () => {
 
     each([10, 27]).it("should clear selection man is clicked twice", square => {
       const pieces = emptyBoard.slice();
-      const moveGenerator = new MoveGenerator(pieces);
       const blackMan = { color: "black", kind: "man" };
       pieces[square] = blackMan;
       const board = TestRenderer.create(
-        <Board pieces={pieces} turn="black" moveGenerator={moveGenerator} />
+        <Board pieces={pieces} turn="black" />
       );
 
       propsForSquare(board, square).onClick();
