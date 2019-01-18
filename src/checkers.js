@@ -16,9 +16,8 @@ const pieces = parse(
   "M.M.M.M." +
   " w").pieces;
 
-const moveGenerator = new MoveGenerator(pieces);
 
 ReactDOM.render(
-    <Board pieces={ pieces } turn="black" moveGenerator={ moveGenerator } />,
+    <Board pieces={ pieces } turn="black" />,
     document.getElementById('game')
   );
