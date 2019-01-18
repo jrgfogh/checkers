@@ -2,6 +2,7 @@ language: node_js
 node_js:
   - "lts/*"
 script:
+  - npx flow
   - npm run build
   - npm test
   - cp src/*.html dist && cp src/*.css dist
