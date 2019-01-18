@@ -739,6 +739,30 @@ describe("Move Generator", () => {
             expect(moves).toEqual([]);
         });
 
+        each([[3, 20], [5, 33]]).it("should not generate simple moves for black from square %d when a black king can jump from square %d", (square, otherSquare) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[otherSquare] = { color: "black", kind: "king" }
+            board[otherSquare - rowLength + 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            const moves = generator.movesFrom(square);
+
+            expect(moves).toEqual([]);
+        });
+
+        each([[3, 20], [5, 32]]).it("should not generate simple moves for black from square %d when a black king can jump from square %d", (square, otherSquare) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[otherSquare] = { color: "black", kind: "king" }
+            board[otherSquare - rowLength - 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator(board);
+
+            const moves = generator.movesFrom(square);
+
+            expect(moves).toEqual([]);
+        });
+
         each([[5, 20], [10, 33]]).it("should not generate any simple moves from square %d when a jump is possible from square %d", (square, otherSquare) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }

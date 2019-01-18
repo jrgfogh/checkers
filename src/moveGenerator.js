@@ -74,15 +74,16 @@ export default class MoveGenerator {
 
     pushUpTheBoardJumps(square, moves) {
         const jumpKind = squareIsInFirstThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
+        const turn = this.board[square].color;
         if (square > 15 &&
                 this.board[square - rowLength + 1] !== null &&
-                this.board[square - rowLength + 1].color !== "white" &&
+                this.board[square - rowLength + 1].color !== turn &&
                 this.board[square - 2 * (rowLength - 1)] === null &&
                 !squareIsAtRightEdge(square - rowLength + 1))
             moves.push(square - 2 * (rowLength - 1), jumpKind);
         if (square > 17 &&
                 this.board[square - rowLength - 1] !== null &&
-                this.board[square - rowLength - 1].color !== "white" &&
+                this.board[square - rowLength - 1].color !== turn &&
                 this.board[square - 2 * (rowLength + 1)] === null &&
                 !squareIsAtLeftEdge(square - rowLength - 1))
             moves.push(square - 2 * (rowLength + 1), jumpKind);
@@ -116,8 +117,7 @@ export default class MoveGenerator {
         const unusedMoves = [];
         if (turn === "black" || this.board[square].kind == "king")
             this.pushDownTheBoardJumps(square, unusedMoves);
-        // TODO(jrgfogh): This criterion is wrong; white kings can jump up the board.
-        if (turn === "white")
+        if (turn === "white" || this.board[square].kind == "king")
             this.pushUpTheBoardJumps(square, unusedMoves);
         return unusedMoves.length > 0;
     }
