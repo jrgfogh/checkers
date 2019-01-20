@@ -16,7 +16,7 @@ type SquareProps = {
   canMoveTo: boolean,
   piece?: ?PieceModel,
   turn: "white" | "black",
-  onClick?: function
+  onClick?: () => void
 };
 
 export function Square(props : SquareProps) {
