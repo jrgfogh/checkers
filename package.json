@@ -27,7 +27,6 @@
     "flow-typed": "^2.5.1",
     "jest": "^23.6.0",
     "jest-each": "^23.6.0",
-    "jest-prop-type-error": "^1.1.0",
     "prettier": "^1.15.3",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",

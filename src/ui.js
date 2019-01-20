@@ -1,34 +1,38 @@
 // @flow
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { movesFrom, movePiece } from './moveGenerator';
 import type { PieceModel } from './moveGenerator';
 
-function Piece(props) {
+function Piece(props : PieceModel) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
     <div className="piece-center" />
   </div>;
 }
 
-export function Square(props : any) {
+type SquareProps = {
+  color: string,
+  selected: boolean,
+  canMoveTo: boolean,
+  piece?: ?PieceModel,
+  turn?: string,
+  onClick?: function
+};
+
+export function Square(props : SquareProps) {
   let squareClasses = ["square", props.color]
   let squareContent
   if (props.selected)
     squareClasses.push("selected")
-  if (props.canMoveTo) {
-    squareClasses.push("destination")
+  if (props.canMoveTo && props.turn) {
     squareContent = <div className={ "piece ghost-piece " + props.turn + "-piece" } />
+    squareClasses.push("destination")
   } else if (props.piece)
     squareContent = Piece(props.piece);
   return (
     <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ squareContent }</div>
   )
 }
-
-Square.propTypes = {
-  color: PropTypes.oneOf(['white', 'black']).isRequired
-};
 
 type BoardState = {
   selected: ?number,
@@ -37,8 +41,13 @@ type BoardState = {
   canMoveTo: boolean[]
 };
 
-export default class Board extends React.Component<{}, BoardState> {
-  constructor(props : any) {
+type BoardProps = {
+  pieces: any,
+  turn: string
+};
+
+export default class Board extends React.Component<BoardProps, BoardState> {
+  constructor(props : BoardProps) {
     super(props)
     this.state = {
       selected: null,
@@ -114,7 +123,3 @@ function nextTurn(turn) {
     return "black";
   return "white";
 }
-
-Board.propTypes = {
-  turn: PropTypes.oneOf(["white", "black"]).isRequired
-};

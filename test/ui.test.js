@@ -14,7 +14,7 @@ const rowLength = 8;
 describe("Board", () => {
   describe("Square", () => {
     it("renders empty black correctly", () => {
-      const square = TestRenderer.create(<Square color="black" />);
+      const square = TestRenderer.create(<Square color="black" canMoveTo={ false } selected={ false } />);
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
   className="square black"
@@ -23,7 +23,7 @@ describe("Board", () => {
     });
 
     it("renders empty white correctly", () => {
-      const square = TestRenderer.create(<Square color="white" />);
+      const square = TestRenderer.create(<Square color="white" canMoveTo={ false } selected={ false } />);
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
   className="square white"
@@ -33,7 +33,7 @@ describe("Board", () => {
 
     it("renders white man on white correctly", () => {
       const square = TestRenderer.create(
-        <Square color="white" piece={{ color: "white", kind: "man" }} />
+        <Square color="white" piece={{ color: "white", kind: "man" }} canMoveTo={ false } selected={ false } />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -52,7 +52,7 @@ describe("Board", () => {
 
     it("renders white king on white correctly", () => {
       const square = TestRenderer.create(
-        <Square color="white" piece={{ color: "white", kind: "king" }} />
+        <Square color="white" piece={{ color: "white", kind: "king" }} canMoveTo={ false } selected={ false } />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -71,7 +71,7 @@ describe("Board", () => {
 
     it("renders black man on white correctly", () => {
       const square = TestRenderer.create(
-        <Square color="white" piece={{ color: "black", kind: "man" }} />
+        <Square color="white" piece={{ color: "black", kind: "man" }} canMoveTo={ false } selected={ false } />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -89,22 +89,18 @@ describe("Board", () => {
     });
 
     it("should require a color", () => {
-      expect(() => TestRenderer.create(<Square />)).toThrowError(
-        "Warning: Failed prop type: The prop `color` is marked as required in `Square`, but its value is `undefined`."
-      );
+        // $FlowExpectError
+        () => TestRenderer.create(<Square />);
     });
 
     it("should require a valid color", () => {
-      expect(() =>
-        TestRenderer.create(<Square color="invalid" />)
-      ).toThrowError(
-        'Warning: Failed prop type: Invalid prop `color` of value `invalid` supplied to `Square`, expected one of ["white","black"].'
-      );
+      // $FlowExpectError
+      () => TestRenderer.create(<Square color="invalid" />);
     });
 
     it("renders empty black selected correctly", () => {
       const square = TestRenderer.create(
-        <Square color="black" selected={true} />
+        <Square color="black" selected={true} canMoveTo={ false } selected={ true } />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -114,9 +110,11 @@ describe("Board", () => {
     });
 
     each(["white", "black"]).it("renders empty black destination correctly, %s's turn", (turn) => {
-      const square = new ShallowRenderer().render(
-        <Square color="black" canMoveTo={ true } turn={ turn } />
+      const renderer = new ShallowRenderer();
+      renderer.render(
+        <Square color="black" canMoveTo={ true } selected={ false } turn={ turn } />
       );
+      const square = renderer.getRenderOutput();
       expect(square.props.className).toBe("square black destination");
       expect(square.props.children.props.className).
           toBe("piece ghost-piece " + turn + "-piece");
@@ -124,15 +122,13 @@ describe("Board", () => {
   });
 
   it("should require a turn", () => {
-    expect(() => TestRenderer.create(<Board />)).toThrowError(
-      "Warning: Failed prop type: The prop `turn` is marked as required in `Board`, but its value is `undefined`."
-    );
+    // $FlowExpectError
+    () => TestRenderer.create(<Board />);
   });
 
   it("should reject an invalid turn", () => {
-    expect(() => TestRenderer.create(<Board turn="invalid" />)).toThrowError(
-      'Warning: Failed prop type: Invalid prop `turn` of value `invalid` supplied to `Board`, expected one of ["white","black"].'
-    );
+    // $FlowExpectError
+    () => TestRenderer.create(<Board turn="invalid" />);
   });
 
   it("renders correctly when empty", () => {
@@ -153,9 +149,11 @@ describe("Board", () => {
       const pieces = emptyBoard.slice();
       const whiteMan = { color: "white", kind: "man" };
       pieces[index] = whiteMan;
-      const board = new ShallowRenderer().render(
+      const renderer = new ShallowRenderer();
+      renderer.render(
         <Board pieces={pieces} turn="white" />
       );
+      const board = renderer.getRenderOutput();
       expect(board.props.children[index].props).toMatchObject({
         piece: whiteMan
       });
@@ -354,10 +352,8 @@ describe("Board", () => {
         propsForSquare(board, index).onClick();
         propsForSquare(board, index + rowLength + 1).onClick();
 
-        expect(propsForSquare(board, index).selected).toBe(false);
-        expect(board.getInstance().state.canMoveTo).toEqual(
-          Array(64).fill(false)
-        );
+        // $FlowExpectError
+        expect(board.getInstance().state.canMoveTo).toEqual(Array(64).fill(false));
       }
     );
 
@@ -380,6 +376,7 @@ describe("Board", () => {
         propsForSquare(board, from).onClick();
         propsForSquare(board, to).onClick();
 
+        // $FlowExpectError
         expect(board.getInstance().state.turn).toEqual(endTurn);
       }
     );
@@ -395,9 +392,8 @@ describe("Board", () => {
       propsForSquare(board, square).onClick();
       propsForSquare(board, square).onClick();
 
-      expect(board.getInstance().state.canMoveTo).toEqual(
-        Array(64).fill(false)
-      );
+      // $FlowExpectError
+      expect(board.getInstance().state.canMoveTo).toEqual(Array(64).fill(false));
     });
   });
 });
