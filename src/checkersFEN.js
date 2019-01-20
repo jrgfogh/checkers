@@ -1,4 +1,8 @@
-export function parse(fenString) {
+// @flow
+
+import type { PieceModel } from './moveGenerator';
+
+export function parse(fenString : string) {
   if (fenString.length < 66)
     throw Error(
       'Invalid checkers FEN string: "' + fenString + '"\n' +
@@ -23,7 +27,7 @@ export function parse(fenString) {
         'Invalid checkers FEN string: "' + fenString + '"\n' +
         'Invalid player: "' + playerCharacter + '"');
 
-  const pieces = Array(64).fill(null);
+  const pieces : Array<?PieceModel> = Array(64).fill(null);
   for (let i = 0; i < 64; i++) {
     const pieceCharacter = fenString[i];
     if (pieceCharacter === 'M')
@@ -57,7 +61,7 @@ export function parse(fenString) {
   };
 }
 
-export function unparse(gameState) {
+export function unparse(gameState : any) : string {
   const squares = Array(64).fill('.');
   for (let i = 0; i < 64; i++) {
     const piece = gameState.pieces[i];

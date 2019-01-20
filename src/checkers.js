@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Board from './ui'
-import MoveGenerator from './moveGenerator'
 import { parse } from "../src/checkersFEN";
 
 const pieces = parse(

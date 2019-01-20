@@ -1,3 +1,5 @@
+// @flow
+
 import each from 'jest-each';
 
 import MoveGenerator, { MoveKind, movesFrom, movePiece } from '../src/moveGenerator';
@@ -6,10 +8,6 @@ const emptyBoard = Array(64).fill(null)
 const rowLength = 8
 
 describe("Move Generator", () => {
-    it("should require a board", () => {
-        expect(() => new MoveGenerator(null)).toThrowError("A valid board state is required.")
-    })
-
     describe("Black man", () => {
         describe("Simple moves", () => {
             each([9, 10, 11, 12, 13, 14]).it("should generate two simple moves for unobstructed at square %d", (square) => {
