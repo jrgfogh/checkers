@@ -19,8 +19,6 @@ export default class MoveGenerator {
     turn: string;
 
     constructor(board : Array<?PieceModel>) {
-        if (!board)
-            throw Error("A valid board state is required.");
         this.board = board;
     }
 

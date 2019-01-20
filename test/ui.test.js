@@ -1,3 +1,5 @@
+// @flow
+
 import React from "react";
 import * as TestRenderer from "react-test-renderer";
 import ShallowRenderer from "react-test-renderer/shallow";

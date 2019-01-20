@@ -1,3 +1,5 @@
+// @flow
+
 import each from 'jest-each';
 
 import { parse, unparse } from "../src/checkersFEN";
