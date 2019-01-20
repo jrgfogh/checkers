@@ -14,7 +14,7 @@ const rowLength = 8;
 describe("Board", () => {
   describe("Square", () => {
     it("renders empty black correctly", () => {
-      const square = TestRenderer.create(<Square color="black" canMoveTo={ false } selected={ false } />);
+      const square = TestRenderer.create(<Square color="black" canMoveTo={ false } selected={ false } turn="black" />);
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
   className="square black"
@@ -23,7 +23,7 @@ describe("Board", () => {
     });
 
     it("renders empty white correctly", () => {
-      const square = TestRenderer.create(<Square color="white" canMoveTo={ false } selected={ false } />);
+      const square = TestRenderer.create(<Square color="white" canMoveTo={ false } selected={ false } turn="black" />);
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
   className="square white"
@@ -33,7 +33,7 @@ describe("Board", () => {
 
     it("renders white man on white correctly", () => {
       const square = TestRenderer.create(
-        <Square color="white" piece={{ color: "white", kind: "man" }} canMoveTo={ false } selected={ false } />
+        <Square color="white" piece={{ color: "white", kind: "man" }} canMoveTo={ false } selected={ false } turn="black" />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -52,7 +52,7 @@ describe("Board", () => {
 
     it("renders white king on white correctly", () => {
       const square = TestRenderer.create(
-        <Square color="white" piece={{ color: "white", kind: "king" }} canMoveTo={ false } selected={ false } />
+        <Square color="white" piece={{ color: "white", kind: "king" }} canMoveTo={ false } selected={ false } turn="black" />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -71,7 +71,7 @@ describe("Board", () => {
 
     it("renders black man on white correctly", () => {
       const square = TestRenderer.create(
-        <Square color="white" piece={{ color: "black", kind: "man" }} canMoveTo={ false } selected={ false } />
+        <Square color="white" piece={{ color: "black", kind: "man" }} canMoveTo={ false } selected={ false } turn="black" />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -90,17 +90,27 @@ describe("Board", () => {
 
     it("should require a color", () => {
         // $FlowExpectError
-        () => TestRenderer.create(<Square />);
+        () => TestRenderer.create(<Square selected={ false } canMoveTo={ false } piece={ null } turn="white" />);
     });
 
     it("should require a valid color", () => {
-      // $FlowExpectError
-      () => TestRenderer.create(<Square color="invalid" />);
+        // $FlowExpectError
+      () => TestRenderer.create(<Square color="invalid" selected={ false } canMoveTo={ false } piece={ null } turn="white" />);
+    });
+
+    it("should require a turn", () => {
+        // $FlowExpectError
+      () => TestRenderer.create(<Square color="black" selected={ false } canMoveTo={ false } piece={ null } />);
+    });
+
+    it("should require a valid turn", () => {
+        // $FlowExpectError
+      () => TestRenderer.create(<Square color="white" selected={ false } canMoveTo={ false } piece={ null } turn="invalid" />);
     });
 
     it("renders empty black selected correctly", () => {
       const square = TestRenderer.create(
-        <Square color="black" selected={true} canMoveTo={ false } selected={ true } />
+        <Square color="black" selected={true} canMoveTo={ false } selected={ true } turn="black" />
       );
       expect(square.toJSON()).toMatchInlineSnapshot(`
 <div

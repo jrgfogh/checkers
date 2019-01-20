@@ -11,11 +11,11 @@ function Piece(props : PieceModel) {
 }
 
 type SquareProps = {
-  color: string,
+  color: "white" | "black",
   selected: boolean,
   canMoveTo: boolean,
   piece?: ?PieceModel,
-  turn?: string,
+  turn: "white" | "black",
   onClick?: function
 };
 
@@ -37,13 +37,13 @@ export function Square(props : SquareProps) {
 type BoardState = {
   selected: ?number,
   pieces: Array<?PieceModel>,
-  turn: string,
+  turn: "white" | "black",
   canMoveTo: boolean[]
 };
 
 type BoardProps = {
   pieces: any,
-  turn: string
+  turn: "white" | "black"
 };
 
 export default class Board extends React.Component<BoardProps, BoardState> {
@@ -96,7 +96,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   render() {
-    const boardColors =
+    const boardColors : Array<"white" | "black"> =
       [ "white", "black", "white", "black", "white", "black", "white", "black",
         "black", "white", "black", "white", "black", "white", "black", "white",
         "white", "black", "white", "black", "white", "black", "white", "black",
