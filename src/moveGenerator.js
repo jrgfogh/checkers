@@ -1,3 +1,10 @@
+// @flow
+
+export type PieceModel = {
+    kind: string;
+    color: string;
+};
+
 export const MoveKind = {
     Simple: 0,
     Crowning: 1,
@@ -8,31 +15,38 @@ export const MoveKind = {
 const rowLength = 8
 
 export default class MoveGenerator {
-    constructor(board) {
+    board: Array<?PieceModel>;
+    turn: string;
+
+    constructor(board : Array<?PieceModel>) {
         if (!board)
             throw Error("A valid board state is required.");
         this.board = board;
     }
 
-    movesFrom(square) {
+    movesFrom(square : number) {
+        if (!this.board[square])
+            throw Error("There is no piece in square" + square);
+        // TODO(jrgfogh): Enforce a proper invariant for this.turn instead.
+        this.turn = this.board[square].color;
         if (this.board[square].kind === "king")
             return this.movesForKingFrom(square);
-        if (this.board[square].color === "black")
+        if (this.turn === "black")
             return this.movesForBlackManFrom(square);
         return this.movesForWhiteManFrom(square)
     }
 
-    movesForKingFrom(square) {
+    movesForKingFrom(square : number) {
         const moves = [];
         this.pushDownTheBoardJumps(square, moves);
-        if (moves.length === 0 && !this.anyPieceCanJump(this.board[square].color)) {
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
             this.pushMainDiagonalForKing(square, moves);
             this.pushSecondaryDiagonalForKing(square, moves);
         }
         return moves;
     }
 
-    pushMainDiagonalForKing(square, moves) {
+    pushMainDiagonalForKing(square : number, moves : number[]) {
         for (let nextSquare = square - (rowLength + 1);
                 // If nextSquare is at the right edge, it means we just wrapped around from the right side.
                 !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
@@ -45,7 +59,7 @@ export default class MoveGenerator {
             moves.push(nextSquare, MoveKind.Simple);
     }
 
-    pushSecondaryDiagonalForKing(square, moves) {
+    pushSecondaryDiagonalForKing(square : number, moves : number[]) {
         for (let nextSquare = square - (rowLength - 1);
                 // If nextSquare is at the left edge, it means we just wrapped around from the right side.
                 !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare);
@@ -58,12 +72,12 @@ export default class MoveGenerator {
             moves.push(nextSquare, MoveKind.Simple);
     }
 
-    movesForWhiteManFrom(square) {
+    movesForWhiteManFrom(square : number) {
         const moves = []
         const moveKind = squareIsInFirstTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
         this.pushUpTheBoardJumps(square, moves);
-        if (moves.length === 0 && !this.anyPieceCanJump("white")) {
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
             if (!squareIsAtRightEdge(square))
                 this.pushMoveIfNotObstructed(square - rowLength + 1, moveKind, moves);
             if (!squareIsAtLeftEdge(square))
@@ -72,29 +86,39 @@ export default class MoveGenerator {
         return moves;
     }
 
-    pushUpTheBoardJumps(square, moves) {
+    pushUpTheBoardJumps(square : number, moves : number[]) {
+        this.pushRightUpTheBoardJump(square, moves);
+        this.pushLeftUpTheBoardJump(square, moves);
+    }
+
+    pushRightUpTheBoardJump(square : number, moves : number[]) {
         const jumpKind = squareIsInFirstThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
-        const turn = this.board[square].color;
+        const destination = this.board[square - rowLength + 1];
         if (square > 15 &&
-                this.board[square - rowLength + 1] !== null &&
-                this.board[square - rowLength + 1].color !== turn &&
+                destination &&
+                destination.color !== this.turn &&
                 this.board[square - 2 * (rowLength - 1)] === null &&
                 !squareIsAtRightEdge(square - rowLength + 1))
             moves.push(square - 2 * (rowLength - 1), jumpKind);
+    }
+
+    pushLeftUpTheBoardJump(square : number, moves : number[]) {
+        const jumpKind = squareIsInFirstThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
+        const destination = this.board[square - rowLength - 1];
         if (square > 17 &&
-                this.board[square - rowLength - 1] !== null &&
-                this.board[square - rowLength - 1].color !== turn &&
+                destination &&
+                destination.color !== this.turn &&
                 this.board[square - 2 * (rowLength + 1)] === null &&
                 !squareIsAtLeftEdge(square - rowLength - 1))
             moves.push(square - 2 * (rowLength + 1), jumpKind);
     }
 
-    movesForBlackManFrom(square) {
+    movesForBlackManFrom(square : number) {
         const moves = [];
         const moveKind = squareIsInLastTwoRows(square) ? MoveKind.Crowning : MoveKind.Simple;
 
         this.pushDownTheBoardJumps(square, moves);
-        if (moves.length === 0 && !this.anyPieceCanJump("black")) {
+        if (moves.length === 0 && !this.anyPieceCanJump()) {
             if (!squareIsAtRightEdge(square))
                 this.pushMoveIfNotObstructed(square + rowLength + 1, moveKind, moves);
 
@@ -104,100 +128,113 @@ export default class MoveGenerator {
         return moves;
     }
 
-    anyPieceCanJump(turn) {
+    anyPieceCanJump() {
         for (let square = 0; square < 64; square++)
-            if (this.canJumpFrom(square, turn))
+            if (this.canJumpFrom(square))
                 return true;
         return false;
     }
 
-    canJumpFrom(square, turn) {
-        if (this.board[square] === null || this.board[square].color !== turn)
+    canJumpFrom(square : number) {
+        if (!this.board[square] || this.board[square].color !== this.turn)
             return false;
         const unusedMoves = [];
-        if (turn === "black" || this.board[square].kind == "king")
+        if (this.turn === "black" || this.board[square].kind == "king")
             this.pushDownTheBoardJumps(square, unusedMoves);
-        if (turn === "white" || this.board[square].kind == "king")
+        if (this.turn === "white" || this.board[square].kind == "king")
             this.pushUpTheBoardJumps(square, unusedMoves);
         return unusedMoves.length > 0;
     }
 
-    pushDownTheBoardJumps(square, moves) {
+    pushDownTheBoardJumps(square : number, moves : number[]) {
+        this.pushLeftDownTheBoardJump(square, moves);
+        this.pushRightDownTheBoardJump(square, moves);
+    }
+
+    pushLeftDownTheBoardJump(square : number, moves : number[]) {
         const jumpKind = squareIsInLastThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
-        const turn = this.board[square].color;
+        const destination = this.board[square + rowLength - 1];
         if (square < 48 &&
-                this.board[square + rowLength - 1] !== null &&
-                this.board[square + rowLength - 1].color !== turn &&
-                !squareIsAtLeftEdge(square + rowLength - 1) &&
-                this.board[square + 2 * (rowLength - 1)] === null)
-            moves.push(square + 2 * (rowLength - 1), jumpKind);
+            destination &&
+            destination.color !== this.turn &&
+            !squareIsAtLeftEdge(square + rowLength - 1) &&
+            this.board[square + 2 * (rowLength - 1)] === null)
+        moves.push(square + 2 * (rowLength - 1), jumpKind);
+    }
+
+    pushRightDownTheBoardJump(square : number, moves : number[]) {
+        const jumpKind = squareIsInLastThreeRows(square) ? MoveKind.CrowningJump : MoveKind.Jump;
+        const destination = this.board[square + rowLength + 1];
         if (square < 46 &&
-                this.board[square + rowLength + 1] !== null &&
-                this.board[square + rowLength + 1].color !== turn &&
+                destination &&
+                destination.color !== this.turn &&
                 !squareIsAtRightEdge(square + rowLength + 1) &&
                 this.board[square + 2 * (rowLength + 1)] === null)
             moves.push(square + 2 * (rowLength + 1), jumpKind);
     }
 
-    pushMoveIfNotObstructed(move, moveKind, moves) {
-        if (!this.board[move])
-            moves.push(move, moveKind);
+    pushMoveIfNotObstructed(destination : number, moveKind : number, moves : number[]) {
+        if (!this.board[destination])
+            moves.push(destination, moveKind);
     }
 
-    movePiece(from, to, moveKind) {
-        this.board[to] = this.board[from];
+    movePiece(from : number, to : number, moveKind : number) {
+        if (!this.board[from])
+            throw Error("Tried to move from empty square: " + from);
+        const piece = this.board[from];
+        this.board[to] = piece;
         this.board[from] = null;
         if (isCrowning(moveKind))
-            this.board[to].kind = "king";
+            piece.kind = "king";
         if (isJump(moveKind))
             this.board[midpoint(from, to)] = null;
     }
 
-    isObstructed(square) {
+    isObstructed(square : number) {
         return this.board[square] !== null
     }
 }
 
-function isCrowning(moveKind) {
+function isCrowning(moveKind : number) {
     return moveKind === MoveKind.Crowning || moveKind === MoveKind.CrowningJump;
 }
 
-function isJump(moveKind) {
+function isJump(moveKind : number) {
     return moveKind === MoveKind.Jump || moveKind === MoveKind.CrowningJump;
 }
 
-function midpoint(from, to) {
+function midpoint(from : number, to : number) {
     return (from + to) >> 1;
 }
 
-function squareIsInLastThreeRows(square) {
+function squareIsInLastThreeRows(square : number) {
     return square > 39;
 }
 
-function squareIsInFirstThreeRows(square) {
+function squareIsInFirstThreeRows(square : number) {
     return square < 24;
 }
 
-function squareIsInLastTwoRows(square) {
+function squareIsInLastTwoRows(square : number) {
     return square > 47;
 }
 
-function squareIsInFirstTwoRows(square) {
+function squareIsInFirstTwoRows(square : number) {
     return square < 16;
 }
 
-function squareIsAtLeftEdge(square) {
+function squareIsAtLeftEdge(square : number) {
     return ((square & 0x7) === 0);
 }
 
-function squareIsAtRightEdge(square) {
+function squareIsAtRightEdge(square : number) {
     return (square & 0x7) === 7;
 }
 
-export function movePiece(board, from, to) {
+export function movePiece(board : Array<?PieceModel>, from : number, to : number) {
     if (board[from] === null)
         throw Error("Attempted to move from an empty square.");
-    const result = board.slice();
+    const result : Array<?PieceModel> = board.slice();
     const generator = new MoveGenerator(result);
     const moves = generator.movesFrom(from);
     for (let i = 0; i < moves.length; i += 2)
@@ -206,7 +243,7 @@ export function movePiece(board, from, to) {
     return result;
 }
 
-export function movesFrom(board, square) {
+export function movesFrom(board : Array<?PieceModel>, square : number) {
     const generator = new MoveGenerator(board);
     return generator.movesFrom(square);
 }

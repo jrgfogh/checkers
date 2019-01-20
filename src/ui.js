@@ -1,6 +1,9 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { movesFrom, movePiece } from './moveGenerator';
+import type { PieceModel } from './moveGenerator';
 
 function Piece(props) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
@@ -8,7 +11,7 @@ function Piece(props) {
   </div>;
 }
 
-export function Square(props) {
+export function Square(props : any) {
   let squareClasses = ["square", props.color]
   let squareContent
   if (props.selected)
@@ -27,8 +30,15 @@ Square.propTypes = {
   color: PropTypes.oneOf(['white', 'black']).isRequired
 };
 
-export default class Board extends React.Component {
-  constructor(props) {
+type BoardState = {
+  selected: ?number,
+  pieces: Array<?PieceModel>,
+  turn: string,
+  canMoveTo: boolean[]
+};
+
+export default class Board extends React.Component<{}, BoardState> {
+  constructor(props : any) {
     super(props)
     this.state = {
       selected: null,
@@ -38,9 +48,14 @@ export default class Board extends React.Component {
     };
   }
 
-  handleClick(square) {
+  handleClick(square : number) : void {
     if (this.state.canMoveTo[square]) {
       this.setState((prevState) => {
+        // TODO(jrgfogh): Find a way to specify the invariant statically.
+        // TODO(jrgfogh): Where should this invariant be documented?
+        // Invariant: canMoveTo is empty <=> !!selected
+        if (!prevState.selected)
+          throw Error("This line should be unreachable!");
         return {
           selected: null,
           pieces: movePiece(prevState.pieces, prevState.selected, square),
@@ -50,19 +65,22 @@ export default class Board extends React.Component {
       });
     }
     else if (this.state.pieces[square])
-      this.toggleSelected(square);
+      this.toggleSelected(square, this.state.pieces[square]);
   }
 
-  toggleSelected(square) {
-    if (this.state.selected !== square && this.state.pieces[square].color === this.state.turn)
-      this.setState(prevState => { return { selected: square, canMoveTo: this.legalMoveGrid(prevState, square) }; })
+  toggleSelected(square : number, piece : PieceModel) : void {
+    if (this.state.selected !== square && piece.color === this.state.turn)
+      this.setState(prevState => { return {
+          selected: square,
+          canMoveTo: this.legalMoveGrid(prevState.pieces, square)
+        }; })
     else
       this.setState({ selected: null, canMoveTo: Array(64).fill(false) })
   }
 
-  legalMoveGrid(state, origin) {
-    const moves = movesFrom(state.pieces, origin);
-    const result = Array(64).fill(false);
+  legalMoveGrid(pieces: Array<?PieceModel>, origin : number) {
+    const moves = movesFrom(pieces, origin);
+    const result : boolean[] = Array(64).fill(false);
     for (let i = 0; i < moves.length; i += 2)
       result[moves[i]] = true;
     return result;
