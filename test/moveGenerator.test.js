@@ -826,7 +826,7 @@ describe("Move Generator", () => {
     })
 
     describe("Move piece destructively", () => {
-        each([0, 1, 2, 3]).it("normal move should leave originating square %d empty", (square : number) => {
+        each([0, 1, 2, 3]).it("simple move should leave originating square %d empty", (square : number) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }
             const generator = new MoveGenerator(board, "black")
@@ -836,7 +836,7 @@ describe("Move Generator", () => {
             expect(board[square]).toBe(null)
         })
 
-        each([[0, "man"], [1, "king"]]).it("normal move from square %d %s should put piece in destination cell", (square, kind) => {
+        each([[0, "man"], [1, "king"]]).it("simple move from square %d %s should put piece in destination cell", (square, kind) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: kind }
             const generator = new MoveGenerator(board, "black")
@@ -902,7 +902,7 @@ describe("Move Generator", () => {
     })
 
     describe("Move piece observationally purely", () => {
-        each([0, 1, 2, 3]).it("normal move should leave originating square %d empty", (square : number) => {
+        each([0, 1, 2, 3]).it("simple move should leave originating square %d empty", (square : number) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }
 
@@ -911,7 +911,7 @@ describe("Move Generator", () => {
             expect(result[square]).toBe(null)
         })
 
-        each([[0, "man"], [1, "king"]]).it("normal move from square %d %s should put piece in destination cell", (square, kind) => {
+        each([[0, "man"], [1, "king"]]).it("simple move from square %d %s should put piece in destination cell", (square, kind) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: kind }
 
@@ -933,6 +933,34 @@ describe("Move Generator", () => {
             const board = emptyBoard.slice()
 
             expect(() => movePiece(board, 3, 12)).toThrowError("Attempted to move from an empty square.");
+        })
+    })
+
+    describe("Undo destructive move", () => {
+        each([0, 1, 2, 13]).it("should round-trip for simple move from square %d", (square : number) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            const generator = new MoveGenerator(board, "black")
+
+            generator.movePiece(square, square + rowLength + 1, MoveKind.Simple);
+            generator.undoMove();
+
+            const originalBoard = emptyBoard.slice()
+            originalBoard[square] = { color: "black", kind: "man" }
+            expect(generator.board).toEqual(originalBoard)
+        })
+
+        each([50, 51, 52]).it("should round-trip for crowning move from square %d", (square : number) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            const generator = new MoveGenerator(board, "black")
+
+            generator.movePiece(square, square + rowLength + 1, MoveKind.Crowning);
+            generator.undoMove();
+
+            const originalBoard = emptyBoard.slice()
+            originalBoard[square] = { color: "black", kind: "man" }
+            expect(generator.board).toEqual(originalBoard)
         })
     })
 
