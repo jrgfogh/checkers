@@ -8,6 +8,8 @@ import each from "jest-each";
 import Board, { Square } from "../src/ui";
 import MoveGenerator from "../src/moveGenerator";
 
+import type { PieceModel } from "../src/moveGenerator"
+
 const emptyBoard = Array(64).fill(null);
 const rowLength = 8;
 
@@ -155,16 +157,16 @@ describe("Board", () => {
 
   each(allSquareIndices).it(
     "renders white man correctly in square %d",
-    index => {
+    (square : number) => {
       const pieces = emptyBoard.slice();
       const whiteMan = { color: "white", kind: "man" };
-      pieces[index] = whiteMan;
+      pieces[square] = whiteMan;
       const renderer = new ShallowRenderer();
       renderer.render(
         <Board pieces={pieces} turn="white" />
       );
       const board = renderer.getRenderOutput();
-      expect(board.props.children[index].props).toMatchObject({
+      expect(board.props.children[square].props).toMatchObject({
         piece: whiteMan
       });
     }
@@ -173,80 +175,80 @@ describe("Board", () => {
   describe("User input", () => {
     each(allSquareIndices).it(
       "should select white piece on square %d when clicked and white's turn.",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
-        pieces[index] = whiteMan;
+        pieces[square] = whiteMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="white" />
         );
 
-        propsForSquare(board, index).onClick();
+        propsForSquare(board, square).onClick();
 
-        expect(propsForSquare(board, index).selected).toBe(true);
+        expect(propsForSquare(board, square).selected).toBe(true);
       }
     );
 
     each(allSquareIndices).it(
       "should not select black piece on square %d when clicked and white's turn.",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const blackMan = { color: "black", kind: "man" };
-        pieces[index] = blackMan;
+        pieces[square] = blackMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="white" />
         );
 
-        propsForSquare(board, index).onClick();
+        propsForSquare(board, square).onClick();
 
-        expect(propsForSquare(board, index).selected).toBe(false);
+        expect(propsForSquare(board, square).selected).toBe(false);
       }
     );
 
     each(allSquareIndices).it(
       "should select black piece on square %d when clicked and black's turn.",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const blackMan = { color: "black", kind: "man" };
-        pieces[index] = blackMan;
+        pieces[square] = blackMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="black" />
         );
 
-        propsForSquare(board, index).onClick();
+        propsForSquare(board, square).onClick();
 
-        expect(propsForSquare(board, index).selected).toBe(true);
+        expect(propsForSquare(board, square).selected).toBe(true);
       }
     );
 
     each(allSquareIndices).it(
       "should unselect piece on square %d when clicked",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
-        pieces[index] = whiteMan;
+        pieces[square] = whiteMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="white" />
         );
 
-        propsForSquare(board, index).onClick();
-        propsForSquare(board, index).onClick();
+        propsForSquare(board, square).onClick();
+        propsForSquare(board, square).onClick();
 
-        expect(propsForSquare(board, index).selected).toBe(false);
+        expect(propsForSquare(board, square).selected).toBe(false);
       }
     );
 
     each(allSquareIndices).it(
       "should not select empty square %d when clicked",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="white" />
         );
 
-        propsForSquare(board, index).onClick();
+        propsForSquare(board, square).onClick();
 
-        expect(propsForSquare(board, index).selected).toBe(false);
+        expect(propsForSquare(board, square).selected).toBe(false);
       }
     );
 
@@ -280,18 +282,18 @@ describe("Board", () => {
 
     each([11, 15, 29, 32, 40]).it(
       "should highlight exactly correct moves for black piece on square %d when clicked and black's turn.",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces);
+        const moveGenerator = new MoveGenerator(pieces, "black");
         const blackMan = { color: "black", kind: "man" };
-        pieces[index] = blackMan;
+        pieces[square] = blackMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="black" />
         );
 
-        propsForSquare(board, index).onClick();
+        propsForSquare(board, square).onClick();
 
-        const moves = moveGenerator.movesFrom(index);
+        const moves = moveGenerator.movesFrom(square);
         for (let i = 0; i < 64; i += 2)
           expect(propsForSquare(board, i).canMoveTo).toBe(canMoveTo(moves, i));
       }
@@ -309,19 +311,19 @@ describe("Board", () => {
 
     each([10, 11, 12]).it(
       "should execute move when a destination square is clicked",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const blackMan = { color: "black", kind: "man" };
-        pieces[index] = blackMan;
+        pieces[square] = blackMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="black" />
         );
 
-        propsForSquare(board, index).onClick();
-        propsForSquare(board, index + rowLength + 1).onClick();
+        propsForSquare(board, square).onClick();
+        propsForSquare(board, square + rowLength + 1).onClick();
 
-        expect(propsForSquare(board, index).piece).toBe(null);
-        expect(propsForSquare(board, index + rowLength + 1).piece).toEqual({
+        expect(propsForSquare(board, square).piece).toBe(null);
+        expect(propsForSquare(board, square + rowLength + 1).piece).toEqual({
           color: "black",
           kind: "man"
         });
@@ -330,19 +332,19 @@ describe("Board", () => {
 
     each([51]).it(
       "should crown the piece when the destination square for a crowning move is clicked",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const blackMan = { color: "black", kind: "man" };
-        pieces[index] = blackMan;
+        pieces[square] = blackMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="black" />
         );
 
-        propsForSquare(board, index).onClick();
-        propsForSquare(board, index + rowLength + 1).onClick();
+        propsForSquare(board, square).onClick();
+        propsForSquare(board, square + rowLength + 1).onClick();
 
-        expect(propsForSquare(board, index).piece).toBe(null);
-        expect(propsForSquare(board, index + rowLength + 1).piece).toEqual({
+        expect(propsForSquare(board, square).piece).toBe(null);
+        expect(propsForSquare(board, square + rowLength + 1).piece).toEqual({
           color: "black",
           kind: "king"
         });
@@ -351,16 +353,16 @@ describe("Board", () => {
 
     each([10, 11, 12]).it(
       "should clear selection when a destination square is clicked",
-      index => {
+      (square : number) => {
         const pieces = emptyBoard.slice();
         const blackMan = { color: "black", kind: "man" };
-        pieces[index] = blackMan;
+        pieces[square] = blackMan;
         const board = TestRenderer.create(
           <Board pieces={pieces} turn="black" />
         );
 
-        propsForSquare(board, index).onClick();
-        propsForSquare(board, index + rowLength + 1).onClick();
+        propsForSquare(board, square).onClick();
+        propsForSquare(board, square + rowLength + 1).onClick();
 
         // $FlowExpectError
         expect(board.getInstance().state.canMoveTo).toEqual(Array(64).fill(false));
@@ -372,9 +374,9 @@ describe("Board", () => {
       [13, 13 - rowLength + 1, "white", "black"]
     ]).it(
       "should switch turn from when a destination square is clicked",
-      (from, to, startTurn, endTurn) => {
+      (from : number, to : number, startTurn, endTurn) => {
         const pieces = emptyBoard.slice();
-        const king = { color: startTurn, kind: "man" };
+        const king : PieceModel = { color: startTurn, kind: "man" };
         pieces[from] = king;
         const board = TestRenderer.create(
           <Board
@@ -391,7 +393,7 @@ describe("Board", () => {
       }
     );
 
-    each([10, 27]).it("should clear selection man is clicked twice", square => {
+    each([10, 27]).it("should clear selection man is clicked twice", (square : number) => {
       const pieces = emptyBoard.slice();
       const blackMan = { color: "black", kind: "man" };
       pieces[square] = blackMan;
@@ -412,8 +414,8 @@ function canMoveTo(moves, i) {
   return (moves.indexOf(i) & 0x1) === 0;
 }
 
-function propsForSquare(boardComponent, index) {
+function propsForSquare(boardComponent, square) {
   const boardElement = boardComponent.root.findByProps({ id: "board" });
-  const squareElement = boardElement.props.children[index];
+  const squareElement = boardElement.props.children[square];
   return squareElement.props;
 }

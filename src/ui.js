@@ -42,7 +42,7 @@ type BoardState = {
 };
 
 type BoardProps = {
-  pieces: any,
+  pieces: Array<?PieceModel>,
   turn: "white" | "black"
 };
 
