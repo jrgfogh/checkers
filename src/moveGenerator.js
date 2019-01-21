@@ -1,8 +1,8 @@
 // @flow
 
 export type PieceModel = {
-    kind: string;
-    color: string;
+    kind: "king" | "man";
+    color: "white" | "black";
 };
 
 export const MoveKind = {
@@ -16,17 +16,16 @@ const rowLength = 8
 
 export default class MoveGenerator {
     board: Array<?PieceModel>;
-    turn: string;
+    turn: "white" | "black";
 
-    constructor(board : Array<?PieceModel>) {
+    constructor(board : Array<?PieceModel>, turn : "black" | "white") {
         this.board = board;
+        this.turn = turn;
     }
 
     movesFrom(square : number) {
         if (!this.board[square])
             throw Error("There is no piece in square" + square);
-        // TODO(jrgfogh): Enforce a proper invariant for this.turn instead.
-        this.turn = this.board[square].color;
         if (this.board[square].kind === "king")
             return this.movesForKingFrom(square);
         if (this.turn === "black")
@@ -179,6 +178,7 @@ export default class MoveGenerator {
     movePiece(from : number, to : number, moveKind : number) {
         if (!this.board[from])
             throw Error("Tried to move from empty square: " + from);
+        // TODO(jrgfogh): Change this.turn.
         const piece = this.board[from];
         this.board[to] = piece;
         this.board[from] = null;
@@ -230,10 +230,11 @@ function squareIsAtRightEdge(square : number) {
 }
 
 export function movePiece(board : Array<?PieceModel>, from : number, to : number) {
-    if (board[from] === null)
+    if (!board[from])
         throw Error("Attempted to move from an empty square.");
+    const piece = board[from];
     const result : Array<?PieceModel> = board.slice();
-    const generator = new MoveGenerator(result);
+    const generator = new MoveGenerator(result, piece.color);
     const moves = generator.movesFrom(from);
     for (let i = 0; i < moves.length; i += 2)
         if (moves[i] == to)
@@ -241,7 +242,9 @@ export function movePiece(board : Array<?PieceModel>, from : number, to : number
     return result;
 }
 
-export function movesFrom(board : Array<?PieceModel>, square : number) {
-    const generator = new MoveGenerator(board);
-    return generator.movesFrom(square);
+export function movesFrom(board : Array<?PieceModel>, from : number) {
+    if (!board[from])
+        throw Error("Attempted to move from an empty square.");
+    const generator = new MoveGenerator(board, board[from].color);
+    return generator.movesFrom(from);
 }
