@@ -15,12 +15,14 @@ export const MoveKind = {
 const rowLength = 8
 
 export default class MoveGenerator {
-    board: Array<?PieceModel>;
+    board: (?PieceModel)[];
     turn: "white" | "black";
+    history: (?PieceModel)[][];
 
     constructor(board : Array<?PieceModel>, turn : "black" | "white") {
         this.board = board;
         this.turn = turn;
+        this.history = [];
     }
 
     movesFrom(square : number) {
@@ -180,6 +182,7 @@ export default class MoveGenerator {
             throw Error("Tried to move from empty square: " + from);
         // TODO(jrgfogh): Change this.turn.
         const piece = this.board[from];
+        this.history.push(deepCopy(this.board));
         this.board[to] = piece;
         this.board[from] = null;
         if (isCrowning(moveKind))
@@ -188,9 +191,17 @@ export default class MoveGenerator {
             this.board[midpoint(from, to)] = null;
     }
 
+    undoMove() {
+        this.board = this.history.pop();
+    }
+
     isObstructed(square : number) {
         return this.board[square] !== null
     }
+}
+
+function deepCopy<T>(original: T) : T {
+    return JSON.parse(JSON.stringify(original));
 }
 
 function isCrowning(moveKind : number) {
