@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import Board from './ui'
 import { parse } from "../src/checkersFEN";
 
-const pieces = parse(
+const board = parse(
   ".m.m.m.m" +
   "m.m.m.m." +
   ".m.m.m.m" +
@@ -15,8 +15,7 @@ const pieces = parse(
   "M.M.M.M." +
   " w").pieces;
 
-
 ReactDOM.render(
-    <Board pieces={ pieces } turn="black" />,
+    <Board board={ board } turn="black" />,
     document.getElementById('game')
   );
