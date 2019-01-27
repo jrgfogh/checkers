@@ -252,7 +252,6 @@ function squareIsAtRightEdge(square : number) {
 export function movePiece(state : GameModel, from : number, to : number) {
     if (!state.board[from])
         throw Error("Attempted to move from an empty square.");
-    const piece = state.board[from];
     const result : GameModel = { board: state.board.slice(), turn: state.turn };
     const generator = new MoveGenerator(result);
     const moves = generator.movesFrom(from);
