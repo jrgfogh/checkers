@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { movesFrom, movePiece } from './moveGenerator';
-import type { PieceModel } from './moveGenerator';
+import type { PieceModel, GameModel } from './moveGenerator';
 
 function Piece(props : PieceModel) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
@@ -36,13 +36,13 @@ export function Square(props : SquareProps) {
 
 type BoardState = {
   selected: ?number,
-  pieces: Array<?PieceModel>,
+  game: GameModel,
   turn: "white" | "black",
   canMoveTo: boolean[]
 };
 
 type BoardProps = {
-  pieces: Array<?PieceModel>,
+  game: GameModel,
   turn: "white" | "black"
 };
 
@@ -51,7 +51,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     super(props)
     this.state = {
       selected: null,
-      pieces: props.pieces.slice(),
+      game: props.game,
       turn: props.turn,
       canMoveTo: Array(64).fill(false)
     };
@@ -67,28 +67,28 @@ export default class Board extends React.Component<BoardProps, BoardState> {
           throw Error("This line should be unreachable!");
         return {
           selected: null,
-          pieces: movePiece(prevState.pieces, prevState.selected, square),
+          game: movePiece(prevState.game, prevState.selected, square),
           turn: nextTurn(prevState.turn),
           canMoveTo: Array(64).fill(false)
         };
       });
     }
-    else if (this.state.pieces[square])
-      this.toggleSelected(square, this.state.pieces[square]);
+    else if (this.state.game.board[square])
+      this.toggleSelected(square, this.state.game.board[square]);
   }
 
   toggleSelected(square : number, piece : PieceModel) : void {
     if (this.state.selected !== square && piece.color === this.state.turn)
       this.setState(prevState => { return {
           selected: square,
-          canMoveTo: this.legalMoveGrid(prevState.pieces, square)
+          canMoveTo: this.legalMoveGrid(prevState.game, square)
         }; })
     else
       this.setState({ selected: null, canMoveTo: Array(64).fill(false) })
   }
 
-  legalMoveGrid(pieces: Array<?PieceModel>, origin : number) {
-    const moves = movesFrom(pieces, origin);
+  legalMoveGrid(game: GameModel, origin : number) {
+    const moves = movesFrom(game, origin);
     const result : boolean[] = Array(64).fill(false);
     for (let i = 0; i < moves.length; i += 2)
       result[moves[i]] = true;
@@ -108,7 +108,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     const squares = []
     for (let i = 0; i < 64; i++)
       squares[i] =
-        <Square key={ i } color={ boardColors[i] } piece={ this.state.pieces[i] }
+        <Square key={ i } color={ boardColors[i] } piece={ this.state.game.board[i] }
           onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.state.turn } />
     return (
       <div id="board">

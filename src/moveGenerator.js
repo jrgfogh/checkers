@@ -5,6 +5,10 @@ export type PieceModel = {
     color: "white" | "black";
 };
 
+export type GameModel = {
+    board: Array<?PieceModel>
+};
+
 export const MoveKind = {
     Simple: 0,
     Crowning: 1,
@@ -240,12 +244,12 @@ function squareIsAtRightEdge(square : number) {
     return (square & 0x7) === 7;
 }
 
-export function movePiece(board : Array<?PieceModel>, from : number, to : number) {
-    if (!board[from])
+export function movePiece(state : GameModel, from : number, to : number) {
+    if (!state.board[from])
         throw Error("Attempted to move from an empty square.");
-    const piece = board[from];
-    const result : Array<?PieceModel> = board.slice();
-    const generator = new MoveGenerator(result, piece.color);
+    const piece = state.board[from];
+    const result : GameModel = { board: state.board.slice() };
+    const generator = new MoveGenerator(result.board, piece.color);
     const moves = generator.movesFrom(from);
     for (let i = 0; i < moves.length; i += 2)
         if (moves[i] == to)
@@ -253,9 +257,9 @@ export function movePiece(board : Array<?PieceModel>, from : number, to : number
     return result;
 }
 
-export function movesFrom(board : Array<?PieceModel>, from : number) {
-    if (!board[from])
+export function movesFrom(state : GameModel, from : number) {
+    if (!state.board[from])
         throw Error("Attempted to move from an empty square.");
-    const generator = new MoveGenerator(board, board[from].color);
+    const generator = new MoveGenerator(state.board, state.board[from].color);
     return generator.movesFrom(from);
 }

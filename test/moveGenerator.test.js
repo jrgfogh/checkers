@@ -906,33 +906,33 @@ describe("Move Generator", () => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }
 
-            const result = movePiece(board, square, square + rowLength + 1);
+            const result = movePiece({ board: board }, square, square + rowLength + 1);
 
-            expect(result[square]).toBe(null)
+            expect(result.board[square]).toBe(null)
         })
 
         each([[0, "man"], [1, "king"]]).it("simple move from square %d %s should put piece in destination cell", (square, kind) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: kind }
 
-            const result = movePiece(board, square, square + rowLength + 1);
+            const result = movePiece({ board: board }, square, square + rowLength + 1);
 
-            expect(result[square + rowLength + 1]).toEqual({ color: "black", kind: kind })
+            expect(result.board[square + rowLength + 1]).toEqual({ color: "black", kind: kind })
         })
 
         each([52, 54]).it("crowning move from square %d should make destination piece a king", (square : number) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }
 
-            const result = movePiece(board, square, square + rowLength + 1);
+            const result = movePiece({ board: board }, square, square + rowLength + 1);
 
-            expect(result[square + rowLength + 1]).toEqual({ color: "black", kind: "king" })
+            expect(result.board[square + rowLength + 1]).toEqual({ color: "black", kind: "king" })
         })
 
         it("should throw for a move from an empty square", () => {
             const board = emptyBoard.slice()
 
-            expect(() => movePiece(board, 3, 12)).toThrowError("Attempted to move from an empty square.");
+            expect(() => movePiece({ board: board }, 3, 12)).toThrowError("Attempted to move from an empty square.");
         })
     })
 
@@ -969,7 +969,7 @@ describe("Move Generator", () => {
             const board = emptyBoard.slice()
             board[63] = { color: "black", kind: "king" }
 
-            const moves = movesFrom(board, 63);
+            const moves = movesFrom({ board: board }, 63);
             const expected = [];
             for (let i = 0; i < 7; i++)
                 expected.push(63 - (rowLength + 1) * (i + 1), MoveKind.Simple);
