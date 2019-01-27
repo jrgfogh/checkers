@@ -37,22 +37,15 @@ export function Square(props : SquareProps) {
 type BoardState = {
   selected: ?number,
   game: GameModel,
-  turn: "white" | "black",
   canMoveTo: boolean[]
 };
 
-type BoardProps = {
-  game: GameModel,
-  turn: "white" | "black"
-};
-
-export default class Board extends React.Component<BoardProps, BoardState> {
-  constructor(props : BoardProps) {
+export default class Board extends React.Component<GameModel, BoardState> {
+  constructor(props : GameModel) {
     super(props)
     this.state = {
       selected: null,
-      game: props.game,
-      turn: props.turn,
+      game: props,
       canMoveTo: Array(64).fill(false)
     };
   }
@@ -68,7 +61,6 @@ export default class Board extends React.Component<BoardProps, BoardState> {
         return {
           selected: null,
           game: movePiece(prevState.game, prevState.selected, square),
-          turn: nextTurn(prevState.turn),
           canMoveTo: Array(64).fill(false)
         };
       });
@@ -78,7 +70,7 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   toggleSelected(square : number, piece : PieceModel) : void {
-    if (this.state.selected !== square && piece.color === this.state.turn)
+    if (this.state.selected !== square && piece.color === this.state.game.turn)
       this.setState(prevState => { return {
           selected: square,
           canMoveTo: this.legalMoveGrid(prevState.game, square)
@@ -109,17 +101,11 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     for (let i = 0; i < 64; i++)
       squares[i] =
         <Square key={ i } color={ boardColors[i] } piece={ this.state.game.board[i] }
-          onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.state.turn } />
+          onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.state.game.turn } />
     return (
       <div id="board">
         { squares }
       </div>
     )
   }
-}
-
-function nextTurn(turn) {
-  if (turn === "white")
-    return "black";
-  return "white";
 }

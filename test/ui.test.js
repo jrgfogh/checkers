@@ -146,7 +146,7 @@ describe("Board", () => {
   it("renders correctly when empty", () => {
     const pieces = emptyBoard.slice();
     const board = TestRenderer.create(
-      <Board game={ { board: pieces } } turn="white" />
+      <Board board={ pieces } turn="white" />
     );
     expect(board.toJSON()).toMatchSnapshot();
   });
@@ -163,7 +163,7 @@ describe("Board", () => {
       pieces[square] = whiteMan;
       const renderer = new ShallowRenderer();
       renderer.render(
-        <Board game={ { board: pieces } } turn="white" />
+        <Board board={ pieces } turn="white" />
       );
       const board = renderer.getRenderOutput();
       expect(board.props.children[square].props).toMatchObject({
@@ -180,7 +180,7 @@ describe("Board", () => {
         const whiteMan = { color: "white", kind: "man" };
         pieces[square] = whiteMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="white" />
+          <Board board={ pieces } turn="white" />
         );
 
         propsForSquare(board, square).onClick();
@@ -196,7 +196,7 @@ describe("Board", () => {
         const blackMan = { color: "black", kind: "man" };
         pieces[square] = blackMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="white" />
+          <Board board={ pieces } turn="white" />
         );
 
         propsForSquare(board, square).onClick();
@@ -212,7 +212,7 @@ describe("Board", () => {
         const blackMan = { color: "black", kind: "man" };
         pieces[square] = blackMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="black" />
+          <Board board={ pieces } turn="black" />
         );
 
         propsForSquare(board, square).onClick();
@@ -228,7 +228,7 @@ describe("Board", () => {
         const whiteMan = { color: "white", kind: "man" };
         pieces[square] = whiteMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="white" />
+          <Board board={ pieces } turn="white" />
         );
 
         propsForSquare(board, square).onClick();
@@ -243,7 +243,7 @@ describe("Board", () => {
       (square : number) => {
         const pieces = emptyBoard.slice();
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="white" />
+          <Board board={ pieces } turn="white" />
         );
 
         propsForSquare(board, square).onClick();
@@ -257,7 +257,7 @@ describe("Board", () => {
       const whiteMan = { color: "white", kind: "man" };
       pieces[2] = pieces[5] = whiteMan;
       const board = TestRenderer.create(
-        <Board game={ { board: pieces } } turn="white" />
+        <Board board={ pieces } turn="white" />
       );
 
       propsForSquare(board, 2).onClick();
@@ -271,7 +271,7 @@ describe("Board", () => {
       const whiteMan = { color: "white", kind: "man" };
       pieces[2] = pieces[5] = whiteMan;
       const board = TestRenderer.create(
-        <Board game={ { board: pieces } } turn="white" />
+        <Board board={ pieces } turn="white" />
       );
 
       propsForSquare(board, 2).onClick();
@@ -284,11 +284,11 @@ describe("Board", () => {
       "should highlight exactly correct moves for black piece on square %d when clicked and black's turn.",
       (square : number) => {
         const pieces = emptyBoard.slice();
-        const moveGenerator = new MoveGenerator(pieces, "black");
+        const moveGenerator = new MoveGenerator({ board: pieces, turn: "black" });
         const blackMan = { color: "black", kind: "man" };
         pieces[square] = blackMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="black" />
+          <Board board={ pieces } turn="black" />
         );
 
         propsForSquare(board, square).onClick();
@@ -302,7 +302,7 @@ describe("Board", () => {
     it("should not highlight any moves for an empty board", () => {
       const pieces = emptyBoard.slice();
       const board = TestRenderer.create(
-        <Board game={ { board: pieces } } turn="black" />
+        <Board board={ pieces } turn="black" />
       );
 
       for (let i = 0; i < 64; i++)
@@ -316,7 +316,7 @@ describe("Board", () => {
         const blackMan = { color: "black", kind: "man" };
         pieces[square] = blackMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="black" />
+          <Board board={ pieces } turn="black" />
         );
 
         propsForSquare(board, square).onClick();
@@ -337,7 +337,7 @@ describe("Board", () => {
         const blackMan = { color: "black", kind: "man" };
         pieces[square] = blackMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="black" />
+          <Board board={ pieces } turn="black" />
         );
 
         propsForSquare(board, square).onClick();
@@ -358,7 +358,7 @@ describe("Board", () => {
         const blackMan = { color: "black", kind: "man" };
         pieces[square] = blackMan;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn="black" />
+          <Board board={ pieces } turn="black" />
         );
 
         propsForSquare(board, square).onClick();
@@ -379,14 +379,14 @@ describe("Board", () => {
         const king : PieceModel = { color: startTurn, kind: "man" };
         pieces[from] = king;
         const board = TestRenderer.create(
-          <Board game={ { board: pieces } } turn={startTurn} />
+          <Board board={ pieces } turn={ startTurn } />
         );
 
         propsForSquare(board, from).onClick();
         propsForSquare(board, to).onClick();
 
         // $FlowExpectError
-        expect(board.getInstance().state.turn).toEqual(endTurn);
+        expect(board.getInstance().state.game.turn).toEqual(endTurn);
       }
     );
 
@@ -395,7 +395,7 @@ describe("Board", () => {
       const blackMan = { color: "black", kind: "man" };
       pieces[square] = blackMan;
       const board = TestRenderer.create(
-        <Board game={ { board: pieces } } turn="black" />
+        <Board board={ pieces } turn="black" />
       );
 
       propsForSquare(board, square).onClick();
