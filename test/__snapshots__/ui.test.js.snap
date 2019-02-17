@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Game UI Board renders correctly when empty 1`] = `
+exports[`Checkers UI Board renders correctly when empty 1`] = `
 <div
   id="board"
 >

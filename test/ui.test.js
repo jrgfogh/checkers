@@ -5,7 +5,7 @@ import * as TestRenderer from "react-test-renderer";
 import ShallowRenderer from "react-test-renderer/shallow";
 import each from "jest-each";
 
-import Board, { Square } from "../src/ui";
+import Board, { Square, Game } from "../src/ui";
 import MoveGenerator from "../src/moveGenerator";
 
 import type { PieceModel } from "../src/moveGenerator"
@@ -13,7 +13,7 @@ import type { PieceModel } from "../src/moveGenerator"
 const emptyBoard = Array(64).fill(null);
 const rowLength = 8;
 
-describe("Game UI", () => {
+describe("Checkers UI", () => {
   describe("Board", () => {
     describe("Square", () => {
       it("renders empty black correctly", () => {
@@ -113,7 +113,7 @@ describe("Game UI", () => {
 
       it("renders empty black selected correctly", () => {
         const square = TestRenderer.create(
-          <Square color="black" selected={true} canMoveTo={ false } selected={ true } turn="black" />
+          <Square color="black" canMoveTo={ false } selected={ true } turn="black" />
         );
         expect(square.toJSON()).toMatchInlineSnapshot(`
 <div
@@ -406,6 +406,35 @@ describe("Game UI", () => {
         expect(board.getInstance().state.canMoveTo).toEqual(Array(64).fill(false));
       });
     });
+  });
+
+  describe("Game", () => {
+    it("should render empty board correctly", () => {
+        const board = emptyBoard.slice();
+        const renderer = new ShallowRenderer();
+        renderer.render(<Game board={ board } turn="white" />);
+        const game = renderer.getRenderOutput();
+
+        expect(game.props.className).toBe("game");
+        expect(game.props.children).toEqual([
+      		<h1>Checkers</h1>,
+          <Board board={ board } turn="white" />
+        ]);
+    })
+
+    it("should render non-empty board correctly", () => {
+        const board = emptyBoard.slice();
+        board[5] = { color: "white", kind: "man" };
+        const renderer = new ShallowRenderer();
+        renderer.render(<Game board={ board } turn="black" />);
+        const game = renderer.getRenderOutput();
+
+        expect(game.props.className).toBe("game");
+        expect(game.props.children).toEqual([
+      		<h1>Checkers</h1>,
+          <Board board={ board } turn="black" />
+        ]);
+    })
   });
 });
 

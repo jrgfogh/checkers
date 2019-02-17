@@ -109,3 +109,10 @@ export default class Board extends React.Component<GameModel, BoardState> {
     )
   }
 }
+
+export function Game(props : GameModel) {
+  return <div className="game">
+  		<h1>Checkers</h1>
+      <Board board={ props.board } turn={ props.turn } />
+    </div>;
+}
