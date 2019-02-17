@@ -17,5 +17,5 @@ const board = parse(
 
 ReactDOM.render(
     <Game board={ board } turn="black" />,
-    document.getElementById('game').parentElement
+    document.getElementById('game')
   );
