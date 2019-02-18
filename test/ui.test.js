@@ -424,25 +424,6 @@ describe("Checkers UI", () => {
           expect(propsForSquare(board, i).canMoveTo).toBe(false);
       });
 
-      each([10, 11, 12]).it(
-        "should clear selection when a destination square is clicked",
-        (square: number) => {
-          const pieces = emptyBoard.slice();
-          const blackMan = { color: "black", kind: "man" };
-          pieces[square] = blackMan;
-          const board = TestRenderer.create(
-            <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
-          );
-
-          propsForSquare(board, square).onClick();
-          propsForSquare(board, square + rowLength + 1).onClick();
-
-          // $FlowExpectError
-          expect(board.getInstance().state.canMoveTo).toEqual(
-            Array(64).fill(false)
-          );
-        });
-
       each([10, 27]).it(
         "should clear selection man is clicked twice",
         (square: number) => {
@@ -632,6 +613,25 @@ describe("Checkers UI", () => {
           expect(undoButton.props.disabled).toEqual(false);
         }
       );
+
+      each([10, 11, 12]).it(
+        "should clear selection when a destination square is clicked",
+        (square: number) => {
+          const pieces = emptyBoard.slice();
+          const blackMan = { color: "black", kind: "man" };
+          pieces[square] = blackMan;
+          const game = TestRenderer.create(
+            <Game board={pieces} turn="black" />
+          );
+
+          propsForSquare(game, square).onClick();
+          propsForSquare(game, square + rowLength + 1).onClick();
+
+          // $FlowExpectErrorz
+          expect(game.root.findByType(Board).instance.state.canMoveTo).toEqual(
+            Array(64).fill(false)
+          );
+        });
     });
   });
 });
