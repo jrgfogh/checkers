@@ -452,9 +452,10 @@ describe("Checkers UI", () => {
       renderer.render(<Game board={board} turn="white" />); 
       const game = renderer.getRenderOutput();
 
-      expect(game.type).toEqual(Board);
-      expect(game.props.board).toEqual(board);
-      expect(game.props.turn).toEqual("white");
+      const boardTag = game.props.children[0];
+      expect(boardTag.type).toEqual(Board);
+      expect(boardTag.props.board).toEqual(board);
+      expect(boardTag.props.turn).toEqual("white");
     });
 
     it("should render non-empty board correctly", () => {
@@ -464,9 +465,22 @@ describe("Checkers UI", () => {
       renderer.render(<Game board={board} turn="black" />);
       const game = renderer.getRenderOutput();
 
-      expect(game.type).toEqual(Board);
-      expect(game.props.board).toEqual(board);
-      expect(game.props.turn).toEqual("black");
+      const boardTag = game.props.children[0];
+      expect(boardTag.type).toEqual(Board);
+      expect(boardTag.props.board).toEqual(board);
+      expect(boardTag.props.turn).toEqual("black");
+    });
+
+    it("should contain undo-button", () => {
+      const board = emptyBoard.slice();
+      const renderer = new ShallowRenderer();
+      renderer.render(<Game board={board} turn="black" />);
+      const game = renderer.getRenderOutput();
+
+      const undoButton = game.props.children[1].props.children;
+      expect(undoButton.type).toEqual("button");
+      expect(undoButton.props.disabled).toEqual(true);
+      expect(undoButton.props.children).toEqual("Undo move!");
     });
 
     describe("User input", () => {
@@ -515,8 +529,7 @@ describe("Checkers UI", () => {
       each([
         [10, 10 + rowLength + 1, "black", "white"],
         [13, 13 - rowLength + 1, "white", "black"]
-      ]).it(
-        "should switch turn from when a destination square is clicked",
+      ]).it("should switch turn when a destination square is clicked",
         (from: number, to: number, startTurn, endTurn) => {
           const pieces = emptyBoard.slice();
           const king: PieceModel = { color: startTurn, kind: "king" };
@@ -529,7 +542,75 @@ describe("Checkers UI", () => {
           propsForSquare(game, to).onClick();
 
           // $FlowExpectError
-          expect(game.getInstance().state.turn).toEqual(endTurn);
+          expect(game.getInstance().state.game.turn).toEqual(endTurn);
+        }
+      );
+
+      each([
+        [10, 10 + rowLength + 1, "black", "white"],
+        [13, 13 - rowLength + 1, "white", "black"]
+      ]).it("should enable undo button when a destination square is clicked",
+        (from: number, to: number, startTurn, endTurn) => {
+          const pieces = emptyBoard.slice();
+          const king: PieceModel = { color: startTurn, kind: "king" };
+          pieces[from] = king;
+          const game = TestRenderer.create(
+            <Game board={pieces} turn={startTurn} />
+          );
+          const undoButton = game.root.findByProps({ children: "Undo move!" });
+
+          propsForSquare(game, from).onClick();
+          propsForSquare(game, to).onClick();
+
+          expect(undoButton.props.disabled).toEqual(false);
+        }
+      );
+
+      each([
+        [10, 10 + rowLength + 1, "black"],
+        [13, 13 - rowLength + 1, "white"]
+      ]).it("should undo move when the undo button is clicked after a single move",
+        (from: number, to: number, startTurn) => {
+          const pieces = emptyBoard.slice();
+          const king: PieceModel = { color: startTurn, kind: "king" };
+          pieces[from] = king;
+          const game = TestRenderer.create(
+            <Game board={pieces} turn={startTurn} />
+          );
+          const undoButton = game.root.findByProps({ children: "Undo move!" });
+
+          propsForSquare(game, from).onClick();
+          propsForSquare(game, to).onClick();
+          undoButton.props.onClick();
+
+          // $FlowExpectError
+          expect(game.getInstance().state.game.turn).toEqual(startTurn);
+          expect(undoButton.props.disabled).toEqual(true);
+        }
+      );
+
+      each([
+        [10, 10 + rowLength + 1, 36, 36 - rowLength + 1]
+      ]).it("should undo move when the undo button is clicked after two moves",
+        (from0: number, to0: number, from1: number, to1: number) => {
+          const pieces = emptyBoard.slice();
+          const blackKing: PieceModel = { color: "black", kind: "king" };
+          const whiteKing: PieceModel = { color: "white", kind: "king" };
+          pieces[from0] = blackKing;
+          pieces[from1] = whiteKing;
+          const game = TestRenderer.create(
+            <Game board={pieces} turn={"black"} />
+          );
+          const undoButton = game.root.findByProps({ children: "Undo move!" });
+          propsForSquare(game, from0).onClick();
+          propsForSquare(game, to0).onClick();
+          propsForSquare(game, from1).onClick();
+          propsForSquare(game, to1).onClick();
+          undoButton.props.onClick();
+
+          // $FlowExpectError
+          expect(game.getInstance().state.game.turn).toEqual("white");
+          expect(undoButton.props.disabled).toEqual(false);
         }
       );
     });

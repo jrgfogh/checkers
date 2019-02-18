@@ -115,20 +115,49 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 }
 
-export class Game extends React.Component<GameModel, GameModel> {
+type GameState = {
+  game: GameModel,
+  stepNumber: number,
+  moveHistory: GameModel[]
+}
+
+export class Game extends React.Component<GameModel, GameState> {
   constructor(props : GameModel) {
     super(props)
     this.state = {
-      board: props.board.slice(),
-      turn: props.turn
+      game: {
+        board: props.board.slice(),
+        turn: props.turn
+      },
+      stepNumber: 0,
+      moveHistory: []
     };
   }
 
   render() {
-    return <Board board={ this.state.board } turn={ this.state.turn } movePiece={(from: number, to: number) => {
-      this.setState((prevState) => {
-        return movePiece(prevState, from, to);
-      });
-    }} />;
+    return <div>
+      <Board key={ this.state.stepNumber } board={ this.state.game.board } turn={ this.state.game.turn } movePiece={(from: number, to: number) => {
+        this.setState((prevState) => {
+          return {
+              game: movePiece(prevState.game, from, to),
+              moveHistory: prevState.moveHistory.concat(prevState.game),
+              stepNumber: prevState.stepNumber + 1
+            };
+        });
+      }} />
+      <div className="game-controls">
+        <button onClick={() => {
+            this.setState((prevState) => {
+              const moveHistory = prevState.moveHistory;
+              const lastIndex = moveHistory.length - 1;
+              return {
+                  game: moveHistory[lastIndex],
+                  moveHistory: moveHistory.slice(0, lastIndex),
+                  stepNumber: prevState.stepNumber + 1
+                };
+            });
+          }} disabled={this.state.moveHistory.length === 0}>Undo move!</button>
+      </div>
+    </div>;
   }
 }
