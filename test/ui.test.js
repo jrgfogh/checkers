@@ -264,7 +264,7 @@ describe("Checkers UI", () => {
     );
 
     describe("User input", () => {
-      each(allSquareIndices).it(
+      each([10, 15, 27, 40]).it(
         "should select white piece on square %d when clicked and white's turn.",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -296,7 +296,26 @@ describe("Checkers UI", () => {
         }
       );
 
-      each(allSquareIndices).it(
+      each([1, 3, 5]).it(
+        "should not select black piece on square %d when it has no valid moves.",
+        (square: number) => {
+          const pieces = emptyBoard.slice();
+          const blackMan = { color: "black", kind: "man" };
+          const whiteMan = { color: "black", kind: "man" };
+          pieces[square] = blackMan;
+          pieces[square + rowLength + 1] = whiteMan;
+          pieces[square + rowLength - 1] = whiteMan;
+          const board = TestRenderer.create(
+            <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
+          );
+
+          propsForSquare(board, square).onClick();
+
+          expect(propsForSquare(board, square).selected).toBe(false);
+        }
+      );
+
+      each([10, 15, 27, 40]).it(
         "should select black piece on square %d when clicked and black's turn.",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -312,7 +331,7 @@ describe("Checkers UI", () => {
         }
       );
 
-      each(allSquareIndices).it(
+      each([10, 15, 27, 40]).it(
         "should unselect piece on square %d when clicked",
         (square: number) => {
           const pieces = emptyBoard.slice();
