@@ -169,3 +169,11 @@ h1
 	width: 50%;
 	border-radius: 50%;
 }
+
+.game-controls {
+	margin-top: 25px;
+}
+
+.game-controls button {
+	padding: 5px 20px;
+}
