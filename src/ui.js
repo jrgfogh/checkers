@@ -71,11 +71,17 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     if (this.state.canMoveTo[square])
       this.moveSelectedTo(square);
     else if (this.props.board[square])
-      this.toggleSelected(square, this.props.board[square]);
+      this.toggleSelected(square);
   }
 
-  toggleSelected(square : number, piece : PieceModel) : void {
-    if (this.state.selected !== square && piece.color === this.props.turn)
+  canMove(square: number) : boolean {
+    const piece = this.props.board[square];
+    return this.state.selected !== square && !!piece && piece.color === this.props.turn &&
+      movesFrom(this.props, square).length > 0;
+  }
+
+  toggleSelected(square : number) : void {
+    if (this.canMove(square))
       this.setState({
           selected: square,
           canMoveTo: this.legalMoveGrid(this.props, square)
