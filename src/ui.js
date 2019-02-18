@@ -53,18 +53,9 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 
   moveSelectedTo(square : number) : void {
-    this.setState((prevState) => {
-      // TODO(jrgfogh): Find a way to specify the invariant statically.
-      // TODO(jrgfogh): Where should this invariant be documented?
-      // Invariant: canMoveTo is empty <=> !selected
-      if (!prevState.selected)
+      if (!this.state.selected)
         throw Error("This line should be unreachable!");
-      this.props.movePiece(prevState.selected, square);
-      return {
-        selected: null,
-        canMoveTo: Array(64).fill(false)
-      };
-    });
+      this.props.movePiece(this.state.selected, square);
   }
 
   handleClick(square : number) : void {
