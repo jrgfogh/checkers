@@ -467,8 +467,8 @@ describe("Move Generator", () => {
                     square - 2 * (rowLength - 1), MoveKind.CrowningJump
                 ]);
             });
-        })
-    })
+        });
+    });
 
     describe("King", () => {
         describe("Main diagonal", () => {
@@ -657,9 +657,11 @@ describe("Move Generator", () => {
         })
         
         describe("Jumps", () => {
-            each([2, 3, 4, 5]).it("should generate two jumps from square %d when possible", (square : number) => {
+            each([26, 28, 35, 37]).it("should generate four jumps from square %d when possible", (square : number) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "king" }
+                board[square - rowLength - 1] = { color: "white", kind: "man" }
+                board[square - rowLength + 1] = { color: "white", kind: "man" }
                 board[square + rowLength - 1] = { color: "white", kind: "man" }
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
@@ -667,6 +669,8 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
 
                 expect(moves).toEqual([
+                    square - 2 * (rowLength - 1), MoveKind.Jump,
+                    square - 2 * (rowLength + 1), MoveKind.Jump,
                     square + 2 * (rowLength - 1), MoveKind.Jump,
                     square + 2 * (rowLength + 1), MoveKind.Jump
                 ]);
@@ -870,6 +874,17 @@ describe("Move Generator", () => {
             expect(board[square + rowLength - 1]).toEqual(null)
         })
 
+        each([5, 27]).it("jump from square %d should switch turn", (square : number) => {
+            const board = emptyBoard.slice()
+            board[square] = { color: "black", kind: "man" }
+            board[square + rowLength - 1] = { color: "white", kind: "man" }
+            const generator = new MoveGenerator({ board: board, turn: "black" });
+
+            generator.movePiece(square, square + 2 * (rowLength - 1), MoveKind.Jump);
+
+            expect(generator.state.turn).toEqual("white")
+        })
+
         each([40, 45]).it("crowning jump from square %d should capture opponent's piece", (square : number) => {
             const board = emptyBoard.slice()
             board[square] = { color: "black", kind: "man" }
@@ -891,6 +906,21 @@ describe("Move Generator", () => {
 
             expect(board[square + 2 * (rowLength + 1)]).toEqual({ color: "black", kind: "king" })
         })
+
+        describe("Multiple jumps", () => {
+            each([5, 27]).it("should not switch turn when second jump is available",
+                    (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                board[square + 3 * (rowLength + 1)] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator({ board: board, turn: "black" });
+
+                generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.Jump);
+
+                expect(generator.state.turn).toEqual("black")
+            });
+        });
     })
 
     describe("Move piece observationally purely", () => {

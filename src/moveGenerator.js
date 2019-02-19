@@ -40,6 +40,7 @@ export default class MoveGenerator {
 
     movesForKingFrom(square : number) {
         const moves = [];
+        this.pushUpTheBoardJumps(square, moves);
         this.pushDownTheBoardJumps(square, moves);
         if (moves.length === 0 && !this.anyPieceCanJump()) {
             this.pushMainDiagonalForKing(square, moves);
@@ -187,11 +188,14 @@ export default class MoveGenerator {
         this.history.push(deepCopy(this.state.board));
         this.state.board[to] = piece;
         this.state.board[from] = null;
-        this.state.turn = nextTurn(this.state.turn);
         if (isCrowning(moveKind))
             piece.kind = "king";
-        if (isJump(moveKind))
+        if (isJump(moveKind)) {
             this.state.board[midpoint(from, to)] = null;
+            if (!this.canJumpFrom(to))
+                this.state.turn = nextTurn(this.state.turn);
+        } else
+            this.state.turn = nextTurn(this.state.turn);
     }
 
     undoMove() {
