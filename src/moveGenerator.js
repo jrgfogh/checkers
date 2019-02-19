@@ -7,6 +7,7 @@ export type PieceModel = {
 
 export type GameModel = {
     board: Array<?PieceModel>,
+    secondMove?: number,
     turn : "black" | "white"
 };
 
@@ -29,6 +30,8 @@ export default class MoveGenerator {
     }
 
     movesFrom(square : number) {
+        if (this.state.secondMove && this.state.secondMove !== square)
+            return [];
         if (!this.state.board[square])
             throw Error("There is no piece in square" + square);
         if (this.state.board[square].kind === "king")
@@ -194,6 +197,9 @@ export default class MoveGenerator {
             this.state.board[midpoint(from, to)] = null;
             if (!this.canJumpFrom(to))
                 this.state.turn = nextTurn(this.state.turn);
+            else
+                // TODO(jrgfogh): We never clear secondMove when moving destructively.
+                this.state.secondMove = to;
         } else
             this.state.turn = nextTurn(this.state.turn);
     }

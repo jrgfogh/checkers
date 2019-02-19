@@ -920,6 +920,37 @@ describe("Move Generator", () => {
 
                 expect(generator.state.turn).toEqual("black")
             });
+
+            each([5, 21]).it("should generate a second jump",
+                    (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                board[square + rowLength - 1] = { color: "white", kind: "man" }
+                board[square + 3 * (rowLength - 1)] = { color: "white", kind: "man" }
+                const firstJumpDestination = square + 2 * (rowLength - 1);
+                const generator = new MoveGenerator({ board: board, turn: "black" });
+
+                generator.movePiece(square, firstJumpDestination, MoveKind.Jump);
+
+                expect(generator.movesFrom(firstJumpDestination)).toEqual([
+                        square + 4 * (rowLength - 1), MoveKind.Jump
+                    ])
+            });
+
+            each([5, 27]).it("should not generate jump another piece when jumping for the second time",
+                    (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                const rivalSquare = square + 2 * (rowLength + 1) + 2;
+                board[rivalSquare] = { color: "black", kind: "man" }
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                board[square + 3 * (rowLength + 1)] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator({ board: board, turn: "black" });
+
+                generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.Jump);
+
+                expect(generator.movesFrom(rivalSquare)).toEqual([])
+            });
         });
     })
 
@@ -956,7 +987,24 @@ describe("Move Generator", () => {
 
             expect(() => movePiece({ board: board, turn: "black" }, 3, 12)).toThrowError("Attempted to move from an empty square.");
         })
-    })
+        
+        describe("Multiple jumps", () => {
+            each([5, 27]).it("should not generate jump another piece when jumping for the second time",
+                    (square) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                const rivalSquare = square + 2 * (rowLength + 1) + 2;
+                board[rivalSquare] = { color: "black", kind: "man" }
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                board[square + 3 * (rowLength + 1)] = { color: "white", kind: "man" }
+
+                const result = movePiece({ board: board, turn: "black" },
+                    square, square + 2 * (rowLength + 1));
+
+                expect(movesFrom(result, rivalSquare)).toEqual([])
+            });
+        });
+    });
 
     describe("Undo destructive move", () => {
         each([0, 1, 2, 13]).it("should round-trip for simple move from square %d", (square : number) => {
