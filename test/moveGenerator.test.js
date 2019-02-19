@@ -951,6 +951,19 @@ describe("Move Generator", () => {
 
                 expect(generator.movesFrom(rivalSquare)).toEqual([])
             });
+
+            each([41, 42, 43]).it("should switch turn after a crowning jump, even when a new jump is possible", (square : number) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                // Pieces to jump over.
+                board[square + rowLength + 1] = { color: "white", kind: "man" }
+                board[square + rowLength + 3] = { color: "white", kind: "man" }
+                const generator = new MoveGenerator({ board: board, turn: "black" })
+
+                generator.movePiece(square, square + 2 * (rowLength + 1), MoveKind.CrowningJump);
+
+                expect(generator.state.turn).toEqual("white");
+            });
         });
     })
 
