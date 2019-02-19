@@ -195,7 +195,7 @@ export default class MoveGenerator {
             piece.kind = "king";
         if (isJump(moveKind)) {
             this.state.board[midpoint(from, to)] = null;
-            if (!this.canJumpFrom(to))
+            if (!this.canJumpFrom(to) || moveKind === MoveKind.CrowningJump)
                 this.state.turn = nextTurn(this.state.turn);
             else
                 // TODO(jrgfogh): We never clear secondMove when moving destructively.
