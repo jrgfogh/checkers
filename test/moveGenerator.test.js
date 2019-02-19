@@ -657,9 +657,11 @@ describe("Move Generator", () => {
         })
         
         describe("Jumps", () => {
-            each([2, 3, 4, 5]).it("should generate two jumps from square %d when possible", (square : number) => {
+            each([26, 28, 35, 37]).it("should generate four jumps from square %d when possible", (square : number) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "king" }
+                board[square - rowLength - 1] = { color: "white", kind: "man" }
+                board[square - rowLength + 1] = { color: "white", kind: "man" }
                 board[square + rowLength - 1] = { color: "white", kind: "man" }
                 board[square + rowLength + 1] = { color: "white", kind: "man" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
@@ -667,6 +669,8 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
 
                 expect(moves).toEqual([
+                    square - 2 * (rowLength - 1), MoveKind.Jump,
+                    square - 2 * (rowLength + 1), MoveKind.Jump,
                     square + 2 * (rowLength - 1), MoveKind.Jump,
                     square + 2 * (rowLength + 1), MoveKind.Jump
                 ]);
