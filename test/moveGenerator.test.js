@@ -1001,6 +1001,32 @@ describe("Move Generator", () => {
                 expect(movesFrom(result, rivalSquare)).toEqual([])
             });
         });
+
+        describe("Undo move", () => {
+            each([0, 1, 2, 13]).it("should round-trip for simple move from square %d", (square : number) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                const originalState = { board: board, turn: "black" };
+
+                movePiece(originalState, square, square + rowLength + 1);
+
+                const originalBoard = emptyBoard.slice()
+                originalBoard[square] = { color: "black", kind: "man" }
+                expect(originalState.board).toEqual(originalBoard)
+            })
+
+            each([50, 51, 52]).it("should round-trip for crowning move from square %d", (square : number) => {
+                const board = emptyBoard.slice()
+                board[square] = { color: "black", kind: "man" }
+                const originalState = { board: board, turn: "black" };
+
+                movePiece(originalState, square, square + rowLength + 1);
+
+                const originalBoard = emptyBoard.slice()
+                originalBoard[square] = { color: "black", kind: "man" }
+                expect(originalState.board).toEqual(originalBoard)
+            })
+        })
     });
 
     describe("Undo destructive move", () => {
