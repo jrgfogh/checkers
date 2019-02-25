@@ -472,31 +472,29 @@ describe("Move Generator", () => {
 
     describe("King", () => {
         describe("Main diagonal", () => {
-            each("white", "black").it("should generate 7 diagonal simple moves for %s king in square 0", (color) => {
+            each("white", "black").it("should generate a diagonal simple move for %s king in square 0", (color) => {
                 const board = emptyBoard.slice()
                 board[0] = { color: color, kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: color })
 
                 const moves = generator.movesFrom(0);
-                const expected = [];
-                for (let i = 0; i < 7; i++)
-                    expected.push(0 + (rowLength + 1) * (i + 1), MoveKind.Simple);
-                expect(moves).toEqual(expected);
+                expect(moves).toEqual([
+                    0 + (rowLength + 1), MoveKind.Simple
+                ]);
             })
 
-            it("should generate 7 diagonal simple moves for king in square 63", () => {
+            it("should generate a diagonal simple move for king in square 63", () => {
                 const board = emptyBoard.slice()
                 board[63] = { color: "black", kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
 
                 const moves = generator.movesFrom(63);
-                const expected = [];
-                for (let i = 0; i < 7; i++)
-                    expected.push(63 - (rowLength + 1) * (i + 1), MoveKind.Simple);
-                expect(moves).toEqual(expected);
+                expect(moves).toEqual([
+                    63 - (rowLength + 1), MoveKind.Simple
+                ]);
             })
 
-            each([2, 3, 4, 5, 6, 7]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square : number) => {
+            each([2, 3, 4, 5, 6]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square : number) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "king" }
                 board[square + rowLength - 1] = { color: "black", kind: "man" }
@@ -504,10 +502,9 @@ describe("Move Generator", () => {
                 const generator = new MoveGenerator({ board: board, turn: "black" })
 
                 const moves = generator.movesFrom(square)
-                const expected = [];
-                for (let i = 0; i < 7 - square; i++)
-                    expected.push(square + (rowLength + 1) * (i + 1), MoveKind.Simple);
-                expect(moves).toEqual(expected);
+                expect(moves).toEqual([
+                    square + (rowLength + 1), MoveKind.Simple
+                ]);
             })
 
             each([10]).it("should generate main diagonal simple moves for king in square %d, when he's obstructed on the secondary diagonal", (square : number) => {
@@ -521,11 +518,7 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
                 expect(moves).toEqual([
                     1, MoveKind.Simple,
-                    19, MoveKind.Simple,
-                    28, MoveKind.Simple,
-                    37, MoveKind.Simple,
-                    46, MoveKind.Simple,
-                    55, MoveKind.Simple
+                    19, MoveKind.Simple
                 ]);
             })
 
@@ -541,10 +534,7 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
                 expect(moves).toEqual([
                     11, MoveKind.Simple,
-                    2, MoveKind.Simple,
-                    29, MoveKind.Simple,
-                    38, MoveKind.Simple,
-                    47, MoveKind.Simple
+                    29, MoveKind.Simple
                 ]);
             })
 
@@ -559,9 +549,7 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
                 expect(moves).toEqual([
                     24, MoveKind.Simple,
-                    42, MoveKind.Simple,
-                    51, MoveKind.Simple,
-                    60, MoveKind.Simple
+                    42, MoveKind.Simple
                 ]);
             })
 
@@ -589,41 +577,38 @@ describe("Move Generator", () => {
         })
 
         describe("Secondary diagonal", () => {
-            it("should generate 7 diagonal simple moves for %s king in square 7", () => {
+            it("should generate a diagonal simple move for %s king in square 7", () => {
                 const board = emptyBoard.slice()
                 board[7] = { color: "black", kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
 
                 const moves = generator.movesFrom(7);
-                const expected = [];
-                for (let i = 1; i <= 7; i++)
-                    expected.push(7 + (rowLength - 1) * i, MoveKind.Simple);
-                expect(moves).toEqual(expected);
+                expect(moves).toEqual([
+                    7 + (rowLength - 1), MoveKind.Simple
+                ]);
             })
 
-            it("should generate 7 diagonal simple moves for %s king in square 56", () => {
+            it("should generate a diagonal simple move for %s king in square 56", () => {
                 const board = emptyBoard.slice()
                 board[56] = { color: "black", kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
 
                 const moves = generator.movesFrom(56);
-                const expected = [];
-                for (let i = 1; i <= 7; i++)
-                    expected.push(56 - (rowLength - 1) * i, MoveKind.Simple);
-                expect(moves).toEqual(expected);
+                expect(moves).toEqual([
+                    56 - (rowLength - 1), MoveKind.Simple
+                ]);
             })
 
-            each([0, 1, 2, 3, 4, 5, 6]).it("should generate secondary diagonal simple moves for king in square %d, when he's obstructed on the main diagonal", (square : number) => {
+            each([1, 2, 3, 4, 5, 6]).it("should generate a simple move on the secondary diagonal for king in square %d, when he's obstructed on the main diagonal", (square : number) => {
                 const board = emptyBoard.slice()
                 board[square] = { color: "black", kind: "king" }
                 board[square + rowLength + 1] = { color: "black", kind: "man" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
 
                 const moves = generator.movesFrom(square)
-                const expected = [];
-                for (let i = 1; i <= square; i++)
-                    expected.push(square + (rowLength - 1) * i, MoveKind.Simple);
-                expect(moves).toEqual(expected);
+                expect(moves).toEqual([
+                    square + (rowLength - 1), MoveKind.Simple
+                ]);
             })
 
             each([10]).it("should generate secondary diagonal simple moves for king in square %d, when he's obstructed on the main diagonal", (square : number) => {
@@ -637,8 +622,7 @@ describe("Move Generator", () => {
                 const moves = generator.movesFrom(square)
                 expect(moves).toEqual([
                     3, MoveKind.Simple,
-                    17, MoveKind.Simple,
-                    24, MoveKind.Simple
+                    17, MoveKind.Simple
                 ]);
             })
 
@@ -1048,15 +1032,14 @@ describe("Move Generator", () => {
     })
 
     describe("Functional movesFrom()", () => {
-        it("should generate 7 diagonal simple moves for king in square 63", () => {
+        it("should generate a diagonal simple move for king in square 63", () => {
             const board = emptyBoard.slice()
             board[63] = { color: "black", kind: "king" }
 
             const moves = movesFrom({ board: board, turn: "black" }, 63);
-            const expected = [];
-            for (let i = 0; i < 7; i++)
-                expected.push(63 - (rowLength + 1) * (i + 1), MoveKind.Simple);
-            expect(moves).toEqual(expected);
+            expect(moves).toEqual([
+                63 - (rowLength + 1), MoveKind.Simple
+            ]);
         })      
     })
 })

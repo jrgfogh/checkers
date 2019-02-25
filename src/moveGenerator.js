@@ -56,26 +56,34 @@ export default class MoveGenerator {
         for (let nextSquare = square - (rowLength + 1);
                 // If nextSquare is at the right edge, it means we just wrapped around from the right side.
                 !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
-                 nextSquare -= (rowLength + 1))
+                 nextSquare -= (rowLength + 1)) {
             moves.push(nextSquare, MoveKind.Simple);
+            break;
+        }
         for (let nextSquare = square + (rowLength + 1);
                 // If nextSquare is at the left edge, it means we just wrapped around from the right side.
                 !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare); 
-                nextSquare += (rowLength + 1))
+                nextSquare += (rowLength + 1)) {
             moves.push(nextSquare, MoveKind.Simple);
+            break;
+        }
     }
 
     pushSecondaryDiagonalForKing(square : number, moves : number[]) {
         for (let nextSquare = square - (rowLength - 1);
                 // If nextSquare is at the left edge, it means we just wrapped around from the right side.
                 !squareIsAtLeftEdge(nextSquare) && !this.isObstructed(nextSquare);
-                nextSquare -= (rowLength - 1))
+                nextSquare -= (rowLength - 1)) {
             moves.push(nextSquare, MoveKind.Simple);
+            break;
+        }
         for (let nextSquare = square + (rowLength - 1);
                 // If nextSquare is at the right edge, it means we just wrapped around from the right side.
                 !squareIsAtRightEdge(nextSquare) && !this.isObstructed(nextSquare);
-                nextSquare += (rowLength - 1))
+                nextSquare += (rowLength - 1)) {
             moves.push(nextSquare, MoveKind.Simple);
+            break;
+        }
     }
 
     movesForWhiteManFrom(square : number) {
