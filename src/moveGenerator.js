@@ -194,17 +194,18 @@ export default class MoveGenerator {
         this.history.push(deepCopy(this.state.board));
         this.state.board[to] = piece;
         this.state.board[from] = null;
-        if (isInKingsRow(to))
-            piece.kind = "king";
         if (moveKind == MoveKind.Jump) {
             this.state.board[midpoint(from, to)] = null;
-            if (!this.canJumpFrom(to) || isInKingsRow(to))
+            // TODO(jrgfogh): Test this line!
+            if (!this.canJumpFrom(to) || (isInKingsRow(to) && piece.kind !== "king"))
                 this.state.turn = nextTurn(this.state.turn);
             else
                 // TODO(jrgfogh): We never clear secondMove when moving destructively.
                 this.state.secondMove = to;
         } else
             this.state.turn = nextTurn(this.state.turn);
+        if (isInKingsRow(to))
+            piece.kind = "king";
     }
 
     undoMove() {

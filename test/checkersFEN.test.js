@@ -26,7 +26,7 @@ describe("Checkers FEN", () => {
         "........" +
         " w";
         expect(parse(fenString)).toMatchObject({
-          pieces: Array(64).fill(null),
+          board: Array(64).fill(null),
           turn: "white"
         })
     })
@@ -43,7 +43,7 @@ describe("Checkers FEN", () => {
         "........" +
         " b";
         expect(parse(fenString)).toMatchObject({
-          pieces: Array(64).fill(null),
+          board: Array(64).fill(null),
           turn: "black"
         })
     })
@@ -51,52 +51,52 @@ describe("Checkers FEN", () => {
     each(allSquareIndices).it('should parse white man on square %d', (index) => {
       const fenString = fenStringWithOnePieceAtIndex('M', index)
 
-      const pieces = Array(64).fill(null);
-      pieces[index] = {
+      const board = Array(64).fill(null);
+      board[index] = {
         color: "white",
         kind: "man"
       }
       expect(parse(fenString)).toMatchObject({
-        pieces: pieces
+        board: board
       })
     })
 
     each(allSquareIndices).it('should parse white king on square %d', (index) => {
       const fenString = fenStringWithOnePieceAtIndex('K', index)
 
-      const pieces = Array(64).fill(null);
-      pieces[index] = {
+      const board = Array(64).fill(null);
+      board[index] = {
         color: "white",
         kind: "king"
       }
       expect(parse(fenString)).toMatchObject({
-        pieces: pieces
+        board: board
       })
     })
 
     each(allSquareIndices).it('should parse black man on square %d', (index) => {
       const fenString = fenStringWithOnePieceAtIndex('m', index)
 
-      const pieces = Array(64).fill(null);
-      pieces[index] = {
+      const board = Array(64).fill(null);
+      board[index] = {
         color: "black",
         kind: "man"
       }
       expect(parse(fenString)).toMatchObject({
-        pieces: pieces
+        board: board
       })
     })
 
     each(allSquareIndices).it('should parse black king on square %d', (index) => {
       const fenString = fenStringWithOnePieceAtIndex('k', index)
 
-      const pieces = Array(64).fill(null);
-      pieces[index] = {
+      const board = Array(64).fill(null);
+      board[index] = {
         color: "black",
         kind: "king"
       }
       expect(parse(fenString)).toMatchObject({
-        pieces: pieces
+        board: board
       })
     })
 
