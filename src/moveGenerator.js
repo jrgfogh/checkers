@@ -218,7 +218,7 @@ export default class MoveGenerator {
 }
 
 function deepCopy<T>(original: T) : T {
-    return JSON.parse(JSON.stringify(original));
+    return JSON.parse(JSON.stringify(original) || '');
 }
 
 function nextTurn(turn) {
