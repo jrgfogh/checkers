@@ -236,14 +236,6 @@ function midpoint(from : number, to : number) {
     return (from + to) >> 1;
 }
 
-function squareIsInLastThreeRows(square : number) {
-    return square > 39;
-}
-
-function squareIsInFirstThreeRows(square : number) {
-    return square < 24;
-}
-
 function squareIsInLastTwoRows(square : number) {
     return square > 47;
 }
