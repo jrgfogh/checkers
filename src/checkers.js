@@ -13,7 +13,7 @@ const board = parse(
   "M.M.M.M." +
   ".M.M.M.M" +
   "M.M.M.M." +
-  " w").pieces;
+  " w").board;
 
 ReactDOM.render(
     <Game board={ board } turn="black" />,
