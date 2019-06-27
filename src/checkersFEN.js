@@ -56,7 +56,7 @@ export function parse(fenString : string) {
           'Invalid piece: "' + pieceCharacter + '"');
   }
   return {
-    pieces: pieces,
+    board: pieces,
     turn: turn
   };
 }
@@ -64,7 +64,7 @@ export function parse(fenString : string) {
 export function unparse(gameState : any) : string {
   const squares = Array(64).fill('.');
   for (let i = 0; i < 64; i++) {
-    const piece = gameState.pieces[i];
+    const piece = gameState.board[i];
     if (piece)
       if (piece.kind === 'king')
         if (piece.color == 'white')
