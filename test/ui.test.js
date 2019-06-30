@@ -237,27 +237,42 @@ describe("Checkers UI", () => {
 
     it("should reject an invalid turn", () => {
       // $FlowExpectError
-      () => TestRenderer.create(<Board turn="invalid" />);
+      () => TestRenderer.create(<Board viewpoint="white" turn="invalid" />);
     });
 
     it("renders correctly when empty", () => {
       const pieces = emptyBoard.slice();
       const board = TestRenderer.create(
-        <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+        <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
       );
       expect(board.toJSON()).toMatchSnapshot();
     });
 
     each(allSquareIndices).it(
-      "renders white man correctly in square %d",
+      "renders white man correctly in square %d from white's viewpoint",
       (square: number) => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
         pieces[square] = whiteMan;
         const renderer = new ShallowRenderer();
-        renderer.render(<Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />);
+        renderer.render(<Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />);
         const board = renderer.getRenderOutput();
         expect(board.props.children[square].props).toMatchObject({
+          piece: whiteMan
+        });
+      }
+    );
+
+    each(allSquareIndices).it(
+      "renders white man correctly in square %d from black's viewpoint",
+      (square: number) => {
+        const pieces = emptyBoard.slice();
+        const whiteMan = { color: "white", kind: "man" };
+        pieces[square] = whiteMan;
+        const renderer = new ShallowRenderer();
+        renderer.render(<Board board={pieces} viewpoint="black" turn="white" movePiece={(from: number, to: number) => {}} />);
+        const board = renderer.getRenderOutput();
+        expect(board.props.children[63 - square].props).toMatchObject({
           piece: whiteMan
         });
       }
@@ -271,7 +286,7 @@ describe("Checkers UI", () => {
           const whiteMan = { color: "white", kind: "man" };
           pieces[square] = whiteMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -287,7 +302,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -306,7 +321,7 @@ describe("Checkers UI", () => {
           pieces[square + rowLength + 1] = whiteMan;
           pieces[square + rowLength - 1] = whiteMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -322,7 +337,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -338,7 +353,7 @@ describe("Checkers UI", () => {
           const whiteMan = { color: "white", kind: "man" };
           pieces[square] = whiteMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -353,7 +368,7 @@ describe("Checkers UI", () => {
         (square: number) => {
           const pieces = emptyBoard.slice();
           const board = TestRenderer.create(
-            <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -367,7 +382,7 @@ describe("Checkers UI", () => {
         const whiteMan = { color: "white", kind: "man" };
         pieces[2] = pieces[5] = whiteMan;
         const board = TestRenderer.create(
-          <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+          <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
         );
 
         propsForSquare(board, 2).onClick();
@@ -381,7 +396,7 @@ describe("Checkers UI", () => {
         const whiteMan = { color: "white", kind: "man" };
         pieces[2] = pieces[5] = whiteMan;
         const board = TestRenderer.create(
-          <Board board={pieces} turn="white" movePiece={(from: number, to: number) => {}} />
+          <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
         );
 
         propsForSquare(board, 2).onClick();
@@ -401,7 +416,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -417,7 +432,7 @@ describe("Checkers UI", () => {
       it("should not highlight any moves for an empty board", () => {
         const pieces = emptyBoard.slice();
         const board = TestRenderer.create(
-          <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
+          <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
         );
 
         for (let i = 0; i < 64; i++)
@@ -431,7 +446,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const board = TestRenderer.create(
-            <Board board={pieces} turn="black" movePiece={(from: number, to: number) => {}} />
+            <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
 
           propsForSquare(board, square).onClick();
@@ -446,23 +461,24 @@ describe("Checkers UI", () => {
   });
 
   describe("Game", () => {
-    it("should render empty board correctly", () => {
+    each(["white", "black"]).it("should render empty board correctly", (viewpoint) => {
       const board = emptyBoard.slice();
       const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} turn="white" />); 
+      renderer.render(<Game board={board} viewpoint={ viewpoint } turn="white" />); 
       const game = renderer.getRenderOutput();
 
       const boardTag = game.props.children[0];
       expect(boardTag.type).toEqual(Board);
       expect(boardTag.props.board).toEqual(board);
       expect(boardTag.props.turn).toEqual("white");
+      expect(boardTag.props.viewpoint).toEqual(viewpoint);
     });
 
     it("should render non-empty board correctly", () => {
       const board = emptyBoard.slice();
       board[5] = { color: "white", kind: "man" };
       const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} turn="black" />);
+      renderer.render(<Game board={board} viewpoint="white" turn="black" />);
       const game = renderer.getRenderOutput();
 
       const boardTag = game.props.children[0];
@@ -474,7 +490,7 @@ describe("Checkers UI", () => {
     it("should contain undo-button", () => {
       const board = emptyBoard.slice();
       const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} turn="black" />);
+      renderer.render(<Game board={board} viewpoint="white" turn="black" />);
       const game = renderer.getRenderOutput();
 
       const undoButton = game.props.children[1].props.children;
@@ -491,7 +507,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const game = TestRenderer.create(
-            <Game board={pieces} turn="black" />
+            <Game board={pieces} viewpoint="white" turn="black" />
           );
 
           propsForSquare(game, square).onClick();
@@ -512,7 +528,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const game = TestRenderer.create(
-            <Game board={pieces} turn="black" />
+            <Game board={pieces} viewpoint="white" turn="black" />
           );
 
           propsForSquare(game, square).onClick();
@@ -535,7 +551,7 @@ describe("Checkers UI", () => {
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={startTurn} />
+            <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
 
           propsForSquare(game, from).onClick();
@@ -555,7 +571,7 @@ describe("Checkers UI", () => {
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={startTurn} />
+            <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
           const undoButton = game.root.findByProps({ children: "Undo move!" });
 
@@ -575,7 +591,7 @@ describe("Checkers UI", () => {
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={startTurn} />
+            <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
           const undoButton = game.root.findByProps({ children: "Undo move!" });
 
@@ -599,7 +615,7 @@ describe("Checkers UI", () => {
           pieces[from0] = blackKing;
           pieces[from1] = whiteKing;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={"black"} />
+            <Game board={pieces} viewpoint="white" turn={"black"} />
           );
           const undoButton = game.root.findByProps({ children: "Undo move!" });
           propsForSquare(game, from0).onClick();
@@ -621,7 +637,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const game = TestRenderer.create(
-            <Game board={pieces} turn="black" />
+            <Game board={pieces} viewpoint="white" turn="black" />
           );
 
           propsForSquare(game, square).onClick();

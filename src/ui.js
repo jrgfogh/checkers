@@ -40,6 +40,7 @@ type BoardState = {
 };
 
 type BoardProps = GameModel & {
+  viewpoint : "black" | "white",
   movePiece: (from: number, to: number) => void
 };
 
@@ -104,6 +105,8 @@ export default class Board extends React.Component<BoardProps, BoardState> {
       squares[i] =
         <Square key={ i } color={ boardColors[i] } piece={ this.props.board[i] }
           onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.props.turn } />
+    if (this.props.viewpoint == "black")
+      squares.reverse();
     return (
       <div id="board">
         { squares }
@@ -112,14 +115,18 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 }
 
-type GameState = {
+type GameViewState = {
   game: GameModel,
   stepNumber: number,
   moveHistory: GameModel[]
-}
+};
 
-export class Game extends React.Component<GameModel, GameState> {
-  constructor(props : GameModel) {
+type GameProps = GameModel & {
+  viewpoint : "black" | "white"
+};
+
+export class Game extends React.Component<GameProps, GameViewState> {
+  constructor(props : GameProps) {
     super(props)
     this.state = {
       game: {
@@ -133,7 +140,7 @@ export class Game extends React.Component<GameModel, GameState> {
 
   render() {
     return <div>
-      <Board key={ this.state.stepNumber } board={ this.state.game.board } turn={ this.state.game.turn } movePiece={(from: number, to: number) => {
+      <Board key={ this.state.stepNumber } board={ this.state.game.board } viewpoint={ this.props.viewpoint } turn={ this.state.game.turn } movePiece={(from: number, to: number) => {
         this.setState((prevState) => {
           return {
               game: movePiece(prevState.game, from, to),

@@ -16,6 +16,6 @@ const board = parse(
   " w").board;
 
 ReactDOM.render(
-    <Game board={ board } turn="black" />,
+    <Game board={ board } viewpoint="black" turn="black" />,
     document.getElementById('game')
   );
