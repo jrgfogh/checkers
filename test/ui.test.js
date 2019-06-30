@@ -449,7 +449,7 @@ describe("Checkers UI", () => {
     it("should render empty board correctly", () => {
       const board = emptyBoard.slice();
       const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} turn="white" />); 
+      renderer.render(<Game board={board} viewpoint="white" turn="white" />); 
       const game = renderer.getRenderOutput();
 
       const boardTag = game.props.children[0];
@@ -462,7 +462,7 @@ describe("Checkers UI", () => {
       const board = emptyBoard.slice();
       board[5] = { color: "white", kind: "man" };
       const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} turn="black" />);
+      renderer.render(<Game board={board} viewpoint="white" turn="black" />);
       const game = renderer.getRenderOutput();
 
       const boardTag = game.props.children[0];
@@ -474,7 +474,7 @@ describe("Checkers UI", () => {
     it("should contain undo-button", () => {
       const board = emptyBoard.slice();
       const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} turn="black" />);
+      renderer.render(<Game board={board} viewpoint="white" turn="black" />);
       const game = renderer.getRenderOutput();
 
       const undoButton = game.props.children[1].props.children;
@@ -491,7 +491,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const game = TestRenderer.create(
-            <Game board={pieces} turn="black" />
+            <Game board={pieces} viewpoint="white" turn="black" />
           );
 
           propsForSquare(game, square).onClick();
@@ -512,7 +512,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const game = TestRenderer.create(
-            <Game board={pieces} turn="black" />
+            <Game board={pieces} viewpoint="white" turn="black" />
           );
 
           propsForSquare(game, square).onClick();
@@ -535,7 +535,7 @@ describe("Checkers UI", () => {
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={startTurn} />
+            <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
 
           propsForSquare(game, from).onClick();
@@ -555,7 +555,7 @@ describe("Checkers UI", () => {
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={startTurn} />
+            <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
           const undoButton = game.root.findByProps({ children: "Undo move!" });
 
@@ -575,7 +575,7 @@ describe("Checkers UI", () => {
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={startTurn} />
+            <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
           const undoButton = game.root.findByProps({ children: "Undo move!" });
 
@@ -599,7 +599,7 @@ describe("Checkers UI", () => {
           pieces[from0] = blackKing;
           pieces[from1] = whiteKing;
           const game = TestRenderer.create(
-            <Game board={pieces} turn={"black"} />
+            <Game board={pieces} viewpoint="white" turn={"black"} />
           );
           const undoButton = game.root.findByProps({ children: "Undo move!" });
           propsForSquare(game, from0).onClick();
@@ -621,7 +621,7 @@ describe("Checkers UI", () => {
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           const game = TestRenderer.create(
-            <Game board={pieces} turn="black" />
+            <Game board={pieces} viewpoint="white" turn="black" />
           );
 
           propsForSquare(game, square).onClick();

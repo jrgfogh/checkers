@@ -112,14 +112,18 @@ export default class Board extends React.Component<BoardProps, BoardState> {
   }
 }
 
-type GameState = {
+type GameViewState = {
   game: GameModel,
   stepNumber: number,
   moveHistory: GameModel[]
-}
+};
 
-export class Game extends React.Component<GameModel, GameState> {
-  constructor(props : GameModel) {
+type GameViewModel = GameModel & {
+  viewpoint : "black" | "white"
+};
+
+export class Game extends React.Component<GameViewModel, GameViewState> {
+  constructor(props : GameViewModel) {
     super(props)
     this.state = {
       game: {
