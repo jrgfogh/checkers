@@ -40,6 +40,7 @@ type BoardState = {
 };
 
 type BoardProps = GameModel & {
+  viewpoint : "black" | "white",
   movePiece: (from: number, to: number) => void
 };
 
@@ -118,12 +119,12 @@ type GameViewState = {
   moveHistory: GameModel[]
 };
 
-type GameViewModel = GameModel & {
+type GameProps = GameModel & {
   viewpoint : "black" | "white"
 };
 
-export class Game extends React.Component<GameViewModel, GameViewState> {
-  constructor(props : GameViewModel) {
+export class Game extends React.Component<GameProps, GameViewState> {
+  constructor(props : GameProps) {
     super(props)
     this.state = {
       game: {
@@ -137,7 +138,7 @@ export class Game extends React.Component<GameViewModel, GameViewState> {
 
   render() {
     return <div>
-      <Board key={ this.state.stepNumber } board={ this.state.game.board } turn={ this.state.game.turn } movePiece={(from: number, to: number) => {
+      <Board key={ this.state.stepNumber } board={ this.state.game.board } viewpoint={ this.props.viewpoint } turn={ this.state.game.turn } movePiece={(from: number, to: number) => {
         this.setState((prevState) => {
           return {
               game: movePiece(prevState.game, from, to),
