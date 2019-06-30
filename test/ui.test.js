@@ -249,7 +249,7 @@ describe("Checkers UI", () => {
     });
 
     each(allSquareIndices).it(
-      "renders white man correctly in square %d",
+      "renders white man correctly in square %d from white's viewpoint",
       (square: number) => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
@@ -258,6 +258,21 @@ describe("Checkers UI", () => {
         renderer.render(<Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />);
         const board = renderer.getRenderOutput();
         expect(board.props.children[square].props).toMatchObject({
+          piece: whiteMan
+        });
+      }
+    );
+
+    each(allSquareIndices).it(
+      "renders white man correctly in square %d from black's viewpoint",
+      (square: number) => {
+        const pieces = emptyBoard.slice();
+        const whiteMan = { color: "white", kind: "man" };
+        pieces[square] = whiteMan;
+        const renderer = new ShallowRenderer();
+        renderer.render(<Board board={pieces} viewpoint="black" turn="white" movePiece={(from: number, to: number) => {}} />);
+        const board = renderer.getRenderOutput();
+        expect(board.props.children[63 - square].props).toMatchObject({
           piece: whiteMan
         });
       }

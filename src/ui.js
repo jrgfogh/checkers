@@ -105,6 +105,8 @@ export default class Board extends React.Component<BoardProps, BoardState> {
       squares[i] =
         <Square key={ i } color={ boardColors[i] } piece={ this.props.board[i] }
           onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.props.turn } />
+    if (this.props.viewpoint == "black")
+      squares.reverse();
     return (
       <div id="board">
         { squares }
