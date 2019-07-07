@@ -279,7 +279,7 @@ describe("Checkers UI", () => {
     );
 
     describe("User input", () => {
-      each([10, 15, 27, 40]).it(
+      each([10, 14, 28, 40]).it(
         "should select white piece on square %d when clicked and white's turn.",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -330,7 +330,7 @@ describe("Checkers UI", () => {
         }
       );
 
-      each([10, 15, 27, 40]).it(
+      each([10, 14, 28, 40]).it(
         "should select black piece on square %d when clicked and black's turn.",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -346,7 +346,7 @@ describe("Checkers UI", () => {
         }
       );
 
-      each([10, 15, 27, 40]).it(
+      each([10, 14, 28, 40]).it(
         "should unselect piece on square %d when clicked",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -377,35 +377,35 @@ describe("Checkers UI", () => {
         }
       );
 
-      it("should unselect square 2 when square 5 clicked", () => {
+      it("should unselect square 3 when square 5 clicked", () => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
-        pieces[2] = pieces[5] = whiteMan;
+        pieces[3] = pieces[5] = whiteMan;
         const board = TestRenderer.create(
           <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
         );
 
-        propsForSquare(board, 2).onClick();
+        propsForSquare(board, 3).onClick();
         propsForSquare(board, 5).onClick();
 
-        expect(propsForSquare(board, 2).selected).toBe(false);
+        expect(propsForSquare(board, 3).selected).toBe(false);
       });
 
-      it("should not erase the piece in square 2 when square 5 clicked", () => {
+      it("should not erase the piece in square 3 when square 5 clicked", () => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
-        pieces[2] = pieces[5] = whiteMan;
+        pieces[3] = pieces[5] = whiteMan;
         const board = TestRenderer.create(
           <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
         );
 
-        propsForSquare(board, 2).onClick();
+        propsForSquare(board, 3).onClick();
         propsForSquare(board, 5).onClick();
 
-        expect(propsForSquare(board, 2).piece).not.toBe(null);
+        expect(propsForSquare(board, 3).piece).not.toBe(null);
       });
 
-      each([11, 15, 29, 32, 40]).it(
+      each([10, 14, 30, 33, 40]).it(
         "should highlight exactly correct moves for black piece on square %d when clicked and black's turn.",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -439,7 +439,7 @@ describe("Checkers UI", () => {
           expect(propsForSquare(board, i).canMoveTo).toBe(false);
       });
 
-      each([10, 27]).it(
+      each([10, 28]).it(
         "should clear selection man is clicked twice",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -500,7 +500,7 @@ describe("Checkers UI", () => {
     });
 
     describe("User input", () => {
-      each([10, 11, 12]).it(
+      each([10, 12, 14]).it(
         "should execute move when a destination square is clicked",
         (square: number) => {
           const pieces = emptyBoard.slice();
@@ -544,7 +544,7 @@ describe("Checkers UI", () => {
 
       each([
         [10, 10 + rowLength + 1, "black", "white"],
-        [13, 13 - rowLength + 1, "white", "black"]
+        [12, 12 - rowLength + 1, "white", "black"]
       ]).it("should switch turn when a destination square is clicked",
         (from: number, to: number, startTurn, endTurn) => {
           const pieces = emptyBoard.slice();
@@ -564,7 +564,7 @@ describe("Checkers UI", () => {
 
       each([
         [10, 10 + rowLength + 1, "black", "white"],
-        [13, 13 - rowLength + 1, "white", "black"]
+        [12, 12 - rowLength + 1, "white", "black"]
       ]).it("should enable undo button when a destination square is clicked",
         (from: number, to: number, startTurn, endTurn) => {
           const pieces = emptyBoard.slice();
@@ -584,7 +584,7 @@ describe("Checkers UI", () => {
 
       each([
         [10, 10 + rowLength + 1, "black"],
-        [13, 13 - rowLength + 1, "white"]
+        [12, 12 - rowLength + 1, "white"]
       ]).it("should undo move when the undo button is clicked after a single move",
         (from: number, to: number, startTurn) => {
           const pieces = emptyBoard.slice();
@@ -606,7 +606,7 @@ describe("Checkers UI", () => {
       );
 
       each([
-        [10, 10 + rowLength + 1, 36, 36 - rowLength + 1]
+        [10, 10 + rowLength + 1, 35, 35 - rowLength + 1]
       ]).it("should undo move when the undo button is clicked after two moves",
         (from0: number, to0: number, from1: number, to1: number) => {
           const pieces = emptyBoard.slice();
@@ -630,7 +630,7 @@ describe("Checkers UI", () => {
         }
       );
 
-      each([10, 11, 12]).it(
+      each([10, 12, 14]).it(
         "should clear selection when a destination square is clicked",
         (square: number) => {
           const pieces = emptyBoard.slice();
