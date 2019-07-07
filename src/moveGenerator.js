@@ -17,7 +17,7 @@ export const MoveKind = {
     Jump: 2
 }
 
-const rowLength = 8
+const rowLength = 8;
 
 export default class MoveGenerator {
     state: GameModel;
