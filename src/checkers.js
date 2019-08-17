@@ -2,18 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Game } from './ui'
-import { parse } from "../src/checkersFEN";
+import { parse, startPosition } from "../src/checkersFEN";
 
-const board = parse(
-  ".m.m.m.m" +
-  "m.m.m.m." +
-  ".m.m.m.m" +
-  "........" +
-  "........" +
-  "M.M.M.M." +
-  ".M.M.M.M" +
-  "M.M.M.M." +
-  " w").board;
+const board = parse(startPosition).board;
 
 ReactDOM.render(
     <Game board={ board } viewpoint="black" turn="black" />,
