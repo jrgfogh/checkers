@@ -3,4 +3,4 @@
 
 A simple in-browser checkers game.
 
-The game was written as an exercise in using modern web technologies.
+The game was written as an exercise in using Reacts.js. The game engine has no AI but I have tested it extremely thoroughly.
