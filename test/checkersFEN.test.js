@@ -114,13 +114,13 @@ describe("Checkers FEN", () => {
 
     describe('Input validation', () => {
       it("should reject empty string", () => {
-        expect(() => parse("")).toThrowError(
+        expect(() => parse("")).toThrow(
           'Invalid checkers FEN string: ""\n' +
           'The string is too short.');
       })
 
       each(["5:W:B", "Q:B:W"]).it("should reject an invalid turn", (fenString) => {
-        expect(() => parse(fenString)).toThrowError(
+        expect(() => parse(fenString)).toThrow(
           'Invalid checkers FEN string: "' +  fenString + '"\n' +
           'The turn must be either "W" or "B", not "' + fenString[0] + '".');
       })
