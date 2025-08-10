@@ -1,5 +1,5 @@
 # checkers
-[![Build Status](https://travis-ci.org/jrgfogh/checkers.svg?branch=master)](https://travis-ci.org/jrgfogh/checkers) [![Total alerts](https://img.shields.io/lgtm/alerts/g/jrgfogh/checkers.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jrgfogh/checkers/alerts/)
+[![CI](https://github.com/jrgfogh/checkers/actions/workflows/ci.yml/badge.svg)](https://github.com/jrgfogh/checkers/actions/workflows/ci.yml) [![CodeQL](https://github.com/jrgfogh/checkers/actions/workflows/codeql.yml/badge.svg)](https://github.com/jrgfogh/checkers/actions/workflows/codeql.yml)
 
 A simple in-browser checkers game.
 
