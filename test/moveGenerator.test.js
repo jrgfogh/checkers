@@ -466,7 +466,7 @@ describe("Move Generator", () => {
 
     describe("King", () => {
         describe("Main diagonal", () => {
-            each("white", "black").it("should generate two diagonal simple moves for %s king in square 1", (color) => {
+            each([["white"], ["black"]]).it("should generate two diagonal simple moves for %s king in square 1", (color) => {
                 const board = emptyBoard.slice()
                 board[1] = { color: color, kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: color })
@@ -968,7 +968,7 @@ describe("Move Generator", () => {
         it("should throw for a move from an empty square", () => {
             const board = emptyBoard.slice()
 
-            expect(() => movePiece({ board: board, turn: "black" }, 3, 12)).toThrowError("Attempted to move from an empty square.");
+            expect(() => movePiece({ board: board, turn: "black" }, 3, 12)).toThrow("Attempted to move from an empty square.");
         })
         
         describe("Multiple jumps", () => {
