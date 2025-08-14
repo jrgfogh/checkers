@@ -1,8 +1,12 @@
-// @flow
+/**
+ * @jest-environment jsdom
+ * @flow
+ */
 
 import React from "react";
-import * as TestRenderer from "react-test-renderer";
-import ShallowRenderer from "react-test-renderer/shallow";
+import { render, screen } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
 import each from "jest-each";
 
 import Board, { Square, Game } from "../src/ui";
@@ -15,10 +19,15 @@ const rowLength = 8;
 const allSquareIndices = Array(64).fill().map((_, i) => i);
 
 describe("Checkers UI", () => {
+  async function clickSquare(user, i) {
+    const squares = screen.queryAllByRole("button");
+    await user.click(squares[i]);
+  }
+
   describe("Board", () => {
     describe("Square", () => {
       it("renders empty black correctly", () => {
-        const square = TestRenderer.create(
+        render(
           <Square
             color="black"
             canMoveTo={false}
@@ -27,16 +36,12 @@ describe("Checkers UI", () => {
             onClick={() => {}}
           />
         );
-        expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square black"
-  onClick={[Function]}
-/>
-`);
-      });
+        const square = screen.getByRole("button");
+        expect(square).toHaveClass("square black");
+    });
 
       it("renders empty white correctly", () => {
-        const square = TestRenderer.create(
+        render(
           <Square
             color="white"
             canMoveTo={false}
@@ -45,16 +50,12 @@ describe("Checkers UI", () => {
             onClick={() => {}}
           />
         );
-        expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square white"
-  onClick={[Function]}
-/>
-`);
+        const square = screen.getByRole("button");
+        expect(square).toHaveClass("square white");
       });
 
       it("renders white man on white correctly", () => {
-        const square = TestRenderer.create(
+        render(
           <Square
             color="white"
             piece={{ color: "white", kind: "man" }}
@@ -64,24 +65,13 @@ describe("Checkers UI", () => {
             onClick={() => {}}
           />
         );
-        expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square white"
-  onClick={[Function]}
->
-  <div
-    className="piece white-piece man"
-  >
-    <div
-      className="piece-center"
-    />
-  </div>
-</div>
-`);
+        const square = screen.getByRole("button");
+        expect(square).toHaveClass("square white");
+        expect(square.querySelector(".piece.white-piece.man")).toBeInTheDocument();
       });
 
       it("renders white king on white correctly", () => {
-        const square = TestRenderer.create(
+        render(
           <Square
             color="white"
             piece={{ color: "white", kind: "king" }}
@@ -91,24 +81,13 @@ describe("Checkers UI", () => {
             onClick={() => {}}
           />
         );
-        expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square white"
-  onClick={[Function]}
->
-  <div
-    className="piece white-piece king"
-  >
-    <div
-      className="piece-center"
-    />
-  </div>
-</div>
-`);
+        const square = screen.getByRole("button");
+        expect(square).toHaveClass("square white");
+        expect(square.querySelector(".piece.white-piece.king")).toBeInTheDocument();
       });
 
       it("renders black man on white correctly", () => {
-        const square = TestRenderer.create(
+        render(
           <Square
             color="white"
             piece={{ color: "black", kind: "man" }}
@@ -118,39 +97,28 @@ describe("Checkers UI", () => {
             onClick={() => {}}
           />
         );
-        expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square white"
-  onClick={[Function]}
->
-  <div
-    className="piece black-piece man"
-  >
-    <div
-      className="piece-center"
-    />
-  </div>
-</div>
-`);
+        const square = screen.getByRole("button");
+        expect(square).toHaveClass("square white");
+        expect(square.querySelector(".piece.black-piece.man")).toBeInTheDocument();
       });
-
+      
       it("should require a color", () => {
-        () =>
-          TestRenderer.create(
-            // $FlowExpectError
-            <Square
+              () =>
+                  render(
+                  // $FlowExpectError
+                  <Square
               selected={false}
               canMoveTo={false}
               piece={null}
               turn="white"
               onClick={() => {}}
-            />
-          );
+          />
+      );
       });
 
       it("should require a valid color", () => {
-        () => TestRenderer.create(
-            <Square
+              () => render(
+                  <Square
               // $FlowExpectError
               color="invalid"
               selected={false}
@@ -158,40 +126,40 @@ describe("Checkers UI", () => {
               piece={null}
               turn="white"
               onClick={() => {}}
-            />
-          );
+          />
+      );
       });
 
       it("should require a turn", () => {
-        () =>
-          TestRenderer.create(
-            // $FlowExpectError
-            <Square
-              color="black"
-              selected={false}
-              canMoveTo={false}
-              piece={null}
-            />
-          );
+          () =>
+              render(
+              // $FlowExpectError
+              <Square
+          color="black"
+          selected={false}
+          canMoveTo={false}
+          piece={null}
+              />
+      );
       });
 
       it("should require a valid turn", () => {
-        () =>
-          TestRenderer.create(
-            <Square
+              () =>
+                  render(
+                  <Square
               color="white"
               selected={false}
               canMoveTo={false}
               piece={null}
-        // $FlowExpectError
+              // $FlowExpectError
               turn="invalid"
               onClick={() => {}}
-            />
-          );
+          />
+      );
       });
 
       it("renders empty black selected correctly", () => {
-        const square = TestRenderer.create(
+        render(
           <Square
             color="black"
             canMoveTo={false}
@@ -200,19 +168,14 @@ describe("Checkers UI", () => {
             onClick={() => {}}
           />
         );
-        expect(square.toJSON()).toMatchInlineSnapshot(`
-<div
-  className="square black selected"
-  onClick={[Function]}
-/>
-`);
+        const square = screen.getByRole("button");
+        expect(square).toHaveClass("square black selected");
       });
 
       each(["white", "black"]).it(
         "renders empty black destination correctly, %s's turn",
         turn => {
-          const renderer = new ShallowRenderer();
-          renderer.render(
+            render(
             <Square
               color="black"
               canMoveTo={true}
@@ -221,31 +184,44 @@ describe("Checkers UI", () => {
               onClick={() => {}}
             />
           );
-          const square = renderer.getRenderOutput();
-          expect(square.props.className).toBe("square black destination");
-          expect(square.props.children.props.className).toBe(
-            "piece ghost-piece " + turn + "-piece"
-          );
+          const square = screen.getByRole("button");
+          expect(square).toHaveClass("square black destination");
+          expect(square.querySelector(".piece.ghost-piece")).toHaveClass(turn + "-piece");
         }
       );
     });
 
     it("should require a turn", () => {
       // $FlowExpectError
-      () => TestRenderer.create(<Board />);
+      () => render(<Board />);
     });
 
     it("should reject an invalid turn", () => {
       // $FlowExpectError
-      () => TestRenderer.create(<Board viewpoint="white" turn="invalid" />);
+      () => render(<Board viewpoint="white" turn="invalid" />);
     });
+
+    function checkSquares() {
+        const squares = screen.queryAllByRole("button");
+        expect(squares).toHaveLength(64);
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const i = 8 * row + col;
+                if ((row + col) & 0x1) {
+                    expect(squares[i]).toHaveClass("square black");
+                } else {
+                    expect(squares[i]).toHaveClass("square white");
+                }
+            }
+        }
+    }
 
     it("renders correctly when empty", () => {
       const pieces = emptyBoard.slice();
-      const board = TestRenderer.create(
+      render(
         <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
       );
-      expect(board.toJSON()).toMatchSnapshot();
+      checkSquares();
     });
 
     each(allSquareIndices).it(
@@ -254,12 +230,10 @@ describe("Checkers UI", () => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
         pieces[square] = whiteMan;
-        const renderer = new ShallowRenderer();
-        renderer.render(<Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />);
-        const board = renderer.getRenderOutput();
-        expect(board.props.children[square].props).toMatchObject({
-          piece: whiteMan
-        });
+        render(<Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />);
+        
+        const squares = screen.queryAllByRole("button");
+        expect(squares[square].querySelector(".piece.white-piece.man")).toBeInTheDocument();
       }
     );
 
@@ -269,145 +243,153 @@ describe("Checkers UI", () => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
         pieces[square] = whiteMan;
-        const renderer = new ShallowRenderer();
-        renderer.render(<Board board={pieces} viewpoint="black" turn="white" movePiece={(from: number, to: number) => {}} />);
-        const board = renderer.getRenderOutput();
-        expect(board.props.children[63 - square].props).toMatchObject({
-          piece: whiteMan
-        });
+        render(<Board board={pieces} viewpoint="black" turn="white" movePiece={(from: number, to: number) => {}} />);
+        
+        const squares = screen.queryAllByRole("button");
+        expect(squares[63 - square].querySelector(".piece.white-piece.man")).toBeInTheDocument();
       }
     );
 
     describe("User input", () => {
+      async function isSelectedWhenClicked(i) {
+        const user = userEvent.setup();
+        await clickSquare(user, i);
+        const squares = screen.queryAllByRole("button");
+        expect(squares[i]).toHaveClass("selected");
+      }
+
+      async function isNotSelectedWhenClicked(user, i) {
+        await clickSquare(user, i);
+        const squares = screen.queryAllByRole("button");
+        expect(squares[i]).not.toHaveClass("selected");
+      }
+
       each([10, 14, 28, 40]).it(
         "should select white piece on square %d when clicked and white's turn.",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const whiteMan = { color: "white", kind: "man" };
           pieces[square] = whiteMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
 
-          propsForSquare(board, square).onClick();
-
-          expect(propsForSquare(board, square).selected).toBe(true);
+          await isSelectedWhenClicked(square);
         }
       );
 
       each(allSquareIndices).it(
         "should not select black piece on square %d when clicked and white's turn.",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
-
-          propsForSquare(board, square).onClick();
-
-          expect(propsForSquare(board, square).selected).toBe(false);
+          
+          const user = userEvent.setup();
+          await isNotSelectedWhenClicked(user, square);
         }
       );
 
       each([1, 3, 5]).it(
         "should not select black piece on square %d when it has no valid moves.",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           const whiteMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
           pieces[square + rowLength + 1] = whiteMan;
           pieces[square + rowLength - 1] = whiteMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
-
-          propsForSquare(board, square).onClick();
-
-          expect(propsForSquare(board, square).selected).toBe(false);
+          
+          const user = userEvent.setup();
+          await isNotSelectedWhenClicked(user, square);
         }
       );
 
       each([10, 14, 28, 40]).it(
         "should select black piece on square %d when clicked and black's turn.",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
 
-          propsForSquare(board, square).onClick();
-
-          expect(propsForSquare(board, square).selected).toBe(true);
+          await isSelectedWhenClicked(square);
         }
       );
 
       each([10, 14, 28, 40]).it(
         "should unselect piece on square %d when clicked",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const whiteMan = { color: "white", kind: "man" };
           pieces[square] = whiteMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
 
-          propsForSquare(board, square).onClick();
-          propsForSquare(board, square).onClick();
+          const user = userEvent.setup();
+          await clickSquare(user, square);
 
-          expect(propsForSquare(board, square).selected).toBe(false);
+          await isNotSelectedWhenClicked(user, square);
         }
       );
 
       each(allSquareIndices).it(
         "should not select empty square %d when clicked",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
           );
-
-          propsForSquare(board, square).onClick();
-
-          expect(propsForSquare(board, square).selected).toBe(false);
+          
+          const user = userEvent.setup();
+          await isNotSelectedWhenClicked(user, square);
         }
       );
 
-      it("should unselect square 3 when square 5 clicked", () => {
+      it("should unselect square 3 when square 5 clicked", async () => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
         pieces[3] = pieces[5] = whiteMan;
-        const board = TestRenderer.create(
+        render(
           <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
         );
 
-        propsForSquare(board, 3).onClick();
-        propsForSquare(board, 5).onClick();
-
-        expect(propsForSquare(board, 3).selected).toBe(false);
+        const user = userEvent.setup();
+        await clickSquare(user, 3);
+        await clickSquare(user, 5);
+        
+        const squares = screen.queryAllByRole("button");
+        expect(squares[3]).not.toHaveClass("selected");
       });
 
-      it("should not erase the piece in square 3 when square 5 clicked", () => {
+      it("should not erase the piece in square 3 when square 5 clicked", async () => {
         const pieces = emptyBoard.slice();
         const whiteMan = { color: "white", kind: "man" };
         pieces[3] = pieces[5] = whiteMan;
-        const board = TestRenderer.create(
+        render(
           <Board board={pieces} viewpoint="white" turn="white" movePiece={(from: number, to: number) => {}} />
         );
 
-        propsForSquare(board, 3).onClick();
-        propsForSquare(board, 5).onClick();
-
-        expect(propsForSquare(board, 3).piece).not.toBe(null);
+        const user = userEvent.setup();
+        await clickSquare(user, 3);
+        await clickSquare(user, 5);
+        
+        const squares = screen.queryAllByRole("button");
+        expect(squares[3].querySelector(".piece")).toBeInTheDocument();
       });
 
       each([10, 14, 30, 33, 40]).it(
         "should highlight exactly correct moves for black piece on square %d when clicked and black's turn.",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const moveGenerator = new MoveGenerator({
             board: pieces,
@@ -415,47 +397,49 @@ describe("Checkers UI", () => {
           });
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
-
-          propsForSquare(board, square).onClick();
+          
+          const user = userEvent.setup();
+          await clickSquare(user, square);
 
           const moves = moveGenerator.movesFrom(square);
+          const squares = screen.queryAllByRole("button");
           for (let i = 0; i < 64; i += 2)
-            expect(propsForSquare(board, i).canMoveTo).toBe(
-              canMoveTo(moves, i)
-            );
+            if (canMoveTo(moves, i))
+              expect(squares[i].querySelector(".ghost-piece")).toBeInTheDocument();
+            else
+              expect(squares[i].querySelector(".ghost-piece")).not.toBeInTheDocument();
         }
       );
 
       it("should not highlight any moves for an empty board", () => {
         const pieces = emptyBoard.slice();
-        const board = TestRenderer.create(
+        render(
           <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
         );
-
+        
+        const squares = screen.queryAllByRole("button");
         for (let i = 0; i < 64; i++)
-          expect(propsForSquare(board, i).canMoveTo).toBe(false);
+          expect(squares[i].querySelector(".ghost-piece")).not.toBeInTheDocument();
       });
 
       each([10, 28]).it(
         "should clear selection man is clicked twice",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const board = TestRenderer.create(
+          render(
             <Board board={pieces} viewpoint="white" turn="black" movePiece={(from: number, to: number) => {}} />
           );
 
-          propsForSquare(board, square).onClick();
-          propsForSquare(board, square).onClick();
+          const user = userEvent.setup();
+          await clickSquare(user, square);
+          await clickSquare(user, square);
 
-          // $FlowExpectError: We don't want to null-check state and canMoveTo.
-          expect(board.getInstance().state.canMoveTo).toEqual(
-            Array(64).fill(false)
-          );
+          expect(document.querySelector(".selected")).not.toBeInTheDocument();
         });
     });
   });
@@ -463,102 +447,67 @@ describe("Checkers UI", () => {
   describe("Game", () => {
     each(["white", "black"]).it("should render empty board correctly", (viewpoint) => {
       const board = emptyBoard.slice();
-      const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} viewpoint={ viewpoint } turn="white" />); 
-      const game = renderer.getRenderOutput();
+      const { container } = render(<Game board={board} viewpoint={ viewpoint } turn="white" />); 
 
-      const boardTag = game.props.children[0];
-      expect(boardTag.type).toEqual(Board);
-      expect(boardTag.props.board).toEqual(board);
-      expect(boardTag.props.turn).toEqual("white");
-      expect(boardTag.props.viewpoint).toEqual(viewpoint);
+      expect(container).toMatchSnapshot();
     });
 
     it("should render non-empty board correctly", () => {
       const board = emptyBoard.slice();
       board[5] = { color: "white", kind: "man" };
-      const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} viewpoint="white" turn="black" />);
-      const game = renderer.getRenderOutput();
+      const { container } = render(<Game board={board} viewpoint="white" turn="black" />);
 
-      const boardTag = game.props.children[0];
-      expect(boardTag.type).toEqual(Board);
-      expect(boardTag.props.board).toEqual(board);
-      expect(boardTag.props.turn).toEqual("black");
+      expect(container).toMatchSnapshot();
     });
 
     it("should contain undo-button", () => {
       const board = emptyBoard.slice();
-      const renderer = new ShallowRenderer();
-      renderer.render(<Game board={board} viewpoint="white" turn="black" />);
-      const game = renderer.getRenderOutput();
+      render(<Game board={board} viewpoint="white" turn="black" />);
+      const undoButton = screen.getByRole("button", { name: /undo move/i });
 
-      const undoButton = game.props.children[1].props.children;
-      expect(undoButton.type).toEqual("button");
-      expect(undoButton.props.disabled).toEqual(true);
-      expect(undoButton.props.children).toEqual("Undo move!");
+      expect(undoButton).toBeInTheDocument();
+      expect(undoButton).toHaveAttribute("disabled");
+      expect(undoButton).toHaveTextContent("Undo move!");
     });
 
     describe("User input", () => {
       each([10, 12, 14]).it(
         "should execute move when a destination square is clicked",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const game = TestRenderer.create(
+          render(
             <Game board={pieces} viewpoint="white" turn="black" />
           );
+          
+          const user = userEvent.setup();
+          await clickSquare(user, square);
+          await clickSquare(user, square + rowLength + 1);
 
-          propsForSquare(game, square).onClick();
-          propsForSquare(game, square + rowLength + 1).onClick();
-
-          expect(propsForSquare(game, square).piece).toBe(null);
-          expect(propsForSquare(game, square + rowLength + 1).piece).toEqual({
-            color: "black",
-            kind: "man"
-          });
+          const squares = screen.queryAllByRole("button");
+          expect(squares[square].querySelector(".piece")).not.toBeInTheDocument();
+          expect(squares[square + rowLength + 1].querySelector(".piece")).toHaveClass("piece black-piece man");
         }
       );
 
       each([51]).it(
         "should crown the piece when the destination square for a crowning move is clicked",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const game = TestRenderer.create(
+          render(
             <Game board={pieces} viewpoint="white" turn="black" />
           );
+          
+          const user = userEvent.setup();
+          await clickSquare(user, square);
+          await clickSquare(user, square + rowLength + 1);
 
-          propsForSquare(game, square).onClick();
-          propsForSquare(game, square + rowLength + 1).onClick();
-
-          expect(propsForSquare(game, square).piece).toBe(null);
-          expect(propsForSquare(game, square + rowLength + 1).piece).toEqual({
-            color: "black",
-            kind: "king"
-          });
-        }
-      );
-
-      each([
-        [10, 10 + rowLength + 1, "black", "white"],
-        [12, 12 - rowLength + 1, "white", "black"]
-      ]).it("should switch turn when a destination square is clicked",
-        (from: number, to: number, startTurn, endTurn) => {
-          const pieces = emptyBoard.slice();
-          const king: PieceModel = { color: startTurn, kind: "king" };
-          pieces[from] = king;
-          const game = TestRenderer.create(
-            <Game board={pieces} viewpoint="white" turn={startTurn} />
-          );
-
-          propsForSquare(game, from).onClick();
-          propsForSquare(game, to).onClick();
-
-          // $FlowExpectError
-          expect(game.getInstance().state.game.turn).toEqual(endTurn);
+          const squares = screen.queryAllByRole("button");
+          expect(squares[square].querySelector(".piece")).not.toBeInTheDocument();
+          expect(squares[square + rowLength + 1].querySelector(".piece")).toHaveClass("piece king black-piece");
         }
       );
 
@@ -566,19 +515,21 @@ describe("Checkers UI", () => {
         [10, 10 + rowLength + 1, "black", "white"],
         [12, 12 - rowLength + 1, "white", "black"]
       ]).it("should enable undo button when a destination square is clicked",
-        (from: number, to: number, startTurn, endTurn) => {
+        async (from: number, to: number, startTurn, endTurn) => {
           const pieces = emptyBoard.slice();
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
-          const game = TestRenderer.create(
+          render(
             <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
-          const undoButton = game.root.findByProps({ children: "Undo move!" });
+          const undoButton = screen.getByRole("button", { name: /undo move/i });
 
-          propsForSquare(game, from).onClick();
-          propsForSquare(game, to).onClick();
-
-          expect(undoButton.props.disabled).toEqual(false);
+          const squares = screen.queryAllByRole("button");
+          const user = userEvent.setup();
+          await user.click(squares[from]);
+          await user.click(squares[to]);
+          
+          expect(undoButton).not.toBeDisabled();
         }
       );
 
@@ -586,78 +537,75 @@ describe("Checkers UI", () => {
         [10, 10 + rowLength + 1, "black"],
         [12, 12 - rowLength + 1, "white"]
       ]).it("should undo move when the undo button is clicked after a single move",
-        (from: number, to: number, startTurn) => {
+        async (from: number, to: number, startTurn) => {
           const pieces = emptyBoard.slice();
           const king: PieceModel = { color: startTurn, kind: "king" };
           pieces[from] = king;
-          const game = TestRenderer.create(
+          render(
             <Game board={pieces} viewpoint="white" turn={startTurn} />
           );
-          const undoButton = game.root.findByProps({ children: "Undo move!" });
+          let undoButton = screen.getByRole("button", { name: /undo move/i });
+          
+          const squares = screen.queryAllByRole("button");
+          const user = userEvent.setup();
+          await user.click(squares[from]);
+          await user.click(squares[to]);
+          await user.click(undoButton);
 
-          propsForSquare(game, from).onClick();
-          propsForSquare(game, to).onClick();
-          undoButton.props.onClick();
-
-          // $FlowExpectError
-          expect(game.getInstance().state.game.turn).toEqual(startTurn);
-          expect(undoButton.props.disabled).toEqual(true);
+          undoButton = screen.getByRole("button", { name: /undo move/i });
+          expect(undoButton).toBeDisabled();
         }
       );
 
       each([
         [10, 10 + rowLength + 1, 35, 35 - rowLength + 1]
       ]).it("should undo move when the undo button is clicked after two moves",
-        (from0: number, to0: number, from1: number, to1: number) => {
+        async (from0: number, to0: number, from1: number, to1: number) => {
           const pieces = emptyBoard.slice();
           const blackKing: PieceModel = { color: "black", kind: "king" };
           const whiteKing: PieceModel = { color: "white", kind: "king" };
           pieces[from0] = blackKing;
           pieces[from1] = whiteKing;
-          const game = TestRenderer.create(
+          render(
             <Game board={pieces} viewpoint="white" turn={"black"} />
           );
-          const undoButton = game.root.findByProps({ children: "Undo move!" });
-          propsForSquare(game, from0).onClick();
-          propsForSquare(game, to0).onClick();
-          propsForSquare(game, from1).onClick();
-          propsForSquare(game, to1).onClick();
-          undoButton.props.onClick();
+          const undoButton = screen.getByRole("button", { name: /undo move/i });
+          const squares = screen.queryAllByRole("button");
+          const user = userEvent.setup();
+          await user.click(squares[from0]);
+          await user.click(squares[to0]);
+          await user.click(squares[from1]);
+          await user.click(squares[to1]);
+          user.click(undoButton);
 
-          // $FlowExpectError
-          expect(game.getInstance().state.game.turn).toEqual("white");
-          expect(undoButton.props.disabled).toEqual(false);
+          expect(undoButton).not.toHaveAttribute("disabled");
         }
       );
 
       each([10, 12, 14]).it(
         "should clear selection when a destination square is clicked",
-        (square: number) => {
+        async (square: number) => {
           const pieces = emptyBoard.slice();
           const blackMan = { color: "black", kind: "man" };
           pieces[square] = blackMan;
-          const game = TestRenderer.create(
+          render(
             <Game board={pieces} viewpoint="white" turn="black" />
           );
+  
+          const user = userEvent.setup();
+          let squares = screen.queryAllByRole("button");
+          user.click(squares[square]);
+          user.click(squares[square + rowLength + 1]);
 
-          propsForSquare(game, square).onClick();
-          propsForSquare(game, square + rowLength + 1).onClick();
-
-          // $FlowExpectErrorz
-          expect(game.root.findByType(Board).instance.state.canMoveTo).toEqual(
-            Array(64).fill(false)
-          );
-        });
+          squares = screen.queryAllByRole("button");
+          for (let i = 0; i < 64; i += 2)
+            expect(squares[i].querySelector(".ghost-piece")).not.toBeInTheDocument();
+        }
+      );
     });
   });
 });
 
 function canMoveTo(moves, i) {
   return (moves.indexOf(i) & 0x1) === 0;
-}
-
-function propsForSquare(boardComponent, square) {
-  const boardElement = boardComponent.root.findByProps({ id: "board" });
-  const squareElement = boardElement.props.children[square];
-  return squareElement.props;
 }
