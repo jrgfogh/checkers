@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useState } from 'react';
 import { movesFrom, movePiece } from './moveGenerator';
 import type { PieceModel, GameModel } from './moveGenerator';
 
@@ -34,55 +34,46 @@ export function Square(props : SquareProps) {
   )
 }
 
-type BoardState = {
-  selected: ?number,
-  canMoveTo: boolean[]
-};
-
 type BoardProps = GameModel & {
   viewpoint : "black" | "white",
   movePiece: (from: number, to: number) => void
 };
 
-export default class Board extends React.Component<BoardProps, BoardState> {
-  constructor(props : BoardProps) {
-    super(props);
-    this.state = {
-      selected: null,
-      canMoveTo: Array(64).fill(false)
-    };
+export default function Board(props: BoardProps) {
+  const [selected, setSelected] = useState<?number>(null);
+  const [canMoveTo, setCanMoveTo] = useState<boolean[]>(Array(64).fill(false));
+
+  function moveSelectedTo(square: number): void {
+    if (selected == null)
+      throw Error("This line should be unreachable!");
+    props.movePiece(selected, square);
   }
 
-  moveSelectedTo(square : number) : void {
-      if (!this.state.selected)
-        throw Error("This line should be unreachable!");
-      this.props.movePiece(this.state.selected, square);
+  function handleClick(square: number): void {
+    if (canMoveTo[square]) {
+      moveSelectedTo(square);
+    } else if (props.board[square]) {
+      toggleSelected(square);
+    }
   }
 
-  handleClick(square : number) : void {
-    if (this.state.canMoveTo[square])
-      this.moveSelectedTo(square);
-    else if (this.props.board[square])
-      this.toggleSelected(square);
+  function canMove(square: number): boolean {
+    const piece = props.board[square];
+    return selected !== square && !!piece && piece.color === props.turn &&
+      movesFrom(props, square).length > 0;
   }
 
-  canMove(square: number) : boolean {
-    const piece = this.props.board[square];
-    return this.state.selected !== square && !!piece && piece.color === this.props.turn &&
-      movesFrom(this.props, square).length > 0;
+  function toggleSelected(square: number): void {
+    if (canMove(square)) {
+      setSelected(square);
+      setCanMoveTo(legalMoveGrid(props, square));
+    } else {
+      setSelected(null);
+      setCanMoveTo(Array(64).fill(false));
+    }
   }
 
-  toggleSelected(square : number) : void {
-    if (this.canMove(square))
-      this.setState({
-          selected: square,
-          canMoveTo: this.legalMoveGrid(this.props, square)
-        });
-    else
-      this.setState({ selected: null, canMoveTo: Array(64).fill(false) });
-  }
-
-  legalMoveGrid(game: GameModel, origin : number) {
+  function legalMoveGrid(game: GameModel, origin : number) : boolean[] {
     const moves = movesFrom(game, origin);
     const result : boolean[] = Array(64).fill(false);
     for (let i = 0; i < moves.length; i += 2)
@@ -90,78 +81,62 @@ export default class Board extends React.Component<BoardProps, BoardState> {
     return result;
   }
 
-  render() {
-    const boardColors : Array<"white" | "black"> =
-      [ "white", "black", "white", "black", "white", "black", "white", "black",
-        "black", "white", "black", "white", "black", "white", "black", "white",
-        "white", "black", "white", "black", "white", "black", "white", "black",
-        "black", "white", "black", "white", "black", "white", "black", "white",
-        "white", "black", "white", "black", "white", "black", "white", "black",
-        "black", "white", "black", "white", "black", "white", "black", "white",
-        "white", "black", "white", "black", "white", "black", "white", "black",
-        "black", "white", "black", "white", "black", "white", "black", "white" ]
-    const squares = []
-    for (let i = 0; i < 64; i++)
-      squares[i] =
-        <Square key={ i } color={ boardColors[i] } piece={ this.props.board[i] }
-          onClick={ () => this.handleClick(i) } selected={ this.state.selected === i } canMoveTo={ this.state.canMoveTo[i] } turn={ this.props.turn } />
-    if (this.props.viewpoint == "black")
-      squares.reverse();
-    return (
-      <div id="board">
-        { squares }
-      </div>
-    )
-  }
+  const boardColors : Array<"white" | "black"> =
+    [ "white", "black", "white", "black", "white", "black", "white", "black",
+      "black", "white", "black", "white", "black", "white", "black", "white",
+      "white", "black", "white", "black", "white", "black", "white", "black",
+      "black", "white", "black", "white", "black", "white", "black", "white",
+      "white", "black", "white", "black", "white", "black", "white", "black",
+      "black", "white", "black", "white", "black", "white", "black", "white",
+      "white", "black", "white", "black", "white", "black", "white", "black",
+      "black", "white", "black", "white", "black", "white", "black", "white" ];
+  let squares = [];
+  for (let i = 0; i < 64; i++)
+    squares[i] =
+      <Square key={ i } color={ boardColors[i] } piece={ props.board[i] }
+        onClick={ () => handleClick(i) } selected={ selected === i } canMoveTo={ canMoveTo[i] } turn={ props.turn } />
+  if (props.viewpoint == "black")
+    squares.reverse();
+  return (
+    <div id="board">
+      { squares }
+    </div>
+  );
 }
-
-type GameViewState = {
-  game: GameModel,
-  stepNumber: number,
-  moveHistory: GameModel[]
-};
 
 type GameProps = GameModel & {
   viewpoint : "black" | "white"
 };
 
-export class Game extends React.Component<GameProps, GameViewState> {
-  constructor(props : GameProps) {
-    super(props)
-    this.state = {
-      game: {
-        board: props.board.slice(),
-        turn: props.turn
-      },
-      stepNumber: 0,
-      moveHistory: []
-    };
+export function Game(props: GameProps) {
+  const [game, setGame] = useState<GameModel>({
+    board: props.board.slice(),
+    turn: props.turn
+  });
+  const [stepNumber, setStepNumber] = useState<number>(0);
+  const [moveHistory, setMoveHistory] = useState<GameModel[]>([]);
+
+  function handleMovePiece(from: number, to: number) {
+    setGame(prevGame => {
+      const newGame = movePiece(prevGame, from, to);
+      setMoveHistory(moveHistory.concat(prevGame));
+      setStepNumber(stepNumber + 1);
+      return newGame;
+    });
   }
 
-  render() {
-    return <div>
-      <Board key={ this.state.stepNumber } board={ this.state.game.board } viewpoint={ this.props.viewpoint } turn={ this.state.game.turn } movePiece={(from: number, to: number) => {
-        this.setState((prevState) => {
-          return {
-              game: movePiece(prevState.game, from, to),
-              moveHistory: prevState.moveHistory.concat(prevState.game),
-              stepNumber: prevState.stepNumber + 1
-            };
-        });
-      }} />
-      <div className="game-controls">
-        <button onClick={() => {
-            this.setState((prevState) => {
-              const moveHistory = prevState.moveHistory;
-              const lastIndex = moveHistory.length - 1;
-              return {
-                  game: moveHistory[lastIndex],
-                  moveHistory: moveHistory.slice(0, lastIndex),
-                  stepNumber: prevState.stepNumber + 1
-                };
-            });
-          }} disabled={this.state.moveHistory.length === 0}>Undo move!</button>
-      </div>
-    </div>;
+  function handleUndo() {
+    const lastIndex = moveHistory.length - 1;
+      
+    setMoveHistory(moveHistory.slice(0, lastIndex));
+    setGame(moveHistory[lastIndex]);
+    setStepNumber(stepNumber + 1);
   }
+
+  return <div>
+    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ game.turn } movePiece={ handleMovePiece } />
+    <div className="game-controls">
+      <button onClick={ handleUndo } disabled={ moveHistory.length === 0 }>Undo move!</button>
+    </div>
+  </div>;
 }
