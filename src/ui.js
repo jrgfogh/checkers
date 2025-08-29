@@ -25,12 +25,12 @@ export function Square(props : SquareProps) {
   if (props.selected)
     squareClasses.push("selected")
   if (props.canMoveTo && props.turn) {
-    squareContent = <div className={ "piece ghost-piece " + props.turn + "-piece" } />
+    squareContent = <div className={ "piece ghost-piece " + props.turn + "-piece" }  />
     squareClasses.push("destination")
   } else if (props.piece)
     squareContent = Piece(props.piece);
   return (
-    <div className={ squareClasses.join(" ") } onClick={ props.onClick } >{ squareContent }</div>
+    <div role="button" className={ squareClasses.join(" ") } onClick={ props.onClick } >{ squareContent }</div>
   )
 }
 

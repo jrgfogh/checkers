@@ -1,264 +1,837 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Checkers UI Board renders correctly when empty 1`] = `
-<div
-  id="board"
->
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
-  <div
-    className="square black"
-    onClick={[Function]}
-  />
-  <div
-    className="square white"
-    onClick={[Function]}
-  />
+exports[`Checkers UI Game should render empty board correctly 1`] = `
+<div>
+  <div>
+    <div
+      id="board"
+    >
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+    </div>
+    <div
+      class="game-controls"
+    >
+      <button
+        disabled=""
+      >
+        Undo move!
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Checkers UI Game should render empty board correctly 2`] = `
+<div>
+  <div>
+    <div
+      id="board"
+    >
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+    </div>
+    <div
+      class="game-controls"
+    >
+      <button
+        disabled=""
+      >
+        Undo move!
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Checkers UI Game should render non-empty board correctly 1`] = `
+<div>
+  <div>
+    <div
+      id="board"
+    >
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      >
+        <div
+          class="piece white-piece man"
+        >
+          <div
+            class="piece-center"
+          />
+        </div>
+      </div>
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+      <div
+        class="square black"
+        role="button"
+      />
+      <div
+        class="square white"
+        role="button"
+      />
+    </div>
+    <div
+      class="game-controls"
+    >
+      <button
+        disabled=""
+      >
+        Undo move!
+      </button>
+    </div>
+  </div>
 </div>
 `;
