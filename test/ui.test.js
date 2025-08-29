@@ -103,50 +103,44 @@ describe("Checkers UI", () => {
       });
       
       it("should require a color", () => {
-              () =>
-                  render(
-                  // $FlowExpectError
-                  <Square
+        void(() => render(
+            // $FlowExpectError
+            <Square
               selected={false}
               canMoveTo={false}
               piece={null}
               turn="white"
               onClick={() => {}}
-          />
-      );
+          />));
       });
 
       it("should require a valid color", () => {
-              () => render(
-                  <Square
-              // $FlowExpectError
+        void(() => render(
+          <Square
+          // $FlowExpectError
               color="invalid"
               selected={false}
               canMoveTo={false}
               piece={null}
               turn="white"
               onClick={() => {}}
-          />
-      );
+          />));
       });
 
       it("should require a turn", () => {
-          () =>
-              render(
-              // $FlowExpectError
-              <Square
-          color="black"
-          selected={false}
-          canMoveTo={false}
-          piece={null}
-              />
-      );
+        void(() => render(
+          // $FlowExpectError
+          <Square
+              color="black"
+              selected={false}
+              canMoveTo={false}
+              piece={null}
+          />));
       });
 
       it("should require a valid turn", () => {
-              () =>
-                  render(
-                  <Square
+        void(() => render(
+          <Square
               color="white"
               selected={false}
               canMoveTo={false}
@@ -154,8 +148,7 @@ describe("Checkers UI", () => {
               // $FlowExpectError
               turn="invalid"
               onClick={() => {}}
-          />
-      );
+          />));
       });
 
       it("renders empty black selected correctly", () => {
@@ -193,12 +186,12 @@ describe("Checkers UI", () => {
 
     it("should require a turn", () => {
       // $FlowExpectError
-      () => render(<Board />);
+      void(() => render(<Board />));
     });
 
     it("should reject an invalid turn", () => {
       // $FlowExpectError
-      () => render(<Board viewpoint="white" turn="invalid" />);
+      void(() => render(<Board viewpoint="white" turn="invalid" />));
     });
 
     function checkSquares() {
