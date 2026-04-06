@@ -1,10 +1,8 @@
-// @flow
-
 import React, { useState } from 'react';
 import { movesFrom, movePiece } from './moveGenerator';
 import type { PieceModel, GameModel } from './moveGenerator';
 
-function Piece(props : PieceModel) {
+function Piece(props: PieceModel) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
     <div className="piece-center" />
   </div>;
@@ -14,12 +12,12 @@ type SquareProps = {
   color: "white" | "black",
   selected: boolean,
   canMoveTo: boolean,
-  piece?: ?PieceModel,
+  piece?: PieceModel | null,
   turn: "white" | "black",
   onClick: () => void
 };
 
-export function Square(props : SquareProps) {
+export function Square(props: SquareProps) {
   let squareClasses = ["square", props.color]
   let squareContent
   if (props.selected)
@@ -35,12 +33,12 @@ export function Square(props : SquareProps) {
 }
 
 type BoardProps = GameModel & {
-  viewpoint : "black" | "white",
+  viewpoint: "black" | "white",
   movePiece: (from: number, to: number) => void
 };
 
 export default function Board(props: BoardProps) {
-  const [selected, setSelected] = useState<?number>(null);
+  const [selected, setSelected] = useState<number | null>(null);
   const [canMoveTo, setCanMoveTo] = useState<boolean[]>(Array(64).fill(false));
 
   function moveSelectedTo(square: number): void {
@@ -73,15 +71,15 @@ export default function Board(props: BoardProps) {
     }
   }
 
-  function legalMoveGrid(game: GameModel, origin : number) : boolean[] {
+  function legalMoveGrid(game: GameModel, origin: number): boolean[] {
     const moves = movesFrom(game, origin);
-    const result : boolean[] = Array(64).fill(false);
+    const result: boolean[] = Array(64).fill(false);
     for (let i = 0; i < moves.length; i += 2)
       result[moves[i]] = true;
     return result;
   }
 
-  const boardColors : Array<"white" | "black"> =
+  const boardColors: Array<"white" | "black"> =
     [ "white", "black", "white", "black", "white", "black", "white", "black",
       "black", "white", "black", "white", "black", "white", "black", "white",
       "white", "black", "white", "black", "white", "black", "white", "black",
@@ -90,7 +88,7 @@ export default function Board(props: BoardProps) {
       "black", "white", "black", "white", "black", "white", "black", "white",
       "white", "black", "white", "black", "white", "black", "white", "black",
       "black", "white", "black", "white", "black", "white", "black", "white" ];
-  let squares = [];
+  const squares: React.ReactElement[] = [];
   for (let i = 0; i < 64; i++)
     squares[i] =
       <Square key={ i } color={ boardColors[i] } piece={ props.board[i] }
@@ -105,7 +103,7 @@ export default function Board(props: BoardProps) {
 }
 
 type GameProps = GameModel & {
-  viewpoint : "black" | "white"
+  viewpoint: "black" | "white"
 };
 
 export function Game(props: GameProps) {

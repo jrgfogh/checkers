@@ -1,8 +1,7 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Game } from './ui'
-import { parse, startPosition } from "../src/checkersFEN";
+import { Game } from './ui';
+import { parse, startPosition } from "./checkersFEN";
 
 const board = parse(startPosition).board;
 
