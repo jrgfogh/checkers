@@ -132,6 +132,18 @@ export function Game(props: GameProps) {
       setStatusMessage(null);
     });
 
+    socketService.onMoveAccepted(({ gameState }) => {
+      const newGame = parse(gameState);
+      setGame(newGame);
+      setStepNumber(n => n + 1);
+    });
+
+    socketService.onGameState(({ gameState }) => {
+      const newGame = parse(gameState);
+      setGame(newGame);
+      setStepNumber(n => n + 1);
+    });
+
     socketService.onGameOver(({ winner, reason }) => {
       setStatusMessage(`Game over: ${winner} wins (${reason})`);
     });

@@ -4,10 +4,20 @@ import type { ClientToServerEvents, ServerToClientEvents } from "../server/proto
 type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
 let socket: TypedSocket | null = null;
+let previousSocketId: string | null = null;
 
 function getSocket(): TypedSocket {
   if (!socket) {
     socket = io({ autoConnect: false });
+    socket.on("connect", () => {
+      const currentId = socket!.id;
+      if (previousSocketId && currentId && currentId !== previousSocketId) {
+        socket!.emit("reconnect-to-game", { previousSocketId });
+      }
+      if (currentId) {
+        previousSocketId = currentId;
+      }
+    });
   }
   return socket;
 }
@@ -21,6 +31,7 @@ export function disconnect(): void {
     socket.disconnect();
     socket = null;
   }
+  previousSocketId = null;
 }
 
 export function createGame(): void {
@@ -47,8 +58,16 @@ export function onGameStart(cb: (payload: { gameState: string; color: "black" | 
   getSocket().on("game-start", cb);
 }
 
+export function onGameState(cb: (payload: { gameState: string }) => void): void {
+  getSocket().on("game-state", cb);
+}
+
 export function onOpponentMoved(cb: (payload: { from: number; to: number; gameState: string }) => void): void {
   getSocket().on("opponent-moved", cb);
+}
+
+export function onMoveAccepted(cb: (payload: { from: number; to: number; gameState: string }) => void): void {
+  getSocket().on("move-accepted", cb);
 }
 
 export function onGameOver(cb: (payload: { winner: "black" | "white"; reason: string }) => void): void {

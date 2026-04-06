@@ -147,7 +147,7 @@ describe("Socket handlers", () => {
       const [black, white] = await setupGame();
       try {
         // Black man at square 17 can move to 26 or 24
-        const blackMovePromise = waitForEvent<{ from: number; to: number; gameState: string }>(black, "opponent-moved");
+        const blackMovePromise = waitForEvent<{ from: number; to: number; gameState: string }>(black, "move-accepted");
         const whiteMovePromise = waitForEvent<{ from: number; to: number; gameState: string }>(white, "opponent-moved");
 
         black.emit("move", { from: 17, to: 26 });
@@ -253,6 +253,56 @@ describe("Socket handlers", () => {
         await disconnectPromise;
       } finally {
         white.disconnect();
+      }
+    });
+  });
+
+  describe("reconnect-to-game", () => {
+    it("reconnects a disconnected player and notifies opponent", async () => {
+      const black = await connectClient();
+      const white = await connectClient();
+      try {
+        const createdPromise = waitForEvent<{ roomId: string }>(black, "game-created");
+        black.emit("create-game");
+        const { roomId } = await createdPromise;
+
+        const blackStartPromise = waitForEvent<any>(black, "game-start");
+        const whiteStartPromise = waitForEvent<any>(white, "game-start");
+        white.emit("join-game", { roomId });
+        await Promise.all([blackStartPromise, whiteStartPromise]);
+
+        const oldBlackId = black.id!;
+        const disconnectPromise = waitForEvent<void>(white, "opponent-disconnected");
+        black.disconnect();
+        await disconnectPromise;
+
+        // Reconnect as a new client with the old socket ID
+        const newBlack = await connectClient();
+        try {
+          const reconnectedPromise = waitForEvent<void>(white, "opponent-reconnected");
+          const gameStatePromise = waitForEvent<{ gameState: string }>(newBlack, "game-state");
+          newBlack.emit("reconnect-to-game", { previousSocketId: oldBlackId });
+
+          const [, gameState] = await Promise.all([reconnectedPromise, gameStatePromise]);
+          expect(gameState.gameState).toBeDefined();
+        } finally {
+          newBlack.disconnect();
+        }
+      } finally {
+        black.disconnect();
+        white.disconnect();
+      }
+    });
+
+    it("returns error for invalid previous socket ID", async () => {
+      const client = await connectClient();
+      try {
+        const errorPromise = waitForEvent<{ message: string }>(client, "error");
+        client.emit("reconnect-to-game", { previousSocketId: "nonexistent" });
+        const error = await errorPromise;
+        expect(error.message).toMatch(/no game/i);
+      } finally {
+        client.disconnect();
       }
     });
   });

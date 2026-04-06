@@ -33,7 +33,7 @@ server/
 ├── index.ts           # Express + Socket.IO server entry point
 ├── protocol.ts        # Shared event type definitions (ClientToServerEvents, ServerToClientEvents)
 ├── gameRoom.ts        # RoomManager – in-memory game room management
-├── socketHandlers.ts  # Socket event handlers (move validation, resign, disconnect)
+├── socketHandlers.ts  # Socket event handlers (move validation, resign, disconnect, reconnect)
 test/
 ├── checkersFEN.test.ts
 ├── moveGenerator.test.ts

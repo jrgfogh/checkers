@@ -79,11 +79,32 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       const newState = movePiece(room.gameState, payload.from, payload.to);
       roomManager.updateGameState(room.id, newState);
       const fen = unparse(newState);
-      io.to(room.id).emit("opponent-moved", {
+      socket.to(room.id).emit("opponent-moved", {
         from: payload.from,
         to: payload.to,
         gameState: fen,
       });
+      socket.emit("move-accepted", {
+        from: payload.from,
+        to: payload.to,
+        gameState: fen,
+      });
+    });
+
+    socket.on("reconnect-to-game", (payload) => {
+      if (!payload || typeof payload.previousSocketId !== "string") {
+        socket.emit("error", { message: "Invalid reconnect payload." });
+        return;
+      }
+      const room = roomManager.handleReconnect(payload.previousSocketId, socket.id);
+      if (!room) {
+        socket.emit("error", { message: "No game to reconnect to." });
+        return;
+      }
+      socket.join(room.id);
+      const fen = unparse(room.gameState);
+      socket.emit("game-state", { gameState: fen });
+      socket.to(room.id).emit("opponent-reconnected");
     });
 
     socket.on("resign", () => {
