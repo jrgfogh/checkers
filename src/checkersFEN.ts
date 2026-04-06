@@ -1,8 +1,6 @@
-// @flow
-
 import type { PieceModel, GameModel } from './moveGenerator';
 
-function validateFen(fenString : string) {
+function validateFen(fenString: string): void {
   // TODO(jrgfogh): Validate colons.
   // TODO(jorgen.fogh): Validate color input.
   if (fenString === '')
@@ -13,23 +11,23 @@ function validateFen(fenString : string) {
           'The turn must be either "W" or "B", not "' + fenString[0] + '".';
 }
 
-function isOdd(n : number) {
+function isOdd(n: number): number {
   return n & 0x1;
 }
 
-function fenIndexToGameIndex(fenIndex) {
+function fenIndexToGameIndex(fenIndex: number): number {
   const fenRow = Math.floor((fenIndex - 1) / 4);
   const index = isOdd(fenRow) ? 65 - 2 * fenIndex : 64 - 2 * fenIndex;
   return index;
 }
 
-function gameIndexToFenIndex(gameIndex) {
+function gameIndexToFenIndex(gameIndex: number): number {
   return Math.floor((65 - gameIndex) / 2);
 }
 
-function parsePiece(board, color, fenPiece) {
-  var kind;
-  var fenIndex;
+function parsePiece(board: (PieceModel | null)[], color: "white" | "black", fenPiece: string): void {
+  let kind: "king" | "man";
+  let fenIndex: number;
   if (fenPiece[0] === 'K') {
     fenIndex = parseInt(fenPiece.substr(1));
     kind = "king";
@@ -44,8 +42,8 @@ function parsePiece(board, color, fenPiece) {
   };
 }
 
-function parsePlayer(board, fenSegment) {
-  const color = (fenSegment[0] === "W") ? "white" : "black";
+function parsePlayer(board: (PieceModel | null)[], fenSegment: string): void {
+  const color: "white" | "black" = (fenSegment[0] === "W") ? "white" : "black";
   if (fenSegment.length > 1) {
     const fenPieces = fenSegment.substr(1).split(',');
     for (const fenPiece of fenPieces)
@@ -53,10 +51,10 @@ function parsePlayer(board, fenSegment) {
   }
 }
 
-export function parse(fenString : string) : GameModel {
+export function parse(fenString: string): GameModel {
   validateFen(fenString);
 
-  const board : Array<?PieceModel> = Array(64).fill(null);
+  const board: (PieceModel | null)[] = Array(64).fill(null);
   for (const fenSegment of fenString.split(':'))
     parsePlayer(board, fenSegment);
 
@@ -67,9 +65,9 @@ export function parse(fenString : string) : GameModel {
   };
 }
 
-export function unparse(gameState : GameModel) : string {
-  var whitePieces = [];
-  var blackPieces = [];
+export function unparse(gameState: GameModel): string {
+  var whitePieces: (string | number)[] = [];
+  var blackPieces: (string | number)[] = [];
   for (var i = 63; i >= 0; i--) {
     const piece = gameState.board[i];
     if (piece != null) {

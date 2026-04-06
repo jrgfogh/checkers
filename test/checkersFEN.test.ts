@@ -1,10 +1,8 @@
-// @flow
-
 import each from 'jest-each';
 
 import { parse, unparse } from "../src/checkersFEN";
 
-const allFenIndices = Array(32).fill().map((_, i) => i + 1);
+const allFenIndices = Array(32).fill(null).map((_, i) => i + 1);
 
 describe("Checkers FEN", () => {
   describe("Parser", () => {
