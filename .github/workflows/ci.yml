@@ -28,14 +28,15 @@ jobs:
           node-version: 'lts/*'
           cache: 'npm'
       - run: npm ci
+      - run: npm run type-check
+      - run: npm test -- --ci
       - run: npm run build
-      - run: npm test
 
       - name: Copy static files
         run: |
           mkdir -p dist
-          cp src/*.html dist || true
-          cp src/*.css dist || true
+          cp src/*.html dist
+          cp src/*.css dist
 
       - name: Upload static files as artifact
         uses: actions/upload-pages-artifact@v3
