@@ -4,6 +4,8 @@ import type { PieceModel, GameModel } from './moveGenerator';
 import * as socketService from './socketService';
 import { parse } from './checkersFEN';
 
+const noop = () => {};
+
 function Piece(props: PieceModel) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
     <div className="piece-center" />
@@ -176,7 +178,7 @@ export function Game(props: GameProps) {
   const effectiveTurn = isOnline && game.turn !== props.viewpoint ? undefined : game.turn;
 
   return <div>
-    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ effectiveTurn ?? game.turn } movePiece={ effectiveTurn ? handleMovePiece : () => {} } />
+    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ effectiveTurn ?? game.turn } movePiece={ effectiveTurn ? handleMovePiece : noop } />
     {statusMessage && <p className="status-message">{statusMessage}</p>}
     <div className="game-controls">
       {!isOnline && <button onClick={ handleUndo } disabled={ moveHistory.length === 0 }>Undo move!</button>}

@@ -18,9 +18,8 @@ export function Lobby() {
   useEffect(() => {
     socketService.connect();
 
-    socketService.onGameCreated(({ roomId, color }) => {
+    socketService.onGameCreated(({ roomId }) => {
       setState({ phase: "waiting", roomId });
-      void color;
     });
 
     socketService.onGameStart(({ gameState, color }) => {
