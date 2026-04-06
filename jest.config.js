@@ -135,7 +135,6 @@ module.exports = {
   // Transform files with ts-jest
   transform: {
     "^.+\\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.test.json" }],
-    "^.+\\.jsx?$": "babel-jest",
   },
 
   // Options that will be passed to the testEnvironment
