@@ -6,8 +6,12 @@
   "scripts": {
     "test": "jest",
     "type-check": "tsc --noEmit",
+    "type-check:server": "tsc --noEmit -p tsconfig.server.json",
     "start": "webpack-dev-server --content-base=src/ --mode development --progress --open --hot",
-    "build": "webpack --mode production --progress"
+    "build": "webpack --mode production --progress",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start:server": "node dist-server/server/index.js",
+    "dev:server": "tsx server/index.ts"
   },
   "keywords": [
     "checkers",
@@ -24,10 +28,12 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/express": "^4.17.25",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "babel-loader": "^10.1.1",
+    "copy-webpack-plugin": "^14.0.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "jest": "^30.3.0",
     "jest-each": "^30.3.0",
@@ -36,9 +42,15 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "ts-jest": "^29.1.1",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.0",
     "webpack-dev-server": "^5.2.3"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   }
 }
