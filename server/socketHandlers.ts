@@ -91,22 +91,6 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       });
     });
 
-    socket.on("reconnect-to-game", (payload) => {
-      if (!payload || typeof payload.previousSocketId !== "string") {
-        socket.emit("error", { message: "Invalid reconnect payload." });
-        return;
-      }
-      const room = roomManager.handleReconnect(payload.previousSocketId, socket.id);
-      if (!room) {
-        socket.emit("error", { message: "No game to reconnect to." });
-        return;
-      }
-      socket.join(room.id);
-      const fen = unparse(room.gameState);
-      socket.emit("game-state", { gameState: fen });
-      socket.to(room.id).emit("opponent-reconnected");
-    });
-
     socket.on("resign", () => {
       const room = roomManager.getRoomForSocket(socket.id);
       if (!room || room.status !== "playing") return;

@@ -138,22 +138,12 @@ export function Game(props: GameProps) {
       setStepNumber(n => n + 1);
     });
 
-    socketService.onGameState(({ gameState }) => {
-      const newGame = parse(gameState);
-      setGame(newGame);
-      setStepNumber(n => n + 1);
-    });
-
     socketService.onGameOver(({ winner, reason }) => {
       setStatusMessage(`Game over: ${winner} wins (${reason})`);
     });
 
     socketService.onOpponentDisconnected(() => {
       setStatusMessage("Opponent disconnected. Waiting for reconnect...");
-    });
-
-    socketService.onOpponentReconnected(() => {
-      setStatusMessage(null);
     });
 
     return () => {
