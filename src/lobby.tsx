@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import * as socketService from "./socketService";
-import { parse } from "./checkersFEN";
+import { parse, startPosition } from "./checkersFEN";
 import { Game } from "./ui";
 import type { GameModel } from "./moveGenerator";
 
 type LobbyState =
   | { phase: "menu" }
+  | { phase: "offline" }
   | { phase: "waiting"; roomId: string }
   | { phase: "joining" }
   | { phase: "playing"; game: GameModel; color: "black" | "white" };
@@ -48,6 +49,11 @@ export function Lobby() {
     socketService.joinGame(joinInput.trim());
   }, [joinInput]);
 
+  if (state.phase === "offline") {
+    const initialGame = parse(startPosition);
+    return <Game board={initialGame.board} viewpoint="black" turn={initialGame.turn} />;
+  }
+
   if (state.phase === "playing") {
     return <Game board={state.game.board} viewpoint={state.color} turn={state.game.turn} mode="online" />;
   }
@@ -59,6 +65,7 @@ export function Lobby() {
 
       {state.phase === "menu" && (
         <div>
+          <button onClick={() => setState({ phase: "offline" })}>Play Offline</button>
           <button onClick={handleCreate}>Create Game</button>
           <div className="join-section">
             <input

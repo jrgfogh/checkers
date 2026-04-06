@@ -4,8 +4,6 @@ import type { PieceModel, GameModel } from './moveGenerator';
 import * as socketService from './socketService';
 import { parse } from './checkersFEN';
 
-const noop = () => {};
-
 function Piece(props: PieceModel) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
     <div className="piece-center" />
@@ -38,7 +36,8 @@ export function Square(props: SquareProps) {
 
 type BoardProps = GameModel & {
   viewpoint: "black" | "white",
-  movePiece: (from: number, to: number) => void
+  movePiece: (from: number, to: number) => void,
+  interactive?: boolean
 };
 
 export default function Board(props: BoardProps) {
@@ -52,6 +51,7 @@ export default function Board(props: BoardProps) {
   }
 
   function handleClick(square: number): void {
+    if (props.interactive === false) return;
     if (canMoveTo[square]) {
       moveSelectedTo(square);
     } else if (props.board[square]) {
@@ -175,10 +175,10 @@ export function Game(props: GameProps) {
   }
 
   // In online mode, only allow interaction on your turn
-  const effectiveTurn = isOnline && game.turn !== props.viewpoint ? undefined : game.turn;
+  const isMyTurn = !isOnline || game.turn === props.viewpoint;
 
   return <div>
-    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ effectiveTurn ?? game.turn } movePiece={ effectiveTurn ? handleMovePiece : noop } />
+    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ game.turn } movePiece={ handleMovePiece } interactive={ isMyTurn } />
     {statusMessage && <p className="status-message">{statusMessage}</p>}
     <div className="game-controls">
       {!isOnline && <button onClick={ handleUndo } disabled={ moveHistory.length === 0 }>Undo move!</button>}
