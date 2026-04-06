@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
- * @flow
  */
 
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -16,10 +14,10 @@ import type { PieceModel } from "../src/moveGenerator";
 
 const emptyBoard = Array(64).fill(null);
 const rowLength = 8;
-const allSquareIndices = Array(64).fill().map((_, i) => i);
+const allSquareIndices = Array(64).fill(null).map((_, i) => i);
 
 describe("Checkers UI", () => {
-  async function clickSquare(user, i) {
+  async function clickSquare(user: ReturnType<typeof userEvent.setup>, i: number) {
     const squares = screen.queryAllByRole("button");
     await user.click(squares[i]);
   }
@@ -104,7 +102,7 @@ describe("Checkers UI", () => {
       
       it("should require a color", () => {
         void(() => render(
-            // $FlowExpectError
+            // @ts-expect-error
             <Square
               selected={false}
               canMoveTo={false}
@@ -117,7 +115,7 @@ describe("Checkers UI", () => {
       it("should require a valid color", () => {
         void(() => render(
           <Square
-          // $FlowExpectError
+              // @ts-expect-error
               color="invalid"
               selected={false}
               canMoveTo={false}
@@ -129,7 +127,7 @@ describe("Checkers UI", () => {
 
       it("should require a turn", () => {
         void(() => render(
-          // $FlowExpectError
+          // @ts-expect-error
           <Square
               color="black"
               selected={false}
@@ -145,7 +143,7 @@ describe("Checkers UI", () => {
               selected={false}
               canMoveTo={false}
               piece={null}
-              // $FlowExpectError
+              // @ts-expect-error
               turn="invalid"
               onClick={() => {}}
           />));
@@ -185,12 +183,12 @@ describe("Checkers UI", () => {
     });
 
     it("should require a turn", () => {
-      // $FlowExpectError
+      // @ts-expect-error
       void(() => render(<Board />));
     });
 
     it("should reject an invalid turn", () => {
-      // $FlowExpectError
+      // @ts-expect-error
       void(() => render(<Board viewpoint="white" turn="invalid" />));
     });
 
@@ -244,14 +242,14 @@ describe("Checkers UI", () => {
     );
 
     describe("User input", () => {
-      async function isSelectedWhenClicked(i) {
+      async function isSelectedWhenClicked(i: number) {
         const user = userEvent.setup();
         await clickSquare(user, i);
         const squares = screen.queryAllByRole("button");
         expect(squares[i]).toHaveClass("selected");
       }
 
-      async function isNotSelectedWhenClicked(user, i) {
+      async function isNotSelectedWhenClicked(user: ReturnType<typeof userEvent.setup>, i: number) {
         await clickSquare(user, i);
         const squares = screen.queryAllByRole("button");
         expect(squares[i]).not.toHaveClass("selected");
@@ -599,6 +597,6 @@ describe("Checkers UI", () => {
   });
 });
 
-function canMoveTo(moves, i) {
+function canMoveTo(moves: number[], i: number): boolean {
   return (moves.indexOf(i) & 0x1) === 0;
 }

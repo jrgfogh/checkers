@@ -1,5 +1,3 @@
-// @flow
-
 import each from 'jest-each';
 
 import MoveGenerator, { MoveKind, movesFrom, movePiece } from '../src/moveGenerator';
@@ -10,11 +8,11 @@ import { parse, startPosition } from "../src/checkersFEN";
 function perft(state: GameModel, depth: number) {
     if (depth == 0)
         return 1;
-    var result = 0;
-    for (var square = 0; square < 64; square++) {
-        if (state.board[square] && state.board[square].color === state.turn) {
+    let result = 0;
+    for (let square = 0; square < 64; square++) {
+        if (state.board[square] && state.board[square]!.color === state.turn) {
             const moves = movesFrom(state, square);
-            for (var i = 0; i < moves.length; i += 2) {
+            for (let i = 0; i < moves.length; i += 2) {
                 const nextState = movePiece(state, square, moves[i]);
                 if (nextState.turn != state.turn)
                     result += perft(nextState, depth - 1);
@@ -27,13 +25,12 @@ function perft(state: GameModel, depth: number) {
 }
 
 function divide(startState: GameModel, depth: number): number[] {
-    const result = [];
-    var i = 0;
-    for (var square = 0; square < 64; square++) {
-        if (startState.board[square] && startState.board[square].color === startState.turn) {
+    const result: number[] = [];
+    for (let square = 0; square < 64; square++) {
+        if (startState.board[square] && startState.board[square]!.color === startState.turn) {
             const moves = movesFrom(startState, square);
             if (depth > 1)
-                for (var i = 0; i < moves.length; i += 2)
+                for (let i = 0; i < moves.length; i += 2)
                     result.push(perft(movePiece(startState, square, moves[i]), depth - 1));
         }
     }
