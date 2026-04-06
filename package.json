@@ -5,11 +5,9 @@
   "main": "checkers.js",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch",
     "type-check": "tsc --noEmit",
     "start": "webpack-dev-server --content-base=src/ --mode development --progress --open --hot",
-    "build": "webpack --mode production --progress",
-    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css}\" \"test/**/*.{ts,tsx,js,jsx}\""
+    "build": "webpack --mode production --progress"
   },
   "keywords": [
     "checkers",
