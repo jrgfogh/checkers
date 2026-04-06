@@ -160,5 +160,15 @@ describe("Checkers FEN", () => {
       const fenString = "W:W:B9,15";
       expect(unparse(parse(fenString))).toBe(fenString)
     })
+
+    it("should round-trip for empty board, black's turn", () => {
+      const fenString = "B:W:B";
+      expect(unparse(parse(fenString))).toBe(fenString)
+    })
+
+    it("should round-trip for start position (black's turn)", () => {
+      const fenString = "B:W1,2,3,4,5,6,7,8,9,10,11,12:B21,22,23,24,25,26,27,28,29,30,31,32";
+      expect(unparse(parse(fenString))).toBe(fenString)
+    })
   })
 })
