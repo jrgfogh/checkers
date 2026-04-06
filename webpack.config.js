@@ -10,11 +10,21 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'checkers.bundle.js',
   },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
   module: {
     rules: [{
-        test: /\.js?$/,
+        test: /\.[tj]sx?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            '@babel/preset-env',
+            '@babel/preset-typescript',
+            '@babel/preset-react'
+          ]
+        }
     }]
-  }
+  },
 }

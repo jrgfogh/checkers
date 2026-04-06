@@ -124,7 +124,19 @@ module.exports = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
+  
+  // Module file extensions
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
+  
+  // Test match patterns
+  testMatch: ["<rootDir>/test/**/*.test.ts?(x)", "<rootDir>/test/**/*.test.js?(x)"],
+  
+  // Transform files with ts-jest
+  transform: {
+    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.jsx?$": "babel-jest",
+  },
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
