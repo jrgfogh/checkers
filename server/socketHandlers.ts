@@ -77,7 +77,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
         return;
       }
       const newState = movePiece(room.gameState, payload.from, payload.to);
-      roomManager.updateGameState(room.id, newState);
+      roomManager.updateGameState(room, newState);
       const fen = unparse(newState);
       socket.to(room.id).emit("opponent-moved", {
         from: payload.from,
@@ -97,7 +97,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       const color = roomManager.getPlayerColor(room, socket.id);
       if (!color) return;
       const winner = color === "black" ? "white" : "black";
-      roomManager.finishRoom(room.id);
+      roomManager.finishRoom(room);
       io.to(room.id).emit("game-over", { winner, reason: "resignation" });
     });
 

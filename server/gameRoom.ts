@@ -94,7 +94,7 @@ export class RoomManager {
     }
 
     if (room.status === "waiting") {
-      this.removeRoom(room.id);
+      this.removeRoom(room);
       return null;
     }
 
@@ -134,37 +134,29 @@ export class RoomManager {
     return room;
   }
 
-  updateGameState(roomId: string, gameState: GameModel): void {
-    const room = this.rooms.get(roomId);
-    if (room) {
-      room.gameState = gameState;
-      room.lastActivity = Date.now();
-    }
+  updateGameState(room: GameRoom, gameState: GameModel): void {
+    room.gameState = gameState;
+    room.lastActivity = Date.now();
   }
 
-  finishRoom(roomId: string): void {
-    const room = this.rooms.get(roomId);
-    if (room) {
-      room.status = "finished";
-    }
+  finishRoom(room: GameRoom): void {
+    room.status = "finished";
   }
 
-  private removeRoom(roomId: string): void {
-    const room = this.rooms.get(roomId);
-    if (!room) return;
+  private removeRoom(room: GameRoom): void {
     for (const timer of room.disconnectTimers.values()) {
       clearTimeout(timer);
     }
     if (room.blackPlayer) this.socketToRoom.delete(room.blackPlayer);
     if (room.whitePlayer) this.socketToRoom.delete(room.whitePlayer);
-    this.rooms.delete(roomId);
+    this.rooms.delete(room.id);
   }
 
   private cleanupStaleRooms(): void {
     const now = Date.now();
-    for (const [id, room] of this.rooms) {
+    for (const [_id, room] of this.rooms) {
       if (now - room.lastActivity > STALE_ROOM_MS) {
-        this.removeRoom(id);
+        this.removeRoom(room);
       }
     }
   }

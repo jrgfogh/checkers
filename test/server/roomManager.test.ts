@@ -162,7 +162,7 @@ describe("RoomManager", () => {
       const room = manager.createRoom("socket-1");
       const before = room.lastActivity;
       const newState = { board: Array(64).fill(null), turn: "white" as const };
-      manager.updateGameState(room.id, newState);
+      manager.updateGameState(room, newState);
       expect(room.gameState).toBe(newState);
       expect(room.lastActivity).toBeGreaterThanOrEqual(before);
     });
@@ -171,7 +171,7 @@ describe("RoomManager", () => {
   describe("finishRoom", () => {
     it("sets status to finished", () => {
       const room = manager.createRoom("socket-1");
-      manager.finishRoom(room.id);
+      manager.finishRoom(room);
       expect(room.status).toBe("finished");
     });
   });
