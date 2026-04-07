@@ -63,11 +63,10 @@ describe("Socket handlers", () => {
     it("creates a game and returns room ID", async () => {
       const client = await connectClient();
       try {
-        const promise = waitForEvent<{ roomId: string; color: string }>(client, "game-created");
+        const promise = waitForEvent<{ roomId: string }>(client, "game-created");
         client.emit("create-game");
         const data = await promise;
         expect(data.roomId).toHaveLength(6);
-        expect(data.color).toBe("black");
       } finally {
         client.disconnect();
       }

@@ -20,7 +20,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       }
       const room = roomManager.createRoom(socket);
       socket.join(room.id);
-      socket.emit("game-created", { roomId: room.id, color: "black" });
+      socket.emit("game-created", { roomId: room.id });
     });
 
     socket.on("join-game", (payload) => {

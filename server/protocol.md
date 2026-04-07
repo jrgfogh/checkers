@@ -13,7 +13,7 @@ The first player (who will play **black**) sends:
 | Direction | Event | Payload |
 |-----------|-------|---------|
 | Client → Server | `create-game` | *(none)* |
-| Server → Client | `game-created` | `{ roomId: string, color: "black" }` |
+| Server → Client | `game-created` | `{ roomId: string }` |
 
 The server creates a room in `"waiting"` status and returns a 6-character room ID that the player can share with an opponent.
 

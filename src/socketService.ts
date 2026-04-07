@@ -39,7 +39,7 @@ export function resign(): void {
   getSocket().emit("resign");
 }
 
-export function onGameCreated(cb: (payload: { roomId: string; color: "black" | "white" }) => void): void {
+export function onGameCreated(cb: (payload: { roomId: string }) => void): void {
   getSocket().on("game-created", cb);
 }
 

@@ -6,7 +6,7 @@ export type ClientToServerEvents = {
 };
 
 export type ServerToClientEvents = {
-  "game-created": (payload: { roomId: string; color: "black" | "white" }) => void;
+  "game-created": (payload: { roomId: string }) => void;
   "game-start": (payload: { gameState: string; color: "black" | "white" }) => void;
   "opponent-moved": (payload: { from: number; to: number; gameState: string }) => void;
   "move-accepted": (payload: { from: number; to: number; gameState: string }) => void;
