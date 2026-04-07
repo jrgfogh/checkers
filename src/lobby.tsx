@@ -32,7 +32,6 @@ export function Lobby() {
     });
 
     return () => {
-      socketService.offAll();
       socketService.disconnect();
     };
   }, []);
