@@ -52,6 +52,3 @@ test/
 - Webpack uses Babel for transpilation; `ForkTsCheckerWebpackPlugin` handles type-checking in parallel
 - `socketService.ts` holds a singleton Socket.IO socket; all components share it
 
-## Known Issues
-
-- `socketService.offAll()` calls `socket.removeAllListeners()`, which removes **all** listeners on the shared socket — not just those registered by the calling component. If `Lobby` and `Game` both register listeners, one component's cleanup can destroy the other's listeners. Prefer scoped `socket.off(event, handler)` when adding new listener registrations.

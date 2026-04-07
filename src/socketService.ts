@@ -51,20 +51,26 @@ export function onOpponentMoved(cb: (payload: { from: number; to: number; gameSt
   getSocket().on("opponent-moved", cb);
 }
 
+export function offOpponentMoved(cb: (payload: { from: number; to: number; gameState: string }) => void): void {
+  if (socket) socket.off("opponent-moved", cb);
+}
+
 export function onMoveAccepted(cb: (payload: { from: number; to: number; gameState: string }) => void): void {
   getSocket().on("move-accepted", cb);
+}
+
+export function offMoveAccepted(cb: (payload: { from: number; to: number; gameState: string }) => void): void {
+  if (socket) socket.off("move-accepted", cb);
 }
 
 export function onGameOver(cb: (payload: { winner: "black" | "white"; reason: string }) => void): void {
   getSocket().on("game-over", cb);
 }
 
-export function onError(cb: (payload: { message: string }) => void): void {
-  getSocket().on("error", cb);
+export function offGameOver(cb: (payload: { winner: "black" | "white"; reason: string }) => void): void {
+  if (socket) socket.off("game-over", cb);
 }
 
-export function offAll(): void {
-  if (socket) {
-    socket.removeAllListeners();
-  }
+export function onError(cb: (payload: { message: string }) => void): void {
+  getSocket().on("error", cb);
 }

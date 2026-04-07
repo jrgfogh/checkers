@@ -125,25 +125,31 @@ export function Game(props: GameProps) {
   useEffect(() => {
     if (!isOnline) return;
 
-    socketService.onOpponentMoved(({ gameState }) => {
+    const handleOpponentMoved = ({ gameState }: { gameState: string }) => {
       const newGame = parse(gameState);
       setGame(newGame);
       setStepNumber(n => n + 1);
       setStatusMessage(null);
-    });
+    };
 
-    socketService.onMoveAccepted(({ gameState }) => {
+    const handleMoveAccepted = ({ gameState }: { gameState: string }) => {
       const newGame = parse(gameState);
       setGame(newGame);
       setStepNumber(n => n + 1);
-    });
+    };
 
-    socketService.onGameOver(({ winner, reason }) => {
+    const handleGameOver = ({ winner, reason }: { winner: "black" | "white"; reason: string }) => {
       setStatusMessage(`Game over: ${winner} wins (${reason})`);
-    });
+    };
+
+    socketService.onOpponentMoved(handleOpponentMoved);
+    socketService.onMoveAccepted(handleMoveAccepted);
+    socketService.onGameOver(handleGameOver);
 
     return () => {
-      socketService.offAll();
+      socketService.offOpponentMoved(handleOpponentMoved);
+      socketService.offMoveAccepted(handleMoveAccepted);
+      socketService.offGameOver(handleGameOver);
     };
   }, [isOnline]);
 
