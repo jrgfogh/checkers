@@ -71,10 +71,6 @@ export class RoomManager {
     return room;
   }
 
-  getRoom(roomId: string): GameRoom | undefined {
-    return this.rooms.get(roomId);
-  }
-
   getRoomForSocket(socket: SocketLike): GameRoom | undefined {
     return this.socketToRoom.get(socket);
   }
