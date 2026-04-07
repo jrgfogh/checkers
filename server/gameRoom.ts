@@ -20,7 +20,7 @@ const RECONNECT_GRACE_MS = 60 * 1000; // 60 seconds
 
 export class RoomManager {
   private rooms = new Map<string, GameRoom>();
-  private socketToRoom = new Map<SocketId, string>();
+  private socketToRoom = new Map<SocketId, GameRoom>();
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   start(): void {
@@ -54,7 +54,7 @@ export class RoomManager {
       disconnectTimers: new Map(),
     };
     this.rooms.set(id, room);
-    this.socketToRoom.set(socketId, id);
+    this.socketToRoom.set(socketId, room);
     return room;
   }
 
@@ -66,7 +66,7 @@ export class RoomManager {
     room.whitePlayer = socketId;
     room.status = "playing";
     room.lastActivity = Date.now();
-    this.socketToRoom.set(socketId, roomId);
+    this.socketToRoom.set(socketId, room);
     return room;
   }
 
@@ -75,9 +75,7 @@ export class RoomManager {
   }
 
   getRoomForSocket(socketId: SocketId): GameRoom | undefined {
-    const roomId = this.socketToRoom.get(socketId);
-    if (!roomId) return undefined;
-    return this.rooms.get(roomId);
+    return this.socketToRoom.get(socketId);
   }
 
   getPlayerColor(room: GameRoom, socketId: SocketId): "black" | "white" | null {
@@ -110,9 +108,7 @@ export class RoomManager {
   }
 
   handleReconnect(oldSocketId: SocketId, newSocketId: SocketId): GameRoom | null {
-    const roomId = this.socketToRoom.get(oldSocketId);
-    if (!roomId) return null;
-    const room = this.rooms.get(roomId);
+    const room = this.socketToRoom.get(oldSocketId);
     if (!room || room.status === "finished") return null;
 
     const timer = room.disconnectTimers.get(oldSocketId);
@@ -130,7 +126,7 @@ export class RoomManager {
     }
 
     this.socketToRoom.delete(oldSocketId);
-    this.socketToRoom.set(newSocketId, roomId);
+    this.socketToRoom.set(newSocketId, room);
     return room;
   }
 
