@@ -3,7 +3,7 @@
  */
 
 import { createServer, Server as HttpServer } from "http";
-import { Server } from "socket.io";
+import { Server as SocketServer } from "socket.io";
 import { io as ioClient, Socket as ClientSocket } from "socket.io-client";
 import { RoomManager } from "../../server/gameRoom";
 import { registerSocketHandlers } from "../../server/socketHandlers";
@@ -19,14 +19,14 @@ function waitForEvent<T>(socket: TypedClientSocket, event: string): Promise<T> {
 
 describe("Socket handlers", () => {
   let httpServer: HttpServer;
-  let ioServer: Server;
+  let ioServer: SocketServer;
   let roomManager: RoomManager;
   let port: number;
 
   beforeEach((done) => {
     roomManager = new RoomManager();
     httpServer = createServer();
-    ioServer = new Server(httpServer);
+    ioServer = new SocketServer(httpServer);
     registerSocketHandlers(ioServer as any, roomManager);
     httpServer.listen(0, () => {
       const addr = httpServer.address();
