@@ -1,15 +1,17 @@
 import type { GameModel } from "../src/moveGenerator";
 import { parse, startPosition } from "../src/checkersFEN";
 
+type SocketId = string;
+
 export type GameRoom = {
   id: string;
-  blackPlayer: string | null;
-  whitePlayer: string | null;
+  blackPlayer: SocketId | null;
+  whitePlayer: SocketId | null;
   gameState: GameModel;
   status: "waiting" | "playing" | "finished";
   createdAt: number;
   lastActivity: number;
-  disconnectTimers: Map<string, ReturnType<typeof setTimeout>>;
+  disconnectTimers: Map<SocketId, ReturnType<typeof setTimeout>>;
 };
 
 const ROOM_ID_LENGTH = 6;
@@ -18,7 +20,7 @@ const RECONNECT_GRACE_MS = 60 * 1000; // 60 seconds
 
 export class RoomManager {
   private rooms = new Map<string, GameRoom>();
-  private socketToRoom = new Map<string, string>();
+  private socketToRoom = new Map<SocketId, string>();
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   start(): void {
@@ -39,7 +41,7 @@ export class RoomManager {
     this.socketToRoom.clear();
   }
 
-  createRoom(socketId: string): GameRoom {
+  createRoom(socketId: SocketId): GameRoom {
     const id = this.generateRoomId();
     const room: GameRoom = {
       id,
@@ -56,7 +58,7 @@ export class RoomManager {
     return room;
   }
 
-  joinRoom(roomId: string, socketId: string): GameRoom | null {
+  joinRoom(roomId: string, socketId: SocketId): GameRoom | null {
     const room = this.rooms.get(roomId);
     if (!room || room.status !== "waiting" || room.whitePlayer !== null) {
       return null;
@@ -72,19 +74,19 @@ export class RoomManager {
     return this.rooms.get(roomId);
   }
 
-  getRoomForSocket(socketId: string): GameRoom | undefined {
+  getRoomForSocket(socketId: SocketId): GameRoom | undefined {
     const roomId = this.socketToRoom.get(socketId);
     if (!roomId) return undefined;
     return this.rooms.get(roomId);
   }
 
-  getPlayerColor(room: GameRoom, socketId: string): "black" | "white" | null {
+  getPlayerColor(room: GameRoom, socketId: SocketId): "black" | "white" | null {
     if (room.blackPlayer === socketId) return "black";
     if (room.whitePlayer === socketId) return "white";
     return null;
   }
 
-  handleDisconnect(socketId: string, onTimeout: (room: GameRoom) => void): GameRoom | null {
+  handleDisconnect(socketId: SocketId, onTimeout: (room: GameRoom) => void): GameRoom | null {
     const room = this.getRoomForSocket(socketId);
     if (!room) {
       this.socketToRoom.delete(socketId);
@@ -107,7 +109,7 @@ export class RoomManager {
     return room;
   }
 
-  handleReconnect(oldSocketId: string, newSocketId: string): GameRoom | null {
+  handleReconnect(oldSocketId: SocketId, newSocketId: SocketId): GameRoom | null {
     const roomId = this.socketToRoom.get(oldSocketId);
     if (!roomId) return null;
     const room = this.rooms.get(roomId);
