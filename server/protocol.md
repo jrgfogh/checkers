@@ -64,7 +64,7 @@ When a player's socket disconnects during an active game:
 |-----------|-------|---------|
 | Server → Opponent | `opponent-disconnected` | *(none)* |
 
-The server starts a **60-second** reconnection grace period. If the disconnected player does not reconnect in time:
+The server starts a **60-second** grace period. If the disconnected player does not come back in time:
 
 | Direction | Event | Payload |
 |-----------|-------|---------|

@@ -149,34 +149,6 @@ describe("RoomManager", () => {
     });
   });
 
-  describe("handleReconnect", () => {
-    it("transfers socket and clears timer", () => {
-      jest.useFakeTimers();
-      const s1 = sock("socket-1");
-      const s2 = sock("socket-2");
-      const room = manager.createRoom(s1);
-      manager.joinRoom(room.id, s2);
-      const onTimeout = jest.fn();
-      manager.handleDisconnect(s1, onTimeout);
-
-      const s1New = sock("socket-1-new");
-      const reconnected = manager.handleReconnect("socket-1", s1New);
-      expect(reconnected).not.toBeNull();
-      expect(reconnected!.blackPlayer).toBe(s1New);
-      expect(manager.getRoomForSocket(s1New)).toBe(room);
-      expect(manager.getRoomForSocket(s1)).toBeUndefined();
-
-      // Timer should be cancelled
-      jest.advanceTimersByTime(60_000);
-      expect(onTimeout).not.toHaveBeenCalled();
-      jest.useRealTimers();
-    });
-
-    it("returns null for unknown old socket", () => {
-      expect(manager.handleReconnect("unknown", sock("new"))).toBeNull();
-    });
-  });
-
   describe("updateGameState", () => {
     it("updates game state and lastActivity", () => {
       const room = manager.createRoom(sock("socket-1"));

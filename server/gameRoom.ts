@@ -1,7 +1,6 @@
 import type { GameModel } from "../src/moveGenerator";
 import { parse, startPosition } from "../src/checkersFEN";
 
-type SocketId = string;
 export type SocketLike = { readonly id: string };
 
 export type GameRoom = {
@@ -101,38 +100,6 @@ export class RoomManager {
       room.disconnectTimers.set(socket, timer);
     }
 
-    return room;
-  }
-
-  handleReconnect(oldSocketId: SocketId, newSocket: SocketLike): GameRoom | null {
-    let oldSocket: SocketLike | undefined;
-    for (const sock of this.socketToRoom.keys()) {
-      if (sock.id === oldSocketId) {
-        oldSocket = sock;
-        break;
-      }
-    }
-    if (!oldSocket) return null;
-
-    const room = this.socketToRoom.get(oldSocket);
-    if (!room || room.status === "finished") return null;
-
-    const timer = room.disconnectTimers.get(oldSocket);
-    if (timer) {
-      clearTimeout(timer);
-      room.disconnectTimers.delete(oldSocket);
-    }
-
-    if (room.blackPlayer === oldSocket) {
-      room.blackPlayer = newSocket;
-    } else if (room.whitePlayer === oldSocket) {
-      room.whitePlayer = newSocket;
-    } else {
-      return null;
-    }
-
-    this.socketToRoom.delete(oldSocket);
-    this.socketToRoom.set(newSocket, room);
     return room;
   }
 
