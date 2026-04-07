@@ -9,7 +9,6 @@ export type GameRoom = {
   whitePlayer: SocketLike | null;
   gameState: GameModel;
   status: "waiting" | "playing" | "finished";
-  createdAt: number;
   lastActivity: number;
 };
 
@@ -42,7 +41,6 @@ export class RoomManager {
       whitePlayer: null,
       gameState: parse(startPosition),
       status: "waiting",
-      createdAt: Date.now(),
       lastActivity: Date.now(),
     };
     this.rooms.set(id, room);
