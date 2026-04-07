@@ -75,7 +75,6 @@ export class RoomManager {
   handleDisconnect(socket: SocketLike): GameRoom | null {
     const room = this.getRoomForSocket(socket);
     if (!room) {
-      this.socketToRoom.delete(socket);
       return null;
     }
 
