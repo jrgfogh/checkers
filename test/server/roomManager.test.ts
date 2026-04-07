@@ -20,9 +20,10 @@ describe("RoomManager", () => {
 
   describe("createRoom", () => {
     it("creates a room and assigns creator as black", () => {
-      const room = manager.createRoom(sock("socket-1"));
+      const s1 = sock("socket-1");
+      const room = manager.createRoom(s1);
       expect(room.id).toHaveLength(6);
-      expect(room.blackPlayer).toBe("socket-1");
+      expect(room.blackPlayer).toBe(s1);
       expect(room.whitePlayer).toBeNull();
       expect(room.status).toBe("waiting");
       expect(room.gameState.board).toHaveLength(64);
@@ -49,10 +50,12 @@ describe("RoomManager", () => {
 
   describe("joinRoom", () => {
     it("second player joins as white and starts the game", () => {
-      const room = manager.createRoom(sock("socket-1"));
-      const joined = manager.joinRoom(room.id, sock("socket-2"));
+      const s1 = sock("socket-1");
+      const s2 = sock("socket-2");
+      const room = manager.createRoom(s1);
+      const joined = manager.joinRoom(room.id, s2);
       expect(joined).not.toBeNull();
-      expect(joined!.whitePlayer).toBe("socket-2");
+      expect(joined!.whitePlayer).toBe(s2);
       expect(joined!.status).toBe("playing");
     });
 
@@ -69,8 +72,9 @@ describe("RoomManager", () => {
 
   describe("getRoomForSocket", () => {
     it("returns the room a socket belongs to", () => {
-      const room = manager.createRoom(sock("socket-1"));
-      expect(manager.getRoomForSocket(sock("socket-1"))).toBe(room);
+      const s1 = sock("socket-1");
+      const room = manager.createRoom(s1);
+      expect(manager.getRoomForSocket(s1)).toBe(room);
     });
 
     it("returns undefined for unknown socket", () => {
@@ -78,23 +82,28 @@ describe("RoomManager", () => {
     });
 
     it("works for both players", () => {
-      const room = manager.createRoom(sock("socket-1"));
-      manager.joinRoom(room.id, sock("socket-2"));
-      expect(manager.getRoomForSocket(sock("socket-1"))!.id).toBe(room.id);
-      expect(manager.getRoomForSocket(sock("socket-2"))!.id).toBe(room.id);
+      const s1 = sock("socket-1");
+      const s2 = sock("socket-2");
+      const room = manager.createRoom(s1);
+      manager.joinRoom(room.id, s2);
+      expect(manager.getRoomForSocket(s1)!.id).toBe(room.id);
+      expect(manager.getRoomForSocket(s2)!.id).toBe(room.id);
     });
   });
 
   describe("getPlayerColor", () => {
     it("returns black for creator", () => {
-      const room = manager.createRoom(sock("socket-1"));
-      expect(manager.getPlayerColor(room, sock("socket-1"))).toBe("black");
+      const s1 = sock("socket-1");
+      const room = manager.createRoom(s1);
+      expect(manager.getPlayerColor(room, s1)).toBe("black");
     });
 
     it("returns white for joiner", () => {
-      const room = manager.createRoom(sock("socket-1"));
-      manager.joinRoom(room.id, sock("socket-2"));
-      expect(manager.getPlayerColor(room, sock("socket-2"))).toBe("white");
+      const s1 = sock("socket-1");
+      const s2 = sock("socket-2");
+      const room = manager.createRoom(s1);
+      manager.joinRoom(room.id, s2);
+      expect(manager.getPlayerColor(room, s2)).toBe("white");
     });
 
     it("returns null for unknown socket", () => {
@@ -105,26 +114,31 @@ describe("RoomManager", () => {
 
   describe("handleDisconnect", () => {
     it("removes waiting rooms on disconnect", () => {
-      manager.createRoom(sock("socket-1"));
-      const result = manager.handleDisconnect(sock("socket-1"), () => {});
+      const s1 = sock("socket-1");
+      manager.createRoom(s1);
+      const result = manager.handleDisconnect(s1, () => {});
       expect(result).toBeNull();
       expect(manager.roomCount).toBe(0);
     });
 
     it("keeps playing rooms alive with a timer", () => {
-      const room = manager.createRoom(sock("socket-1"));
-      manager.joinRoom(room.id, sock("socket-2"));
-      const result = manager.handleDisconnect(sock("socket-1"), () => {});
+      const s1 = sock("socket-1");
+      const s2 = sock("socket-2");
+      const room = manager.createRoom(s1);
+      manager.joinRoom(room.id, s2);
+      const result = manager.handleDisconnect(s1, () => {});
       expect(result).not.toBeNull();
       expect(result!.status).toBe("playing");
     });
 
     it("calls timeout callback after grace period", () => {
       jest.useFakeTimers();
-      const room = manager.createRoom(sock("socket-1"));
-      manager.joinRoom(room.id, sock("socket-2"));
+      const s1 = sock("socket-1");
+      const s2 = sock("socket-2");
+      const room = manager.createRoom(s1);
+      manager.joinRoom(room.id, s2);
       const onTimeout = jest.fn();
-      manager.handleDisconnect(sock("socket-1"), onTimeout);
+      manager.handleDisconnect(s1, onTimeout);
       jest.advanceTimersByTime(60_000);
       expect(onTimeout).toHaveBeenCalledWith(expect.objectContaining({ id: room.id }));
       jest.useRealTimers();
@@ -136,18 +150,21 @@ describe("RoomManager", () => {
   });
 
   describe("handleReconnect", () => {
-    it("transfers socket ID and clears timer", () => {
+    it("transfers socket and clears timer", () => {
       jest.useFakeTimers();
-      const room = manager.createRoom(sock("socket-1"));
-      manager.joinRoom(room.id, sock("socket-2"));
+      const s1 = sock("socket-1");
+      const s2 = sock("socket-2");
+      const room = manager.createRoom(s1);
+      manager.joinRoom(room.id, s2);
       const onTimeout = jest.fn();
-      manager.handleDisconnect(sock("socket-1"), onTimeout);
+      manager.handleDisconnect(s1, onTimeout);
 
-      const reconnected = manager.handleReconnect("socket-1", sock("socket-1-new"));
+      const s1New = sock("socket-1-new");
+      const reconnected = manager.handleReconnect("socket-1", s1New);
       expect(reconnected).not.toBeNull();
-      expect(reconnected!.blackPlayer).toBe("socket-1-new");
-      expect(manager.getRoomForSocket(sock("socket-1-new"))).toBe(room);
-      expect(manager.getRoomForSocket(sock("socket-1"))).toBeUndefined();
+      expect(reconnected!.blackPlayer).toBe(s1New);
+      expect(manager.getRoomForSocket(s1New)).toBe(room);
+      expect(manager.getRoomForSocket(s1)).toBeUndefined();
 
       // Timer should be cancelled
       jest.advanceTimersByTime(60_000);

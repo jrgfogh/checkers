@@ -104,7 +104,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
     socket.on("disconnect", () => {
       const room = roomManager.handleDisconnect(socket, (timedOutRoom) => {
         io.to(timedOutRoom.id).emit("game-over", {
-          winner: timedOutRoom.blackPlayer === socket.id ? "white" : "black",
+          winner: timedOutRoom.blackPlayer === socket ? "white" : "black",
           reason: "disconnect timeout",
         });
       });

@@ -6,13 +6,13 @@ export type SocketLike = { readonly id: string };
 
 export type GameRoom = {
   id: string;
-  blackPlayer: SocketId | null;
-  whitePlayer: SocketId | null;
+  blackPlayer: SocketLike | null;
+  whitePlayer: SocketLike | null;
   gameState: GameModel;
   status: "waiting" | "playing" | "finished";
   createdAt: number;
   lastActivity: number;
-  disconnectTimers: Map<SocketId, ReturnType<typeof setTimeout>>;
+  disconnectTimers: Map<SocketLike, ReturnType<typeof setTimeout>>;
 };
 
 const ROOM_ID_LENGTH = 6;
@@ -21,7 +21,7 @@ const RECONNECT_GRACE_MS = 60 * 1000; // 60 seconds
 
 export class RoomManager {
   private rooms = new Map<string, GameRoom>();
-  private socketToRoom = new Map<SocketId, GameRoom>();
+  private socketToRoom = new Map<SocketLike, GameRoom>();
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   start(): void {
@@ -46,7 +46,7 @@ export class RoomManager {
     const id = this.generateRoomId();
     const room: GameRoom = {
       id,
-      blackPlayer: socket.id,
+      blackPlayer: socket,
       whitePlayer: null,
       gameState: parse(startPosition),
       status: "waiting",
@@ -55,7 +55,7 @@ export class RoomManager {
       disconnectTimers: new Map(),
     };
     this.rooms.set(id, room);
-    this.socketToRoom.set(socket.id, room);
+    this.socketToRoom.set(socket, room);
     return room;
   }
 
@@ -64,10 +64,10 @@ export class RoomManager {
     if (!room || room.status !== "waiting" || room.whitePlayer !== null) {
       return null;
     }
-    room.whitePlayer = socket.id;
+    room.whitePlayer = socket;
     room.status = "playing";
     room.lastActivity = Date.now();
-    this.socketToRoom.set(socket.id, room);
+    this.socketToRoom.set(socket, room);
     return room;
   }
 
@@ -76,19 +76,19 @@ export class RoomManager {
   }
 
   getRoomForSocket(socket: SocketLike): GameRoom | undefined {
-    return this.socketToRoom.get(socket.id);
+    return this.socketToRoom.get(socket);
   }
 
   getPlayerColor(room: GameRoom, socket: SocketLike): "black" | "white" | null {
-    if (room.blackPlayer === socket.id) return "black";
-    if (room.whitePlayer === socket.id) return "white";
+    if (room.blackPlayer === socket) return "black";
+    if (room.whitePlayer === socket) return "white";
     return null;
   }
 
   handleDisconnect(socket: SocketLike, onTimeout: (room: GameRoom) => void): GameRoom | null {
     const room = this.getRoomForSocket(socket);
     if (!room) {
-      this.socketToRoom.delete(socket.id);
+      this.socketToRoom.delete(socket);
       return null;
     }
 
@@ -102,32 +102,41 @@ export class RoomManager {
         room.status = "finished";
         onTimeout(room);
       }, RECONNECT_GRACE_MS);
-      room.disconnectTimers.set(socket.id, timer);
+      room.disconnectTimers.set(socket, timer);
     }
 
     return room;
   }
 
   handleReconnect(oldSocketId: SocketId, newSocket: SocketLike): GameRoom | null {
-    const room = this.socketToRoom.get(oldSocketId);
+    let oldSocket: SocketLike | undefined;
+    for (const sock of this.socketToRoom.keys()) {
+      if (sock.id === oldSocketId) {
+        oldSocket = sock;
+        break;
+      }
+    }
+    if (!oldSocket) return null;
+
+    const room = this.socketToRoom.get(oldSocket);
     if (!room || room.status === "finished") return null;
 
-    const timer = room.disconnectTimers.get(oldSocketId);
+    const timer = room.disconnectTimers.get(oldSocket);
     if (timer) {
       clearTimeout(timer);
-      room.disconnectTimers.delete(oldSocketId);
+      room.disconnectTimers.delete(oldSocket);
     }
 
-    if (room.blackPlayer === oldSocketId) {
-      room.blackPlayer = newSocket.id;
-    } else if (room.whitePlayer === oldSocketId) {
-      room.whitePlayer = newSocket.id;
+    if (room.blackPlayer === oldSocket) {
+      room.blackPlayer = newSocket;
+    } else if (room.whitePlayer === oldSocket) {
+      room.whitePlayer = newSocket;
     } else {
       return null;
     }
 
-    this.socketToRoom.delete(oldSocketId);
-    this.socketToRoom.set(newSocket.id, room);
+    this.socketToRoom.delete(oldSocket);
+    this.socketToRoom.set(newSocket, room);
     return room;
   }
 
