@@ -11,6 +11,5 @@ export type ServerToClientEvents = {
   "opponent-moved": (payload: { from: number; to: number; gameState: string }) => void;
   "move-accepted": (payload: { from: number; to: number; gameState: string }) => void;
   "game-over": (payload: { winner: "black" | "white"; reason: string }) => void;
-  "opponent-disconnected": () => void;
   "error": (payload: { message: string }) => void;
 };

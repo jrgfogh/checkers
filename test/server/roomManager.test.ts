@@ -116,36 +116,23 @@ describe("RoomManager", () => {
     it("removes waiting rooms on disconnect", () => {
       const s1 = sock("socket-1");
       manager.createRoom(s1);
-      const result = manager.handleDisconnect(s1, () => {});
+      const result = manager.handleDisconnect(s1);
       expect(result).toBeNull();
       expect(manager.roomCount).toBe(0);
     });
 
-    it("keeps playing rooms alive with a timer", () => {
+    it("immediately finishes playing rooms on disconnect", () => {
       const s1 = sock("socket-1");
       const s2 = sock("socket-2");
       const room = manager.createRoom(s1);
       manager.joinRoom(room.id, s2);
-      const result = manager.handleDisconnect(s1, () => {});
+      const result = manager.handleDisconnect(s1);
       expect(result).not.toBeNull();
-      expect(result!.status).toBe("playing");
-    });
-
-    it("calls timeout callback after grace period", () => {
-      jest.useFakeTimers();
-      const s1 = sock("socket-1");
-      const s2 = sock("socket-2");
-      const room = manager.createRoom(s1);
-      manager.joinRoom(room.id, s2);
-      const onTimeout = jest.fn();
-      manager.handleDisconnect(s1, onTimeout);
-      jest.advanceTimersByTime(60_000);
-      expect(onTimeout).toHaveBeenCalledWith(expect.objectContaining({ id: room.id }));
-      jest.useRealTimers();
+      expect(result!.status).toBe("finished");
     });
 
     it("returns null for unknown socket", () => {
-      expect(manager.handleDisconnect(sock("unknown"), () => {})).toBeNull();
+      expect(manager.handleDisconnect(sock("unknown"))).toBeNull();
     });
   });
 

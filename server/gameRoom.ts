@@ -11,12 +11,10 @@ export type GameRoom = {
   status: "waiting" | "playing" | "finished";
   createdAt: number;
   lastActivity: number;
-  disconnectTimers: Map<SocketLike, ReturnType<typeof setTimeout>>;
 };
 
 const ROOM_ID_LENGTH = 6;
 const STALE_ROOM_MS = 30 * 60 * 1000; // 30 minutes
-const RECONNECT_GRACE_MS = 60 * 1000; // 60 seconds
 
 export class RoomManager {
   private rooms = new Map<string, GameRoom>();
@@ -32,11 +30,6 @@ export class RoomManager {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = null;
     }
-    for (const room of this.rooms.values()) {
-      for (const timer of room.disconnectTimers.values()) {
-        clearTimeout(timer);
-      }
-    }
     this.rooms.clear();
     this.socketToRoom.clear();
   }
@@ -51,7 +44,6 @@ export class RoomManager {
       status: "waiting",
       createdAt: Date.now(),
       lastActivity: Date.now(),
-      disconnectTimers: new Map(),
     };
     this.rooms.set(id, room);
     this.socketToRoom.set(socket, room);
@@ -80,7 +72,7 @@ export class RoomManager {
     return null;
   }
 
-  handleDisconnect(socket: SocketLike, onTimeout: (room: GameRoom) => void): GameRoom | null {
+  handleDisconnect(socket: SocketLike): GameRoom | null {
     const room = this.getRoomForSocket(socket);
     if (!room) {
       this.socketToRoom.delete(socket);
@@ -93,14 +85,11 @@ export class RoomManager {
     }
 
     if (room.status === "playing") {
-      const timer = setTimeout(() => {
-        room.status = "finished";
-        onTimeout(room);
-      }, RECONNECT_GRACE_MS);
-      room.disconnectTimers.set(socket, timer);
+      room.status = "finished";
+      return room;
     }
 
-    return room;
+    return null;
   }
 
   updateGameState(room: GameRoom, gameState: GameModel): void {
@@ -113,9 +102,6 @@ export class RoomManager {
   }
 
   private removeRoom(room: GameRoom): void {
-    for (const timer of room.disconnectTimers.values()) {
-      clearTimeout(timer);
-    }
     if (room.blackPlayer) this.socketToRoom.delete(room.blackPlayer);
     if (room.whitePlayer) this.socketToRoom.delete(room.whitePlayer);
     this.rooms.delete(room.id);

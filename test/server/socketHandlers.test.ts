@@ -235,7 +235,7 @@ describe("Socket handlers", () => {
   });
 
   describe("disconnect", () => {
-    it("notifies opponent when a player disconnects", async () => {
+    it("ends the game when a player disconnects", async () => {
       const black = await connectClient();
       const white = await connectClient();
       try {
@@ -248,9 +248,11 @@ describe("Socket handlers", () => {
         white.emit("join-game", { roomId });
         await Promise.all([blackStartPromise, whiteStartPromise]);
 
-        const disconnectPromise = waitForEvent<void>(white, "opponent-disconnected");
+        const gameOverPromise = waitForEvent<{ winner: string; reason: string }>(white, "game-over");
         black.disconnect();
-        await disconnectPromise;
+        const gameOver = await gameOverPromise;
+        expect(gameOver.winner).toBe("white");
+        expect(gameOver.reason).toBe("opponent disconnected");
       } finally {
         white.disconnect();
       }

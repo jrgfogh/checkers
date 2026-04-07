@@ -142,10 +142,6 @@ export function Game(props: GameProps) {
       setStatusMessage(`Game over: ${winner} wins (${reason})`);
     });
 
-    socketService.onOpponentDisconnected(() => {
-      setStatusMessage("Opponent disconnected. Waiting for reconnect...");
-    });
-
     return () => {
       socketService.offAll();
     };

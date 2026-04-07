@@ -58,17 +58,13 @@ The room moves to `"finished"` status.
 
 ### 5. Disconnection
 
-When a player's socket disconnects during an active game:
+When a player's socket disconnects during an active game, the game ends immediately:
 
 | Direction | Event | Payload |
 |-----------|-------|---------|
-| Server → Opponent | `opponent-disconnected` | *(none)* |
+| Server → Opponent | `game-over` | `{ winner: "black" \| "white", reason: "opponent disconnected" }` |
 
-The server starts a **60-second** grace period. If the disconnected player does not come back in time:
-
-| Direction | Event | Payload |
-|-----------|-------|---------|
-| Server → Both | `game-over` | `{ winner: "black" \| "white", reason: "disconnect timeout" }` |
+The disconnected player's opponent is declared the winner.
 
 If a player disconnects from a `"waiting"` room (before an opponent joins), the room is removed immediately.
 

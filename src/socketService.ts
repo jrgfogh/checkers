@@ -59,10 +59,6 @@ export function onGameOver(cb: (payload: { winner: "black" | "white"; reason: st
   getSocket().on("game-over", cb);
 }
 
-export function onOpponentDisconnected(cb: () => void): void {
-  getSocket().on("opponent-disconnected", cb);
-}
-
 export function onError(cb: (payload: { message: string }) => void): void {
   getSocket().on("error", cb);
 }

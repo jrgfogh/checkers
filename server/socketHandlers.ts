@@ -102,14 +102,10 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
     });
 
     socket.on("disconnect", () => {
-      const room = roomManager.handleDisconnect(socket, (timedOutRoom) => {
-        io.to(timedOutRoom.id).emit("game-over", {
-          winner: timedOutRoom.blackPlayer === socket ? "white" : "black",
-          reason: "disconnect timeout",
-        });
-      });
-      if (room && room.status === "playing") {
-        socket.to(room.id).emit("opponent-disconnected");
+      const room = roomManager.handleDisconnect(socket);
+      if (room) {
+        const winner = room.blackPlayer === socket ? "white" : "black";
+        io.to(room.id).emit("game-over", { winner, reason: "opponent disconnected" });
       }
     });
   });
