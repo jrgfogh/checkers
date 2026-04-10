@@ -9,7 +9,7 @@ import type { ClientToServerEvents, ServerToClientEvents } from "./protocol";
 const PORT = parseInt(process.env.PORT || "3000", 10);
 
 const app = express();
-app.use(express.static(path.join(__dirname, "..", "dist")));
+app.use(express.static(path.join(process.cwd(), "dist")));
 
 const httpServer = createServer(app);
 const io = new SocketServer<ClientToServerEvents, ServerToClientEvents>(httpServer, {
