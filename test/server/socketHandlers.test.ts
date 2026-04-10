@@ -216,6 +216,7 @@ describe("Socket handlers", () => {
         expect(blackOver.winner).toBe("white");
         expect(blackOver.reason).toBe("resignation");
         expect(whiteOver.winner).toBe("white");
+        expect(whiteOver.reason).toBe("resignation");
       } finally {
         black.disconnect();
         white.disconnect();
