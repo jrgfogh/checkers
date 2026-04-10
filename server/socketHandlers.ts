@@ -1,6 +1,6 @@
 import type { Server, Socket } from "socket.io";
 import type { ClientToServerEvents, ServerToClientEvents } from "./protocol";
-import type { GameRoom, RoomManager } from "./gameRoom";
+import type { RoomManager } from "./gameRoom";
 import { movesFrom, movePiece } from "../src/moveGenerator";
 import { unparse } from "../src/checkersFEN";
 
@@ -13,14 +13,6 @@ function isValidSquare(n: unknown): n is number {
 
 export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager): void {
   io.on("connection", (socket: TypedSocket) => {
-    function getActiveGame(): { room: GameRoom; color: "black" | "white" } | null {
-      const room = roomManager.getRoomForSocket(socket);
-      if (!room || room.status !== "playing") return null;
-      const color = roomManager.getPlayerColor(room, socket);
-      if (!color) return null;
-      return { room, color };
-    }
-
     socket.on("create-game", () => {
       if (roomManager.getRoomForSocket(socket)) {
         socket.emit("error", { message: "You are already in a game." });
@@ -57,12 +49,12 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
         socket.emit("error", { message: "Invalid move payload." });
         return;
       }
-      const active = getActiveGame();
-      if (!active) {
+      const room = roomManager.getRoomForSocket(socket);
+      if (!room || room.status !== "playing") {
         socket.emit("error", { message: "No active game." });
         return;
       }
-      const { room, color } = active;
+      const color = roomManager.getPlayerColor(room, socket);
       if (color !== room.gameState.turn) {
         socket.emit("error", { message: "Not your turn." });
         return;
@@ -100,9 +92,10 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
     });
 
     socket.on("resign", () => {
-      const active = getActiveGame();
-      if (!active) return;
-      const { room, color } = active;
+      const room = roomManager.getRoomForSocket(socket);
+      if (!room || room.status !== "playing") return;
+      const color = roomManager.getPlayerColor(room, socket);
+      if (!color) return;
       const winner = color === "black" ? "white" : "black";
       roomManager.finishRoom(room);
       io.to(room.id).emit("game-over", { winner, reason: "resignation" });
