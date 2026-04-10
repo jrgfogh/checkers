@@ -1,5 +1,6 @@
 const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -38,6 +39,12 @@ module.exports = {
           syntactic: true,
         },
       },
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/index.html', to: 'index.html' },
+        { from: 'src/checkers.css', to: 'checkers.css', noErrorOnMissing: true },
+      ],
     }),
   ],
 }

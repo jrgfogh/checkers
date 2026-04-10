@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { movesFrom, movePiece } from './moveGenerator';
 import type { PieceModel, GameModel } from './moveGenerator';
+import * as socketService from './socketService';
+import { parse } from './checkersFEN';
 
 function Piece(props: PieceModel) {
   return <div className={"piece " + props.color + "-piece " + props.kind}>
@@ -34,7 +36,8 @@ export function Square(props: SquareProps) {
 
 type BoardProps = GameModel & {
   viewpoint: "black" | "white",
-  movePiece: (from: number, to: number) => void
+  movePiece: (from: number, to: number) => void,
+  interactive?: boolean
 };
 
 export default function Board(props: BoardProps) {
@@ -48,6 +51,7 @@ export default function Board(props: BoardProps) {
   }
 
   function handleClick(square: number): void {
+    if (props.interactive === false) return;
     if (canMoveTo[square]) {
       moveSelectedTo(square);
     } else if (props.board[square]) {
@@ -103,24 +107,63 @@ export default function Board(props: BoardProps) {
 }
 
 type GameProps = GameModel & {
-  viewpoint: "black" | "white"
+  viewpoint: "black" | "white";
+  mode?: "local" | "online";
 };
 
 export function Game(props: GameProps) {
+  const isOnline = props.mode === "online";
+
   const [game, setGame] = useState<GameModel>({
     board: props.board.slice(),
     turn: props.turn
   });
   const [stepNumber, setStepNumber] = useState<number>(0);
   const [moveHistory, setMoveHistory] = useState<GameModel[]>([]);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOnline) return;
+
+    const handleOpponentMoved = ({ gameState }: { gameState: string }) => {
+      const newGame = parse(gameState);
+      setGame(newGame);
+      setStepNumber(n => n + 1);
+      setStatusMessage(null);
+    };
+
+    const handleMoveAccepted = ({ gameState }: { gameState: string }) => {
+      const newGame = parse(gameState);
+      setGame(newGame);
+      setStepNumber(n => n + 1);
+    };
+
+    const handleGameOver = ({ winner, reason }: { winner: "black" | "white"; reason: string }) => {
+      setStatusMessage(`Game over: ${winner} wins (${reason})`);
+    };
+
+    socketService.onOpponentMoved(handleOpponentMoved);
+    socketService.onMoveAccepted(handleMoveAccepted);
+    socketService.onGameOver(handleGameOver);
+
+    return () => {
+      socketService.offOpponentMoved(handleOpponentMoved);
+      socketService.offMoveAccepted(handleMoveAccepted);
+      socketService.offGameOver(handleGameOver);
+    };
+  }, [isOnline]);
 
   function handleMovePiece(from: number, to: number) {
-    setGame(prevGame => {
-      const newGame = movePiece(prevGame, from, to);
-      setMoveHistory(moveHistory.concat(prevGame));
-      setStepNumber(stepNumber + 1);
-      return newGame;
-    });
+    if (isOnline) {
+      socketService.sendMove(from, to);
+    } else {
+      setGame(prevGame => {
+        const newGame = movePiece(prevGame, from, to);
+        setMoveHistory(moveHistory.concat(prevGame));
+        setStepNumber(stepNumber + 1);
+        return newGame;
+      });
+    }
   }
 
   function handleUndo() {
@@ -131,10 +174,19 @@ export function Game(props: GameProps) {
     setStepNumber(stepNumber + 1);
   }
 
+  function handleResign() {
+    socketService.resign();
+  }
+
+  // In online mode, only allow interaction on your turn
+  const isMyTurn = !isOnline || game.turn === props.viewpoint;
+
   return <div>
-    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ game.turn } movePiece={ handleMovePiece } />
+    <Board key={ stepNumber } board={ game.board } viewpoint={ props.viewpoint } turn={ game.turn } movePiece={ handleMovePiece } interactive={ isMyTurn } />
+    {statusMessage && <p className="status-message">{statusMessage}</p>}
     <div className="game-controls">
-      <button onClick={ handleUndo } disabled={ moveHistory.length === 0 }>Undo move!</button>
+      {!isOnline && <button onClick={ handleUndo } disabled={ moveHistory.length === 0 }>Undo move!</button>}
+      {isOnline && <button onClick={ handleResign }>Resign</button>}
     </div>
   </div>;
 }
