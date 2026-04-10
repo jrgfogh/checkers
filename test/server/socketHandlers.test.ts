@@ -125,23 +125,23 @@ describe("Socket handlers", () => {
     });
   });
 
+  async function setupGame(): Promise<[TypedClientSocket, TypedClientSocket]> {
+    const black = await connectClient();
+    const white = await connectClient();
+
+    const createdPromise = waitForEvent<{ roomId: string }>(black, "game-created");
+    black.emit("create-game");
+    const { roomId } = await createdPromise;
+
+    const blackStartPromise = waitForEvent<any>(black, "game-start");
+    const whiteStartPromise = waitForEvent<any>(white, "game-start");
+    white.emit("join-game", { roomId });
+    await Promise.all([blackStartPromise, whiteStartPromise]);
+
+    return [black, white];
+  }
+
   describe("move", () => {
-    async function setupGame(): Promise<[TypedClientSocket, TypedClientSocket]> {
-      const black = await connectClient();
-      const white = await connectClient();
-
-      const createdPromise = waitForEvent<{ roomId: string }>(black, "game-created");
-      black.emit("create-game");
-      const { roomId } = await createdPromise;
-
-      const blackStartPromise = waitForEvent<any>(black, "game-start");
-      const whiteStartPromise = waitForEvent<any>(white, "game-start");
-      white.emit("join-game", { roomId });
-      await Promise.all([blackStartPromise, whiteStartPromise]);
-
-      return [black, white];
-    }
-
     it("allows valid move from black (first turn)", async () => {
       const [black, white] = await setupGame();
       try {
@@ -206,18 +206,8 @@ describe("Socket handlers", () => {
 
   describe("resign", () => {
     it("ends the game with opponent as winner", async () => {
-      const black = await connectClient();
-      const white = await connectClient();
+      const [black, white] = await setupGame();
       try {
-        const createdPromise = waitForEvent<{ roomId: string }>(black, "game-created");
-        black.emit("create-game");
-        const { roomId } = await createdPromise;
-
-        const blackStartPromise = waitForEvent<any>(black, "game-start");
-        const whiteStartPromise = waitForEvent<any>(white, "game-start");
-        white.emit("join-game", { roomId });
-        await Promise.all([blackStartPromise, whiteStartPromise]);
-
         const blackOverPromise = waitForEvent<{ winner: string; reason: string }>(black, "game-over");
         const whiteOverPromise = waitForEvent<{ winner: string; reason: string }>(white, "game-over");
         black.emit("resign");
@@ -235,18 +225,8 @@ describe("Socket handlers", () => {
 
   describe("disconnect", () => {
     it("ends the game when a player disconnects", async () => {
-      const black = await connectClient();
-      const white = await connectClient();
+      const [black, white] = await setupGame();
       try {
-        const createdPromise = waitForEvent<{ roomId: string }>(black, "game-created");
-        black.emit("create-game");
-        const { roomId } = await createdPromise;
-
-        const blackStartPromise = waitForEvent<any>(black, "game-start");
-        const whiteStartPromise = waitForEvent<any>(white, "game-start");
-        white.emit("join-game", { roomId });
-        await Promise.all([blackStartPromise, whiteStartPromise]);
-
         const gameOverPromise = waitForEvent<{ winner: string; reason: string }>(white, "game-over");
         black.disconnect();
         const gameOver = await gameOverPromise;
