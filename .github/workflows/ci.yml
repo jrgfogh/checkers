@@ -104,10 +104,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Compute lowercase image name
+      - name: Compute image reference
         run: |
-          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY,,}"
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> "$GITHUB_ENV"
+          # Lowercase for Docker compatibility; compute SHA tag to pin the
+          # exact image that was built by the docker job.
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}:sha-${GITHUB_SHA::7}"
+          echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
 
       - name: Deploy to Akamai Cloud
         uses: appleboy/ssh-action@v1
@@ -119,8 +121,8 @@ jobs:
             # Log in to GitHub Container Registry
             echo "${{ secrets.DEPLOY_GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-            # Pull the latest image
-            docker pull ${{ env.IMAGE_NAME }}:latest
+            # Pull the exact image built for this commit
+            docker pull ${{ env.IMAGE }}
 
             # Replace the running container
             docker stop checkers 2>/dev/null || true
@@ -129,7 +131,7 @@ jobs:
               --name checkers \
               --restart unless-stopped \
               -p 3000:3000 \
-              ${{ env.IMAGE_NAME }}:latest
+              ${{ env.IMAGE }}
 
             # Clean up old images
             docker image prune -f
