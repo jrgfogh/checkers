@@ -11,6 +11,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  packages: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -29,6 +30,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run type-check
+      - run: npm run type-check:server
       - run: npm test -- --ci
       - run: npm run build
 
@@ -55,3 +57,79 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Build Docker image and push to GitHub Container Registry
+  docker:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  # Deploy the Docker image to an Akamai Cloud (Linode) server via SSH.
+  # Required repository secrets:
+  #   DEPLOY_HOST            – IP address or hostname of the Akamai Cloud server
+  #   DEPLOY_USER            – SSH username on the server (e.g. "deploy")
+  #   DEPLOY_SSH_PRIVATE_KEY – private SSH key whose public half is in the
+  #                            server's ~/.ssh/authorized_keys
+  #   DEPLOY_GHCR_TOKEN      – GitHub PAT with read:packages scope, used by the
+  #                            server to pull images from ghcr.io
+  deploy-server:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: docker
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Compute lowercase image name
+        run: |
+          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> "$GITHUB_ENV"
+
+      - name: Deploy to Akamai Cloud
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          script: |
+            # Log in to GitHub Container Registry
+            echo "${{ secrets.DEPLOY_GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+            # Pull the latest image
+            docker pull ${{ env.IMAGE_NAME }}:latest
+
+            # Replace the running container
+            docker stop checkers 2>/dev/null || true
+            docker rm checkers 2>/dev/null || true
+            docker run -d \
+              --name checkers \
+              --restart unless-stopped \
+              -p 3000:3000 \
+              ${{ env.IMAGE_NAME }}:latest
+
+            # Clean up old images
+            docker image prune -f
