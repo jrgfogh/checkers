@@ -132,7 +132,7 @@ jobs:
             docker run -d \
               --name checkers \
               --restart unless-stopped \
-              -p 3000:3000 \
+              --network server_config_default \
               ${{ env.IMAGE }}
 
             # Clean up old images
