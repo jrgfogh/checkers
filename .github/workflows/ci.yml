@@ -96,6 +96,7 @@ jobs:
   #   DEPLOY_USER            – SSH username on the server (e.g. "deploy")
   #   DEPLOY_SSH_PRIVATE_KEY – private SSH key whose public half is in the
   #                            server's ~/.ssh/authorized_keys
+  #   DEPLOY_SSH_PASSPHRASE  - passphrase for the private SSH key
   #   DEPLOY_GHCR_TOKEN      – GitHub PAT with read:packages scope, used by the
   #                            server to pull images from ghcr.io
   deploy-server:
@@ -117,6 +118,7 @@ jobs:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
           script: |
             # Log in to GitHub Container Registry
             echo "${{ secrets.DEPLOY_GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
