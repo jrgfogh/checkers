@@ -133,6 +133,15 @@ jobs:
               --name checkers \
               --restart unless-stopped \
               --network server_config_default \
+              --label "traefik.enable=true" \
+              --label "traefik.http.routers.checkers.rule=Host(\`85.90.247.214\`) && PathPrefix(\`/\`)" \
+              --label "traefik.http.routers.checkers.entrypoints=websecure" \
+              --label "traefik.http.services.checkers.loadbalancer.server.port=3000" \
+              --label "traefik.http.routers.checkers.tls=true" \
+              --label "traefik.http.routers.checkers.tls.options=default" \
+              --label "traefik.http.routers.checkers.tls.certresolver=dnsresolver" \
+              --label "traefik.http.routers.checkers.middlewares=security-headers" \
+              --label "traefik.http.middlewares.security-headers.headers.customresponseheaders.Content-Security-Policy=upgrade-insecure-requests" \
               ${{ env.IMAGE }}
 
             # Clean up old images
