@@ -23,8 +23,8 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -64,10 +64,10 @@ jobs:
     needs: build-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -75,7 +75,7 @@ jobs:
 
       - name: Extract metadata for Docker
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
@@ -83,7 +83,7 @@ jobs:
             type=raw,value=latest
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
@@ -97,8 +97,6 @@ jobs:
   #   DEPLOY_SSH_PRIVATE_KEY – private SSH key whose public half is in the
   #                            server's ~/.ssh/authorized_keys
   #   DEPLOY_SSH_PASSPHRASE  - passphrase for the private SSH key
-  #   DEPLOY_GHCR_TOKEN      – GitHub PAT with read:packages scope, used by the
-  #                            server to pull images from ghcr.io
   deploy-server:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     needs: docker
@@ -121,7 +119,7 @@ jobs:
           passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
           script: |
             # Log in to GitHub Container Registry
-            echo "${{ secrets.DEPLOY_GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             # Pull the exact image built for this commit
             docker pull ${{ env.IMAGE }}
