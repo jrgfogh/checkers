@@ -46,7 +46,7 @@
     "typescript": "^6.0.2",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.0",
-    "webpack-dev-server": "^5.2.3"
+    "webpack-dev-server": "^5.2.6"
   },
   "dependencies": {
     "express": "^5.2.1",
