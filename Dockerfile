@@ -1,5 +1,5 @@
 # Dependency stage
-FROM node:22-slim AS deps
+FROM node:26-slim AS deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -18,7 +18,7 @@ FROM ci AS production-deps
 RUN npm prune --omit=dev
 
 # Run stage
-FROM node:22-slim AS runtime
+FROM node:26-slim AS runtime
 WORKDIR /app
 COPY package*.json ./
 COPY --from=production-deps /app/node_modules ./node_modules
