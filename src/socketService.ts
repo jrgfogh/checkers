@@ -3,11 +3,13 @@ import type { ClientToServerEvents, ServerToClientEvents } from "../server/proto
 
 type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
+declare const __BACKEND_URL__: string;
+
 let socket: TypedSocket | null = null;
 
 function getSocket(): TypedSocket {
   if (!socket) {
-    socket = io({ autoConnect: false });
+    socket = io(__BACKEND_URL__ || undefined, { autoConnect: false });
   }
   return socket;
 }

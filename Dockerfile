@@ -7,6 +7,8 @@ RUN npm ci
 # CI stage
 FROM deps AS ci
 COPY . .
+ARG BACKEND_URL
+ENV BACKEND_URL=$BACKEND_URL
 RUN npm run type-check \
  && npm run type-check:server \
  && npm test -- --ci \
