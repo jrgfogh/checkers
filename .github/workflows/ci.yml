@@ -33,6 +33,7 @@ jobs:
           target: ci
           load: true
           tags: checkers-ci:${{ github.sha }}
+          build-args: BACKEND_URL=${{ secrets.BACKEND_URL }}
           cache-from: type=gha,scope=checkers-docker
           cache-to: type=gha,mode=max,scope=checkers-docker
 
@@ -139,6 +140,7 @@ jobs:
               --name checkers \
               --restart unless-stopped \
               --network server_config_default \
+              -e CORS_ORIGIN=https://jrgfogh.github.io \
               --label "traefik.enable=true" \
               --label "traefik.http.routers.checkers.rule=Host(\`85.90.247.214\`) && PathPrefix(\`/\`)" \
               --label "traefik.http.routers.checkers.entrypoints=websecure" \

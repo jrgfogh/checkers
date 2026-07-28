@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
@@ -30,6 +31,9 @@ module.exports = {
     }]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      __BACKEND_URL__: JSON.stringify(process.env.BACKEND_URL || ""),
+    }),
     new ForkTsCheckerWebpackPlugin({
       async: false,
       typescript: {
