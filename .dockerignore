@@ -4,5 +4,4 @@ dist-server
 coverage
 .git
 .github
-test
 *.md

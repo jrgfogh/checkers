@@ -1,18 +1,28 @@
-# Build stage
-FROM node:22-alpine AS build
+# Dependency stage
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+
+# CI stage
+FROM deps AS ci
 COPY . .
-RUN npm run build
-RUN npm run build:server
+RUN npm run type-check \
+ && npm run type-check:server \
+ && npm test -- --ci \
+ && npm run build \
+ && npm run build:server
+
+# Production dependency stage
+FROM ci AS production-deps
+RUN npm prune --omit=dev
 
 # Run stage
-FROM node:22-alpine
+FROM node:22-alpine AS runtime
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/dist-server ./dist-server
+COPY --from=production-deps /app/node_modules ./node_modules
+COPY --from=ci /app/dist ./dist
+COPY --from=ci /app/dist-server ./dist-server
 EXPOSE 3000
 CMD ["node", "dist-server/server/index.js"]
