@@ -1,5 +1,6 @@
 import type { GameModel } from "../src/moveGenerator";
 import { parse, startPosition } from "../src/checkersFEN";
+import type { LobbyRoom } from "./protocol";
 
 export type SocketLike = { readonly id: string };
 
@@ -125,8 +126,8 @@ export class RoomManager {
     return id;
   }
 
-  listRooms(): { id: string; status: "waiting" | "playing" | "finished" }[] {
-    const result: { id: string; status: "waiting" | "playing" | "finished" }[] = [];
+  listRooms(): LobbyRoom[] {
+    const result: LobbyRoom[] = [];
     for (const room of this.rooms.values()) {
       result.push({ id: room.id, status: room.status });
     }
