@@ -5,6 +5,11 @@ export type ClientToServerEvents = {
   "resign": () => void;
 };
 
+export type LobbyRoom = {
+  id: string;
+  status: "waiting" | "playing" | "finished";
+};
+
 export type ServerToClientEvents = {
   "game-created": (payload: { roomId: string }) => void;
   "game-start": (payload: { gameState: string; color: "black" | "white" }) => void;
@@ -12,4 +17,5 @@ export type ServerToClientEvents = {
   "move-accepted": (payload: { from: number; to: number; gameState: string }) => void;
   "game-over": (payload: { winner: "black" | "white"; reason: string }) => void;
   "error": (payload: { message: string }) => void;
+  "lobby-update": (payload: { rooms: LobbyRoom[] }) => void;
 };

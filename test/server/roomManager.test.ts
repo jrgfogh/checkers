@@ -154,4 +154,36 @@ describe("RoomManager", () => {
       expect(room.status).toBe("finished");
     });
   });
+
+  describe("listRooms", () => {
+    it("returns empty array when there are no rooms", () => {
+      expect(manager.listRooms()).toEqual([]);
+    });
+
+    it("includes a waiting room", () => {
+      const room = manager.createRoom(sock("socket-1"));
+      expect(manager.listRooms()).toEqual([{ id: room.id, status: "waiting" }]);
+    });
+
+    it("reflects playing status after second player joins", () => {
+      const room = manager.createRoom(sock("socket-1"));
+      manager.joinRoom(room.id, sock("socket-2"));
+      expect(manager.listRooms()).toEqual([{ id: room.id, status: "playing" }]);
+    });
+
+    it("reflects finished status after finishRoom", () => {
+      const room = manager.createRoom(sock("socket-1"));
+      manager.finishRoom(room);
+      expect(manager.listRooms()).toEqual([{ id: room.id, status: "finished" }]);
+    });
+
+    it("lists multiple rooms", () => {
+      const r1 = manager.createRoom(sock("socket-1"));
+      const r2 = manager.createRoom(sock("socket-2"));
+      const list = manager.listRooms();
+      expect(list).toHaveLength(2);
+      expect(list.map((r) => r.id)).toContain(r1.id);
+      expect(list.map((r) => r.id)).toContain(r2.id);
+    });
+  });
 });

@@ -125,6 +125,14 @@ export class RoomManager {
     return id;
   }
 
+  listRooms(): { id: string; status: "waiting" | "playing" | "finished" }[] {
+    const result: { id: string; status: "waiting" | "playing" | "finished" }[] = [];
+    for (const room of this.rooms.values()) {
+      result.push({ id: room.id, status: room.status });
+    }
+    return result;
+  }
+
   // Exposed for testing
   get roomCount(): number {
     return this.rooms.size;

@@ -256,4 +256,92 @@ describe("Socket handlers", () => {
       }
     });
   });
+
+  describe("lobby-update", () => {
+    it("sends lobby-update on connection with empty room list", async () => {
+      const client = createClient();
+      try {
+        const lobbyPromise = waitForEvent<{ rooms: any[] }>(client, "lobby-update");
+        client.connect();
+        const { rooms } = await lobbyPromise;
+        expect(rooms).toEqual([]);
+      } finally {
+        client.disconnect();
+      }
+    });
+
+    it("broadcasts lobby-update after create-game", async () => {
+      const observer = await connectClient();
+      const creator = await connectClient();
+      try {
+        // The initial lobby-update fired during connect; now set up listener before action
+        const obsUpdate = waitForEvent<{ rooms: any[] }>(observer, "lobby-update");
+        creator.emit("create-game");
+        const { rooms } = await obsUpdate;
+        expect(rooms).toHaveLength(1);
+        expect(rooms[0].status).toBe("waiting");
+      } finally {
+        observer.disconnect();
+        creator.disconnect();
+      }
+    });
+
+    it("broadcasts lobby-update with playing status after join-game", async () => {
+      const observer = await connectClient();
+      const creator = await connectClient();
+      const joiner = await connectClient();
+      try {
+        const createdPromise = waitForEvent<{ roomId: string }>(creator, "game-created");
+        // Set up the post-join observer listener before any actions
+        let obsUpdate = waitForEvent<{ rooms: any[] }>(observer, "lobby-update");
+        creator.emit("create-game");
+        const { roomId } = await createdPromise;
+        // Wait for the post-create lobby-update on observer before setting up the next one
+        await obsUpdate;
+
+        obsUpdate = waitForEvent<{ rooms: any[] }>(observer, "lobby-update");
+        joiner.emit("join-game", { roomId });
+        const { rooms } = await obsUpdate;
+        expect(rooms).toHaveLength(1);
+        expect(rooms[0].status).toBe("playing");
+      } finally {
+        observer.disconnect();
+        creator.disconnect();
+        joiner.disconnect();
+      }
+    });
+
+    it("broadcasts lobby-update with finished status after resign", async () => {
+      const [black, white] = await setupGame();
+      const observer = await connectClient();
+      try {
+        // Set up listener before action; the initial lobby-update on connect already fired
+        const obsUpdate = waitForEvent<{ rooms: any[] }>(observer, "lobby-update");
+        black.emit("resign");
+        const { rooms } = await obsUpdate;
+        expect(rooms).toHaveLength(1);
+        expect(rooms[0].status).toBe("finished");
+      } finally {
+        black.disconnect();
+        white.disconnect();
+        observer.disconnect();
+      }
+    });
+
+    it("broadcasts lobby-update after a player disconnects during a game", async () => {
+      const [black, white] = await setupGame();
+      const observer = await connectClient();
+      try {
+        // Set up listener before action; the initial lobby-update on connect already fired
+        const obsUpdate = waitForEvent<{ rooms: any[] }>(observer, "lobby-update");
+        black.disconnect();
+        const { rooms } = await obsUpdate;
+        expect(rooms).toHaveLength(1);
+        expect(rooms[0].status).toBe("finished");
+      } finally {
+        white.disconnect();
+        observer.disconnect();
+      }
+    });
+  });
 });
