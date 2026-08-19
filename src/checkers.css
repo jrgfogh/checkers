@@ -184,10 +184,6 @@ h1
 	min-width: 360px;
 }
 
-.lobby h2 {
-	text-align: center;
-}
-
 .lobby-actions {
 	display: flex;
 	gap: 10px;

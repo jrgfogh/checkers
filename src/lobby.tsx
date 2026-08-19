@@ -70,7 +70,6 @@ export function Lobby() {
 
   return (
     <div className="lobby">
-      <h2>Checkers Online</h2>
       {errorMsg && <p className="error">{errorMsg}</p>}
 
       {(state.phase === "menu" || state.phase === "joining") && (
