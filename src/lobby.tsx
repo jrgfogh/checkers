@@ -33,10 +33,9 @@ export function Lobby() {
       setErrorMsg(message);
     });
 
-    const handleLobbyUpdate = ({ rooms: updatedRooms }: { rooms: LobbyRoom[] }) => {
+    socketService.onLobbyUpdate(({ rooms: updatedRooms }) => {
       setRooms(updatedRooms);
-    };
-    socketService.onLobbyUpdate(handleLobbyUpdate);
+    });
 
     return () => {
       socketService.disconnect();
