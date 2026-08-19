@@ -177,3 +177,96 @@ h1
 .game-controls button {
 	padding: 5px 20px;
 }
+
+.lobby {
+	display: inline-block;
+	text-align: left;
+	min-width: 360px;
+}
+
+.lobby-actions {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.lobby-actions button {
+	padding: 6px 18px;
+}
+
+.lobby-section {
+	margin-bottom: 16px;
+}
+
+.lobby-section h3 {
+	margin: 0 0 8px 0;
+	font-size: 1em;
+	color: #444;
+	border-bottom: 1px solid #bbb;
+	padding-bottom: 4px;
+}
+
+.lobby-empty {
+	color: #666;
+	font-style: italic;
+	margin: 0;
+}
+
+.room-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.room-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 7px 10px;
+	margin-bottom: 4px;
+	border-radius: 4px;
+	border: 1px solid #c0c8e8;
+	background: white;
+	cursor: pointer;
+}
+
+.room-item:not(.selected):not(.room-finished):hover {
+	background: rgb(210, 220, 255);
+}
+
+.room-item.selected {
+	background: rgba(25, 25, 150, 0.85);
+	border-color: rgba(25, 25, 150, 1);
+	color: white;
+}
+
+.room-item.room-finished {
+	cursor: default;
+	color: #888;
+	background: rgb(240, 242, 248);
+	border-color: #d0d0d0;
+}
+
+.room-id {
+	font-family: monospace;
+	font-size: 0.95em;
+}
+
+.room-status {
+	margin-left: 16px;
+	font-size: 0.85em;
+	white-space: nowrap;
+}
+
+.room-item.selected .room-status {
+	color: rgba(200, 210, 255, 1);
+}
+
+.error {
+	color: #cc0000;
+}
+
+.room-code {
+	font-size: 1.1em;
+}

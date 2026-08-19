@@ -12,7 +12,13 @@ function isValidSquare(n: unknown): n is number {
 }
 
 export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager): void {
+  function broadcastLobbyUpdate(): void {
+    io.emit("lobby-update", { rooms: roomManager.listRooms() });
+  }
+
   io.on("connection", (socket: TypedSocket) => {
+    socket.emit("lobby-update", { rooms: roomManager.listRooms() });
+
     socket.on("create-game", () => {
       if (roomManager.getRoomForSocket(socket)) {
         socket.emit("error", { message: "You are already in a game." });
@@ -21,6 +27,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       const room = roomManager.createRoom(socket);
       socket.join(room.id);
       socket.emit("game-created", { roomId: room.id });
+      broadcastLobbyUpdate();
     });
 
     socket.on("join-game", (payload) => {
@@ -42,6 +49,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       const fen = unparse(room.gameState);
       socket.emit("game-start", { gameState: fen, color: "white" });
       socket.to(room.id).emit("game-start", { gameState: fen, color: "black" });
+      broadcastLobbyUpdate();
     });
 
     socket.on("move", (payload) => {
@@ -99,6 +107,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       const winner = color === "black" ? "white" : "black";
       roomManager.finishRoom(room);
       io.to(room.id).emit("game-over", { winner, reason: "resignation" });
+      broadcastLobbyUpdate();
     });
 
     socket.on("disconnect", () => {
@@ -106,6 +115,7 @@ export function registerSocketHandlers(io: TypedServer, roomManager: RoomManager
       if (room) {
         const winner = room.blackPlayer === socket ? "white" : "black";
         io.to(room.id).emit("game-over", { winner, reason: "opponent disconnected" });
+        broadcastLobbyUpdate();
       }
     });
   });

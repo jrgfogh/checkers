@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import type { ClientToServerEvents, ServerToClientEvents } from "../server/protocol";
+import type { ClientToServerEvents, ServerToClientEvents, LobbyRoom } from "../server/protocol";
 
 type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -75,4 +75,12 @@ export function offGameOver(cb: (payload: { winner: "black" | "white"; reason: s
 
 export function onError(cb: (payload: { message: string }) => void): void {
   getSocket().on("error", cb);
+}
+
+export function onLobbyUpdate(cb: (payload: { rooms: LobbyRoom[] }) => void): void {
+  getSocket().on("lobby-update", cb);
+}
+
+export function offLobbyUpdate(cb: (payload: { rooms: LobbyRoom[] }) => void): void {
+  if (socket) socket.off("lobby-update", cb);
 }
