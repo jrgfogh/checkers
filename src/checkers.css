@@ -235,7 +235,7 @@ h1
 	cursor: pointer;
 }
 
-.room-item:hover {
+.room-item:not(.selected):not(.room-finished):hover {
 	background: rgb(210, 220, 255);
 }
 
