@@ -39,7 +39,6 @@ export function Lobby() {
     socketService.onLobbyUpdate(handleLobbyUpdate);
 
     return () => {
-      socketService.offLobbyUpdate(handleLobbyUpdate);
       socketService.disconnect();
     };
   }, []);
