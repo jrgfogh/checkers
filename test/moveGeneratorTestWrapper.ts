@@ -7,7 +7,9 @@ import MoveGenerator, {
 export function coordinate(checkersCoordinate: number): number {
   if (!Number.isInteger(checkersCoordinate) || checkersCoordinate < 1 || checkersCoordinate > 32)
     throw Error(`Invalid checkers coordinate: ${checkersCoordinate}.`);
-  return 65 - 2 * checkersCoordinate;
+  const offset = 32 - checkersCoordinate;
+  const row = Math.floor(offset / 4);
+  return row * 8 + (row % 2 === 0 ? 1 : 0) + 2 * (offset % 4);
 }
 
 export default MoveGenerator;
