@@ -463,7 +463,7 @@ describe("Move Generator", () => {
 
     describe("King", () => {
         describe("Main diagonal", () => {
-            each([["white"], ["black"]]).it("should generate two diagonal simple moves for %s king in square 1", (color) => {
+            each([["white"], ["black"]]).it("should generate two diagonal simple moves for %s king in square 32", (color) => {
                 const board = emptyBoard.slice()
                 board[32] = { color: color, kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: color })
@@ -475,7 +475,7 @@ describe("Move Generator", () => {
                 ]);
             })
 
-            it("should generate two diagonal simple moves for king in square 62", () => {
+            it("should generate two diagonal simple moves for king in square 1", () => {
                 const board = emptyBoard.slice()
                 board[1] = { color: "black", kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
@@ -547,7 +547,7 @@ describe("Move Generator", () => {
                 ]);
             })
 
-            it("should generate no moves for completely obstructed king in square 1", () => {
+            it("should generate no moves for completely obstructed king in square 32", () => {
                 const board = emptyBoard.slice()
                 board[32] = { color: "white", kind: "king" }
                 board[squareAt(32, 1, -1)] = { color: "black", kind: "man" }
@@ -559,7 +559,7 @@ describe("Move Generator", () => {
                 expect(moves).toEqual([]);
             })
 
-            it("should generate no moves for completely obstructed king in square 62", () => {
+            it("should generate no moves for completely obstructed king in square 1", () => {
                 const board = emptyBoard.slice()
                 board[1] = { color: "white", kind: "king" }
                 board[squareAt(1, -1, 1)] = { color: "black", kind: "man" }
@@ -573,7 +573,7 @@ describe("Move Generator", () => {
         })
 
         describe("Secondary diagonal", () => {
-            it("should generate a diagonal simple move for %s king in square 7", () => {
+            it("should generate a diagonal simple move for %s king in square 29", () => {
                 const board = emptyBoard.slice()
                 board[29] = { color: "black", kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
@@ -584,7 +584,7 @@ describe("Move Generator", () => {
                 ]);
             })
 
-            it("should generate a diagonal simple move for %s king in square 56", () => {
+            it("should generate a diagonal simple move for %s king in square 4", () => {
                 const board = emptyBoard.slice()
                 board[4] = { color: "black", kind: "king" }
                 const generator = new MoveGenerator({ board: board, turn: "black" })
@@ -1042,7 +1042,7 @@ describe("Move Generator", () => {
     })
 
     describe("Functional movesFrom()", () => {
-        it("should generate two diagonal simple moves for king in square 62", () => {
+        it("should generate two diagonal simple moves for king in square 1", () => {
             const board = emptyBoard.slice()
             board[1] = { color: "black", kind: "king" }
 
