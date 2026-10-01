@@ -1,7 +1,3 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-
 import MoveGenerator, {
   MoveKind,
   movesFrom as rawMovesFrom,
@@ -15,10 +11,25 @@ type LoggedSquare = {
   checkersCoordinate: number | null;
 };
 
+declare const process: {
+  env: Record<string, string | undefined>;
+  pid: number;
+};
+
+declare function require(moduleName: string): {
+  appendFileSync?: (path: string, data: string) => void;
+  tmpdir?: () => string;
+  join?: (...paths: string[]) => string;
+};
+
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+
 const coordinateLogPath =
   process.env.CHECKERS_TEST_COORDINATE_LOG_PATH ??
-  path.join(
-    os.tmpdir(),
+  path.join!(
+    os.tmpdir!(),
     `checkers-test-coordinates-${process.pid}-${process.env.JEST_WORKER_ID ?? "0"}.ndjson`
   );
 
@@ -55,7 +66,7 @@ function logMoves(moves: number[]) {
 
 function appendCoordinateLog(entry: object): void {
   try {
-    fs.appendFileSync(coordinateLogPath, JSON.stringify(entry) + "\n");
+    fs.appendFileSync!(coordinateLogPath, JSON.stringify(entry) + "\n");
   } catch {
     // Logging is best-effort and must not break the tests.
   }
