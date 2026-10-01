@@ -547,7 +547,7 @@ describe("Move Generator", () => {
                 ]);
             })
 
-            it("should generate no moves for completely obstructed king in cell 1", () => {
+            it("should generate no moves for completely obstructed king in square 1", () => {
                 const board = emptyBoard.slice()
                 board[32] = { color: "white", kind: "king" }
                 board[squareAt(32, 1, -1)] = { color: "black", kind: "man" }
@@ -559,7 +559,7 @@ describe("Move Generator", () => {
                 expect(moves).toEqual([]);
             })
 
-            it("should generate no moves for completely obstructed king in cell 62", () => {
+            it("should generate no moves for completely obstructed king in square 62", () => {
                 const board = emptyBoard.slice()
                 board[1] = { color: "white", kind: "king" }
                 board[squareAt(1, -1, 1)] = { color: "black", kind: "man" }
