@@ -47,6 +47,15 @@ function toCheckersCoordinate(square: number): number | null {
   return Math.floor((65 - square) / 2);
 }
 
+export function coordinate(boardIndex: number, checkersCoordinate: number): number {
+  if (toCheckersCoordinate(boardIndex) !== checkersCoordinate)
+    throw Error(
+      `Inconsistent coordinates: board index ${boardIndex} is checkers coordinate ` +
+      `${toCheckersCoordinate(boardIndex)}, not ${checkersCoordinate}.`
+    );
+  return boardIndex;
+}
+
 function logSquare(square: number): LoggedSquare {
   return {
     boardIndex: square,
