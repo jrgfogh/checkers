@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 import each from "jest-each";
 
 import Board, { Square, Game } from "../src/ui";
-import MoveGenerator from "../src/moveGenerator";
+import MoveGenerator from "./moveGeneratorTestWrapper";
 
 import type { PieceModel } from "../src/moveGenerator";
 

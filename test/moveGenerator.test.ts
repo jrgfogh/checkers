@@ -1,6 +1,6 @@
 import each from 'jest-each';
 
-import MoveGenerator, { MoveKind, movesFrom, movePiece } from '../src/moveGenerator';
+import MoveGenerator, { MoveKind, movesFrom, movePiece } from './moveGeneratorTestWrapper';
 
 const emptyBoard = Array(64).fill(null)
 const rowLength = 8

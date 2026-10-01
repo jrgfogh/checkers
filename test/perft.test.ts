@@ -1,6 +1,6 @@
 import each from 'jest-each';
 
-import MoveGenerator, { MoveKind, movesFrom, movePiece } from '../src/moveGenerator';
+import MoveGenerator, { MoveKind, movesFrom, movePiece } from './moveGeneratorTestWrapper';
 import type { GameModel } from '../src/moveGenerator';
 
 import { parse, startPosition } from "../src/checkersFEN";
