@@ -10,4 +10,5 @@ export function coordinate(checkersCoordinate: number): number {
   return 65 - 2 * checkersCoordinate;
 }
 
+export default MoveGenerator;
 export { MoveGenerator, MoveKind, movesFrom, movePiece };
