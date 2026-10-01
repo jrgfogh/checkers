@@ -1042,7 +1042,7 @@ describe("Move Generator", () => {
     })
 
     describe("Functional movesFrom()", () => {
-        it("should generate two diagonal simple moves for king in checker square 1", () => {
+        it("should generate two diagonal simple moves for king in square 62", () => {
             const board = emptyBoard.slice()
             board[1] = { color: "black", kind: "king" }
 
