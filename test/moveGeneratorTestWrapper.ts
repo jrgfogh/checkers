@@ -1,129 +1,100 @@
-import MoveGenerator, {
+import InternalMoveGenerator, {
   MoveKind,
-  movesFrom as rawMovesFrom,
-  movePiece as rawMovePiece
+  movesFrom as internalMovesFrom,
+  movePiece as internalMovePiece
 } from "../src/moveGenerator";
 
 import type { GameModel } from "../src/moveGenerator";
 
-type LoggedSquare = {
-  boardIndex: number;
-  checkersCoordinate: number | null;
-};
-
-declare const process: {
-  env: Record<string, string | undefined>;
-  pid: number;
-};
-
-declare function require(moduleName: string): {
-  appendFileSync?: (path: string, data: string) => void;
-  tmpdir?: () => string;
-  join?: (...paths: string[]) => string;
-};
-
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
-
-const coordinateLogPath =
-  process.env.CHECKERS_TEST_COORDINATE_LOG_PATH ??
-  path.join!(
-    os.tmpdir!(),
-    `checkers-test-coordinates-${process.pid}-${process.env.JEST_WORKER_ID ?? "0"}.ndjson`
-  );
-
-function currentTestName(): string {
-  return expect.getState().currentTestName ?? "unknown test";
+function toBoardIndex(square: number): number {
+  if (!Number.isInteger(square) || square < 1 || square > 32)
+    throw Error(`Invalid checker square: ${square}.`);
+  const offset = 32 - square;
+  const row = Math.floor(offset / 4);
+  const column = (row % 2 === 0 ? 1 : 0) + 2 * (offset % 4);
+  return row * 8 + column;
 }
 
-function isPlayableSquare(square: number): boolean {
-  return square >= 0 && square < 64 && ((Math.floor(square / 8) + square) & 0x1) === 1;
-}
-
-function toCheckersCoordinate(square: number): number | null {
-  if (!isPlayableSquare(square))
-    return null;
+function toCheckersCoordinate(square: number): number {
   return Math.floor((65 - square) / 2);
 }
 
-export function coordinate(boardIndex: number, checkersCoordinate: number): number {
-  if (toCheckersCoordinate(boardIndex) !== checkersCoordinate)
-    throw Error(
-      `Inconsistent coordinates: board index ${boardIndex} is checkers coordinate ` +
-      `${toCheckersCoordinate(boardIndex)}, not ${checkersCoordinate}.`
-    );
-  return boardIndex;
-}
-
-function logSquare(square: number): LoggedSquare {
+function toInternalState(state: GameModel): GameModel {
+  const board: GameModel["board"] = Array(64).fill(null);
+  for (let square = 1; square <= 32; square++)
+    board[toBoardIndex(square)] = state.board[square];
   return {
-    boardIndex: square,
-    checkersCoordinate: toCheckersCoordinate(square)
+    board,
+    turn: state.turn,
+    ...(state.secondMove === undefined ? {} : { secondMove: toBoardIndex(state.secondMove) })
   };
 }
 
-function logMoves(moves: number[]) {
-  const result: { destination: LoggedSquare; moveKind: number }[] = [];
-  for (let i = 0; i < moves.length; i += 2)
-    result.push({
-      destination: logSquare(moves[i]),
-      moveKind: moves[i + 1]
-    });
-  return result;
+function syncState(state: GameModel, internalState: GameModel): void {
+  for (let square = 1; square <= 32; square++)
+    state.board[square] = internalState.board[toBoardIndex(square)];
+  state.turn = internalState.turn;
+  state.secondMove = internalState.secondMove === undefined
+    ? undefined
+    : toCheckersCoordinate(internalState.secondMove);
 }
 
-function appendCoordinateLog(entry: object): void {
-  try {
-    fs.appendFileSync!(coordinateLogPath, JSON.stringify(entry) + "\n");
-  } catch {
-    // Logging is best-effort and must not break the tests.
+function toCheckersMoves(moves: number[]): number[] {
+  const checkersMoves: number[] = [];
+  for (let index = 0; index < moves.length; index += 2) {
+    checkersMoves.push(toCheckersCoordinate(moves[index]), moves[index + 1]);
   }
+  return checkersMoves;
 }
 
-export default class LoggedMoveGenerator extends MoveGenerator {
-  override movesFrom(square: number): number[] {
-    const moves = super.movesFrom(square);
-    appendCoordinateLog({
-      testName: currentTestName(),
-      api: "MoveGenerator.movesFrom",
-      source: logSquare(square),
-      moves: logMoves(moves)
-    });
-    return moves;
+export function squareAt(square: number, rowOffset: number, columnOffset: number): number {
+  const index = toBoardIndex(square);
+  const row = Math.floor(index / 8) + rowOffset;
+  const column = (index % 8) + columnOffset;
+  if (row < 0 || row > 7 || column < 0 || column > 7)
+    throw Error(`Square offset is outside the board: ${square}, ${rowOffset}, ${columnOffset}.`);
+  return toCheckersCoordinate(row * 8 + column);
+}
+
+export default class MoveGenerator {
+  readonly state: GameModel;
+  private readonly generator: InternalMoveGenerator;
+
+  constructor(state: GameModel) {
+    this.state = state;
+    this.generator = new InternalMoveGenerator(toInternalState(state));
   }
 
-  override movePiece(from: number, to: number, moveKind: number): void {
-    appendCoordinateLog({
-      testName: currentTestName(),
-      api: "MoveGenerator.movePiece",
-      from: logSquare(from),
-      to: logSquare(to),
-      moveKind
-    });
-    super.movePiece(from, to, moveKind);
+  movesFrom(square: number): number[] {
+    return toCheckersMoves(this.generator.movesFrom(toBoardIndex(square)));
+  }
+
+  movePiece(from: number, to: number, moveKind: number): void {
+    this.generator.movePiece(toBoardIndex(from), toBoardIndex(to), moveKind);
+    syncState(this.state, this.generator.state);
+  }
+
+  undoMove(): void {
+    this.generator.undoMove();
+    syncState(this.state, this.generator.state);
   }
 }
 
 export function movesFrom(state: GameModel, from: number): number[] {
-  const moves = rawMovesFrom(state, from);
-  appendCoordinateLog({
-    testName: currentTestName(),
-    api: "movesFrom",
-    source: logSquare(from),
-    moves: logMoves(moves)
-  });
-  return moves;
+  return toCheckersMoves(internalMovesFrom(toInternalState(state), toBoardIndex(from)));
 }
 
 export function movePiece(state: GameModel, from: number, to: number): GameModel {
-  appendCoordinateLog({
-    testName: currentTestName(),
-    api: "movePiece",
-    from: logSquare(from),
-    to: logSquare(to)
-  });
-  return rawMovePiece(state, from, to);
+  const internalState = toInternalState(state);
+  const result = internalMovePiece(internalState, toBoardIndex(from), toBoardIndex(to));
+  const coordinateBoard = Array(33).fill(null);
+  const coordinateState: GameModel = {
+    board: coordinateBoard,
+    turn: result.turn,
+    ...(result.secondMove === undefined ? {} : { secondMove: toCheckersCoordinate(result.secondMove) })
+  };
+  syncState(coordinateState, result);
+  return coordinateState;
 }
 
-export { MoveKind, coordinateLogPath };
+export { MoveKind };
