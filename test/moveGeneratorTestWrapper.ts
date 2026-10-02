@@ -6,11 +6,6 @@ import InternalMoveGenerator, {
 
 import type { GameModel } from "../src/moveGenerator";
 
-type CoordinateGameModel = Omit<GameModel, "board" | "secondMove"> & {
-  board: (GameModel["board"][number])[];
-  secondMove?: number;
-};
-
 function toBoardIndex(square: number): number {
   if (!Number.isInteger(square) || square < 1 || square > 32)
     throw Error(`Invalid checker square: ${square}.`);
@@ -24,7 +19,7 @@ function toCheckersCoordinate(square: number): number {
   return Math.floor((65 - square) / 2);
 }
 
-function toInternalState(state: CoordinateGameModel): GameModel {
+function toInternalState(state: GameModel): GameModel {
   const board: GameModel["board"] = Array(64).fill(null);
   for (let square = 1; square <= 32; square++)
     board[toBoardIndex(square)] = state.board[square];
@@ -35,7 +30,7 @@ function toInternalState(state: CoordinateGameModel): GameModel {
   };
 }
 
-function syncState(state: CoordinateGameModel, internalState: GameModel): void {
+function syncState(state: GameModel, internalState: GameModel): void {
   for (let square = 1; square <= 32; square++)
     state.board[square] = internalState.board[toBoardIndex(square)];
   state.turn = internalState.turn;
@@ -45,7 +40,11 @@ function syncState(state: CoordinateGameModel, internalState: GameModel): void {
 }
 
 function toCheckersMoves(moves: number[]): number[] {
-  return moves.map((move, index) => index % 2 === 0 ? toCheckersCoordinate(move) : move);
+  const checkersMoves: number[] = [];
+  for (let index = 0; index < moves.length; index += 2) {
+    checkersMoves.push(toCheckersCoordinate(moves[index]), moves[index + 1]);
+  }
+  return checkersMoves;
 }
 
 export function squareAt(square: number, rowOffset: number, columnOffset: number): number {
@@ -58,10 +57,10 @@ export function squareAt(square: number, rowOffset: number, columnOffset: number
 }
 
 export default class MoveGenerator {
-  readonly state: CoordinateGameModel;
+  readonly state: GameModel;
   private readonly generator: InternalMoveGenerator;
 
-  constructor(state: CoordinateGameModel) {
+  constructor(state: GameModel) {
     this.state = state;
     this.generator = new InternalMoveGenerator(toInternalState(state));
   }
@@ -81,15 +80,15 @@ export default class MoveGenerator {
   }
 }
 
-export function movesFrom(state: CoordinateGameModel, from: number): number[] {
+export function movesFrom(state: GameModel, from: number): number[] {
   return toCheckersMoves(internalMovesFrom(toInternalState(state), toBoardIndex(from)));
 }
 
-export function movePiece(state: CoordinateGameModel, from: number, to: number): CoordinateGameModel {
+export function movePiece(state: GameModel, from: number, to: number): GameModel {
   const internalState = toInternalState(state);
   const result = internalMovePiece(internalState, toBoardIndex(from), toBoardIndex(to));
   const coordinateBoard = Array(33).fill(null);
-  const coordinateState: CoordinateGameModel = {
+  const coordinateState: GameModel = {
     board: coordinateBoard,
     turn: result.turn,
     ...(result.secondMove === undefined ? {} : { secondMove: toCheckersCoordinate(result.secondMove) })
