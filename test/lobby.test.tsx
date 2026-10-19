@@ -61,6 +61,7 @@ function sendLobbyUpdate(rooms: LobbyRoom[]) {
 describe("Lobby", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.history.replaceState(null, "", "/");
   });
 
   it("renders buttons and headings", () => {
@@ -140,6 +141,41 @@ describe("Lobby", () => {
     render(<Lobby />);
     await user.click(screen.getByRole("button", { name: /new game/i }));
     expect(mockSocket.createGame).toHaveBeenCalled();
+  });
+
+  it("shows a copyable game link when a game is created", () => {
+    render(<Lobby />);
+    act(() => {
+      mockSocket.__emit("game-created", { roomId: "ABCDEF" });
+    });
+
+    const link = screen.getByRole("textbox", { name: /game link/i });
+    expect(link).toHaveValue(`${window.location.origin}/?room=ABCDEF`);
+    expect(link).toHaveAttribute("readonly");
+    expect(screen.getByRole("button", { name: /copy link/i })).toBeInTheDocument();
+    expect(window.location.search).toBe("?room=ABCDEF");
+  });
+
+  it("copies the game link", async () => {
+    const user = userEvent.setup();
+    const clipboard = { writeText: jest.fn().mockResolvedValue(undefined) };
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: clipboard });
+    render(<Lobby />);
+    act(() => {
+      mockSocket.__emit("game-created", { roomId: "ABCDEF" });
+    });
+
+    await user.click(screen.getByRole("button", { name: /copy link/i }));
+
+    expect(clipboard.writeText).toHaveBeenCalledWith(`${window.location.origin}/?room=ABCDEF`);
+    expect(screen.getByRole("status")).toHaveTextContent(/link copied/i);
+  });
+
+  it("joins the game in the current URL", () => {
+    window.history.replaceState(null, "", "/?room=ABCDEF");
+    render(<Lobby />);
+
+    expect(mockSocket.joinGame).toHaveBeenCalledWith("ABCDEF");
   });
 
   it("clicking a selected room deselects it", async () => {

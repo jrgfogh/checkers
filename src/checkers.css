@@ -270,3 +270,13 @@ h1
 .room-code {
 	font-size: 1.1em;
 }
+
+.game-link {
+	display: flex;
+	gap: 8px;
+}
+
+.game-link input {
+	min-width: 0;
+	flex: 1;
+}
