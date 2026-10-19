@@ -1,9 +1,19 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import * as socketService from "./socketService";
 import { parse, startPosition } from "./checkersFEN";
 import { Game } from "./ui";
 import type { GameModel } from "./moveGenerator";
 import type { LobbyRoom } from "../server/protocol";
+
+function gameUrl(roomId: string): string {
+  const url = new URL(window.location.href);
+  url.searchParams.set("room", roomId);
+  return url.toString();
+}
+
+function setGameUrl(roomId: string): void {
+  window.history.replaceState(null, "", gameUrl(roomId));
+}
 
 type LobbyState =
   | { phase: "menu" }
@@ -17,15 +27,22 @@ export function Lobby() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [rooms, setRooms] = useState<LobbyRoom[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const roomToJoin = useRef<string | null>(null);
 
   useEffect(() => {
     socketService.connect();
 
     socketService.onGameCreated(({ roomId }) => {
+      setGameUrl(roomId);
       setState({ phase: "waiting", roomId });
     });
 
     socketService.onGameStart(({ gameState, color }) => {
+      if (roomToJoin.current) {
+        setGameUrl(roomToJoin.current);
+        roomToJoin.current = null;
+      }
       setState({ phase: "playing", game: parse(gameState), color });
     });
 
@@ -36,6 +53,13 @@ export function Lobby() {
     socketService.onLobbyUpdate(({ rooms: updatedRooms }) => {
       setRooms(updatedRooms);
     });
+
+    const roomId = new URLSearchParams(window.location.search).get("room");
+    if (roomId) {
+      roomToJoin.current = roomId;
+      setState({ phase: "joining" });
+      socketService.joinGame(roomId);
+    }
 
     return () => {
       socketService.disconnect();
@@ -50,9 +74,19 @@ export function Lobby() {
   const handleJoin = useCallback(() => {
     setErrorMsg(null);
     if (!selectedRoomId) return;
+    roomToJoin.current = selectedRoomId;
     setState({ phase: "joining" });
     socketService.joinGame(selectedRoomId);
   }, [selectedRoomId]);
+
+  const handleCopyLink = useCallback(async (roomId: string) => {
+    try {
+      await navigator.clipboard.writeText(gameUrl(roomId));
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }, []);
 
   if (state.phase === "offline") {
     const initialGame = parse(startPosition);
@@ -132,7 +166,17 @@ export function Lobby() {
         <div>
           <p>Waiting for opponent...</p>
           <p className="room-code">Room code: <strong>{state.roomId}</strong></p>
-          <p>Share this code with your opponent, or ask them to join from the lobby.</p>
+          <p>Share this link with your opponent:</p>
+          <div className="game-link">
+            <input
+              aria-label="Game link"
+              readOnly
+              value={gameUrl(state.roomId)}
+              onFocus={(event) => event.currentTarget.select()}
+            />
+            <button onClick={() => void handleCopyLink(state.roomId)}>Copy link</button>
+          </div>
+          {copied && <p role="status">Link copied!</p>}
         </div>
       )}
     </div>
